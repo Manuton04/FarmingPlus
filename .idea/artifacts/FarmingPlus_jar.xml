@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="FarmingPlus:jar">
+    <output-path>$PROJECT_DIR$/../../../../Server plugin/plugins</output-path>
+    <root id="archive" name="FarmingPlus.jar">
+      <element id="module-output" name="FarmingPlus" />
+    </root>
+  </artifact>
+</component>

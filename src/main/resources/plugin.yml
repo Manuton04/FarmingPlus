@@ -1,0 +1,11 @@
+main: fp.manuton.FarmingPlus
+version: 1.0.0
+name: FarmingPlus
+author: Manuton
+api-version: 1.13
+
+commands:
+  farmingplus:
+    description: Principal command of the plugin FarmingPlus
+    aliases:
+      - fp
