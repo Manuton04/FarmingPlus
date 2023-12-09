@@ -1,5 +1,6 @@
 package fp.manuton.events;
 
+import fp.manuton.FarmingPlus;
 import fp.manuton.enchantments.CustomEnchantments;
 import fp.manuton.utils.ItemUtils;
 import fp.manuton.utils.MessageUtils;
@@ -19,17 +20,20 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Random;
 
 import static org.bukkit.event.block.Action.*;
 
 //
 public class PlayerListener implements Listener {
+
+    private FarmingPlus plugin;
+
+    public PlayerListener(FarmingPlus plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void Replenish(BlockBreakEvent event){
@@ -79,7 +83,7 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
 
         if (event.getAction() == LEFT_CLICK_BLOCK){
-            player.sendMessage(MessageUtils.getColoredMessage("&cLeft click this item while pointing the air!"));
+            player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix +"&cLeft click this item while pointing the air!"));
         }else if (event.getAction() == LEFT_CLICK_AIR){
 
         }
