@@ -9,15 +9,16 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.TabExecutor;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class MainCommand implements CommandExecutor {
+public class MainCommand implements CommandExecutor, TabExecutor {
 
     private FarmingPlus plugin;
 
@@ -47,33 +48,17 @@ public class MainCommand implements CommandExecutor {
                     if (args[1].equalsIgnoreCase("replenish")) { // /fp enchant replenish
                         enchantable.addAll(ItemUtils.hoes); // HOES //
                         enchantable.addAll(ItemUtils.axes); // AXES //
-                        ItemStack itemUser = new ItemStack(player.getItemInHand());
-                        boolean enchanted = false;
-                        for (Material type : enchantable) {
-                            if (itemUser.getType() == type) {
-                                player.getInventory().remove(itemUser);
-                                itemUser.addUnsafeEnchantment(CustomEnchantments.REPLENISH, 1);
-                                ItemMeta meta = itemUser.getItemMeta();
-                                List<String> lore = new ArrayList<String>();
-                                lore.add(MessageUtils.getColoredMessage("&7Replenish I"));
-                                if (meta.hasLore())
-                                    lore.addAll(meta.getLore());
-                                meta.setLore(lore);
-                                itemUser.setItemMeta(meta);
-
-                                player.getInventory().addItem(itemUser);
-                                return true;
-                            }
-                        }
-                        if (!enchanted)
-                            player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThat enchantment can only be applied on hoes or axes!"));
-                    } else {
+                        ItemUtils.enchantItem(enchantable, player, CustomEnchantments.REPLENISH,1);
+                    } else if (args[1].equalsIgnoreCase("farmersgrace")){
+                        enchantable.addAll(ItemUtils.boots); // HOES //
+                        ItemUtils.enchantItem(enchantable, player, CustomEnchantments.FARMERSGRACE,1);
+                    }else {
                         player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThat enchantment doesn't exist!"));
                     }
                 }else {
                     sender.sendMessage(MessageUtils.getColoredMessage("&f&l------" + FarmingPlus.prefix + " &fEnchants&f&l-------"));
                     sender.sendMessage(MessageUtils.getColoredMessage("&e Replenish I"));
-                    sender.sendMessage(MessageUtils.getColoredMessage("&e"));
+                    sender.sendMessage(MessageUtils.getColoredMessage("&e Farmer's Grace I"));
                     sender.sendMessage(MessageUtils.getColoredMessage("&e"));
                     sender.sendMessage(MessageUtils.getColoredMessage("&e"));
                     sender.sendMessage(MessageUtils.getColoredMessage("&e"));
@@ -118,5 +103,33 @@ public class MainCommand implements CommandExecutor {
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+plugin.getMainConfigManager().getReloadedConfig()));
     }
 
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+
+        if (args.length == 1)
+            return Arrays.asList("enchant", "reload");
+
+        if (args[0].equalsIgnoreCase("enchant")) {
+            if (args.length == 2)
+                return Arrays.asList("delicate", "farmersgrace", "farmerstep", "grandtilling", "replenish");
+            if (args.length == 3) {
+                if (args[1].equalsIgnoreCase("delicate"))
+                    return List.of("1");
+                if (args[1].equalsIgnoreCase("farmersgrace"))
+                    return List.of("1");
+                if (args[1].equalsIgnoreCase("farmerstep"))
+                    return Arrays.asList("1", "2", "3");
+                if (args[1].equalsIgnoreCase("grandtilling"))
+                    return Arrays.asList("1", "2", "3");
+                if (args[1].equalsIgnoreCase("replenish"))
+                    return List.of("1");
+            }
+
+
+        }
+
+
+        return new ArrayList<>(); // null = all player names
+    }
 }
 

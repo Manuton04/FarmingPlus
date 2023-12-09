@@ -12,8 +12,8 @@ public class CustomEnchantments {
     public static final Enchantment REPLENISH = new EnchantmentWrapper("replenish", "Replenish", 1, EnchantmentTarget.TOOL);
     public static final Enchantment DELICATE = new EnchantmentWrapper("delicate", "Delicate", 1, EnchantmentTarget.TOOL);
     public static final Enchantment GRANDTILLING = new EnchantmentWrapper("grandtilling", "Grand Tilling", 3, EnchantmentTarget.TOOL);
-    public static final Enchantment FARMERSTEP = new EnchantmentWrapper("farmerstep", "Farmer´s Step", 3, EnchantmentTarget.TOOL);
-    public static final Enchantment FARMERSGRACE = new EnchantmentWrapper("farmersgrace", "Farmer´s Grace", 1, EnchantmentTarget.TOOL);
+    public static final Enchantment FARMERSTEP = new EnchantmentWrapper("farmerstep", "Farmer´s Step", 3, EnchantmentTarget.ARMOR_FEET);
+    public static final Enchantment FARMERSGRACE = new EnchantmentWrapper("farmersgrace", "Farmer´s Grace", 1, EnchantmentTarget.ARMOR_FEET);
 
     public static void registerAll(){
         register(REPLENISH);
@@ -24,7 +24,7 @@ public class CustomEnchantments {
     }
 
 
-    // Checks if the enchantments is alredy registered //
+    // Checks if the enchantments is already registered //
     public static void register(Enchantment ench){
         boolean registered = Arrays.stream(Enchantment.values()).collect(Collectors.toList()).contains(ench);
 

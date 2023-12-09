@@ -30,6 +30,7 @@ public class FarmingPlus extends JavaPlugin {
             Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&cMetrics are not enabled."));
         registerEvents();
         registerCommands();
+        registerItemUtils();
         ItemUtils.getMaterials();
 
     }
@@ -46,6 +47,10 @@ public class FarmingPlus extends JavaPlugin {
 
     public void registerEvents(){
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+    }
+
+    public void registerItemUtils(){
+        new ItemUtils(this);
     }
 
     public MainConfigManager getMainConfigManager(){
