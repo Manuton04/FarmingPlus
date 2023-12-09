@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.Ageable;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -17,14 +18,39 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Random;
 
 import static org.bukkit.event.block.Action.*;
 
 //
 public class PlayerListener implements Listener {
+
+    public void durabilityCalc(ItemStack tool, Player player){
+        if (tool.getType().getMaxDurability() > 0 && tool.getItemMeta() instanceof Damageable) {
+            Damageable damageable = (Damageable) tool.getItemMeta();
+
+            if (damageable.hasDamage() && damageable.getDamage() < tool.getType().getMaxDurability()) {
+                int level = 0;
+                if (tool.getItemMeta().hasEnchant(Enchantment.DURABILITY))
+                    level = tool.getItemMeta().getEnchantLevel(Enchantment.DURABILITY);
+
+                float chance =  100.0f / (level + 1); // Level 0 = 100% / 1 = 50% / 2 = 33%  / 3 = 25% chances of using durability
+
+                if (Math.random() * 100 < chance){
+                    int damageToDeal = 1;
+                    damageable.setDamage(damageable.getDamage() + damageToDeal);
+
+                    tool.setItemMeta((ItemMeta) damageable);
+                    player.getInventory().setItemInMainHand(tool);
+                }
+            }
+        }
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void Replenish(BlockBreakEvent event){
@@ -45,8 +71,12 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         Ageable ageable = (Ageable) block.getState().getBlockData();
         Collection<ItemStack> drops = block.getDrops(player.getInventory().getItemInMainHand());
+        ItemStack tool = player.getInventory().getItemInMainHand();
         if (ageable.getAge() == ageable.getMaximumAge()){
-            block.getWorld().dropItemNaturally(block.getLocation(), drops.iterator().next());
+            durabilityCalc(tool, player);
+            for (ItemStack drop: drops){
+                block.getWorld().dropItemNaturally(block.getLocation(), drop);
+            }
         }
         ageable.setAge(0);
         block.setBlockData(ageable);
