@@ -1,6 +1,7 @@
 package fp.manuton.events;
 
 import fp.manuton.enchantments.CustomEnchantments;
+import fp.manuton.utils.ItemUtils;
 import fp.manuton.utils.MessageUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -30,31 +31,9 @@ import static org.bukkit.event.block.Action.*;
 //
 public class PlayerListener implements Listener {
 
-    public void durabilityCalc(ItemStack tool, Player player){
-        if (tool.getType().getMaxDurability() > 0 && tool.getItemMeta() instanceof Damageable) {
-            Damageable damageable = (Damageable) tool.getItemMeta();
-
-            if (damageable.hasDamage() && damageable.getDamage() < tool.getType().getMaxDurability()) {
-                int level = 0;
-                if (tool.getItemMeta().hasEnchant(Enchantment.DURABILITY))
-                    level = tool.getItemMeta().getEnchantLevel(Enchantment.DURABILITY);
-
-                float chance =  100.0f / (level + 1); // Level 0 = 100% / 1 = 50% / 2 = 33%  / 3 = 25% chances of using durability
-
-                if (Math.random() * 100 < chance){
-                    int damageToDeal = 1;
-                    damageable.setDamage(damageable.getDamage() + damageToDeal);
-
-                    tool.setItemMeta((ItemMeta) damageable);
-                    player.getInventory().setItemInMainHand(tool);
-                }
-            }
-        }
-    }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void Replenish(BlockBreakEvent event){
-        if (event.getPlayer().getInventory().getItemInMainHand() == null)
+        if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR)
             return;
         if (!event.getPlayer().getInventory().getItemInMainHand().hasItemMeta())
             return;
@@ -73,7 +52,7 @@ public class PlayerListener implements Listener {
         Collection<ItemStack> drops = block.getDrops(player.getInventory().getItemInMainHand());
         ItemStack tool = player.getInventory().getItemInMainHand();
         if (ageable.getAge() == ageable.getMaximumAge()){
-            durabilityCalc(tool, player);
+            ItemUtils.setDurability(tool, player);
             for (ItemStack drop: drops){
                 block.getWorld().dropItemNaturally(block.getLocation(), drop);
             }
@@ -86,7 +65,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void setFarmersStepCrop(PlayerInteractEvent event){
-        if (event.getPlayer().getInventory().getItemInMainHand() == null)
+        if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR)
             return;
         if (!event.getPlayer().getInventory().getItemInMainHand().hasItemMeta())
             return;
