@@ -3,7 +3,9 @@ package fp.manuton;
 import fp.manuton.commands.MainCommand;
 import fp.manuton.config.MainConfigManager;
 import fp.manuton.enchantments.CustomEnchantments;
+import fp.manuton.events.GuiListener;
 import fp.manuton.events.PlayerListener;
+import fp.manuton.guis.EnchantGui;
 import fp.manuton.utils.ItemUtils;
 import fp.manuton.utils.MessageUtils;
 import fp.manuton.utils.Metrics;
@@ -22,7 +24,7 @@ public class FarmingPlus extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
 
         if (getMainConfigManager().isEnabledMetrics()){
-            int pluginId = 20430; // <-- Replace with the id of your plugin!
+            int pluginId = 20430; // ID OF PLUGIN
             Metrics metrics = new Metrics(this, pluginId);
             CustomEnchantments.registerAll();
             Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&aMetrics are enabled."));
@@ -32,6 +34,7 @@ public class FarmingPlus extends JavaPlugin {
         registerCommands();
         registerItemUtils();
         ItemUtils.getMaterials();
+        registerEnchantGui();
 
     }
 
@@ -47,6 +50,7 @@ public class FarmingPlus extends JavaPlugin {
 
     public void registerEvents(){
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+        getServer().getPluginManager().registerEvents(new GuiListener(this), this);
     }
 
     public void registerItemUtils(){
@@ -56,4 +60,9 @@ public class FarmingPlus extends JavaPlugin {
     public MainConfigManager getMainConfigManager(){
         return mainConfigManager;
     }
+
+    public void registerEnchantGui(){
+        new EnchantGui(this);
+    }
+
 }

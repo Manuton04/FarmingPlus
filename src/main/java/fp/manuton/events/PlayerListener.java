@@ -4,9 +4,11 @@ import fp.manuton.FarmingPlus;
 import fp.manuton.enchantments.CustomEnchantments;
 import fp.manuton.utils.ItemUtils;
 import fp.manuton.utils.MessageUtils;
+import fp.manuton.utils.SoundUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.Ageable;
@@ -57,6 +59,11 @@ public class PlayerListener implements Listener {
             ItemUtils.setDurability(tool, player);
             for (ItemStack drop: drops){
                 block.getWorld().dropItemNaturally(block.getLocation(), drop);
+            }
+            String sound = plugin.getMainConfigManager().getReplenishSoundBreak();
+            if (SoundUtils.getSoundFromString(sound) != null){
+                float volume = plugin.getMainConfigManager().getVolumeReplenishSoundBreak();
+                player.getLocation().getWorld().playSound(player.getLocation(), SoundUtils.getSoundFromString(sound), volume, 1.0f);
             }
         }
         ageable.setAge(0);

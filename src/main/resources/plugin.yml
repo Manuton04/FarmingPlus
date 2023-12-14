@@ -3,6 +3,7 @@ version: 1.0.0
 name: FarmingPlus
 author: Manuton
 api-version: 1.13
+softdepend: [Vault]
 
 commands:
   farmingplus:

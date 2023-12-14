@@ -2,6 +2,7 @@ package fp.manuton.commands;
 
 import fp.manuton.FarmingPlus;
 import fp.manuton.enchantments.CustomEnchantments;
+import fp.manuton.guis.EnchantGui;
 import fp.manuton.utils.ItemUtils;
 import fp.manuton.utils.MessageUtils;
 import org.bukkit.Bukkit;
@@ -67,6 +68,8 @@ public class MainCommand implements CommandExecutor, TabExecutor {
 
             }else if (args[0].equalsIgnoreCase("reload")){
                 subCommandReload(player);
+            }else if (args[0].equalsIgnoreCase("gui")){
+                EnchantGui.createGui(player);
             }else{
                 sender.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThat command does not exist!"));
                 help(player);

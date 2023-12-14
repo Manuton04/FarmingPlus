@@ -67,7 +67,6 @@ public class ItemUtils {
         boots.add(Material.GOLDEN_BOOTS);
         boots.add(Material.DIAMOND_BOOTS);
         boots.add(Material.NETHERITE_BOOTS);
-
     }
 
     public static void enchantItem(List<Material> enchantable, Player player, Enchantment ench, int level){
