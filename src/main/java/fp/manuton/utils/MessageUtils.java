@@ -8,4 +8,11 @@ public class MessageUtils {
     public static String getColoredMessage(String message){
         return ChatColor.translateAlternateColorCodes('&', message);
     }
+
+    public static boolean isStringEmpty(String string){
+        if (string.isEmpty() || string.isBlank())
+            return true;
+        else
+            return false;
+    }
 }
