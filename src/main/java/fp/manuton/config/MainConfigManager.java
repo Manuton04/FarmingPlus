@@ -5,8 +5,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public class MainConfigManager {
 
-    private CustomConfig configFile;
-    private FarmingPlus plugin;
+    private final CustomConfig configFile;
     private boolean enabledMetrics;
     private String noPermissionCommand;
     private String noPermissionAction;
@@ -33,10 +32,13 @@ public class MainConfigManager {
     private float volumeGuiSoundOpen;
     private float volumeGuiSoundClose;
     private float volumeReplenishSoundBreak;
+    private String farmerstepGuiTitle;
+    private String farmerstepGuiEmptySlot;
+    private String farmerstepGuiSoundOnSet;
+    private float volumeFarmerstepGuiSoundOnSet;
 
-    public MainConfigManager(FarmingPlus plugin){
-        this.plugin = plugin;
-        configFile = new CustomConfig("config.yml", null, plugin);
+    public MainConfigManager(){
+        configFile = new CustomConfig("config.yml", null, FarmingPlus.getPlugin());
         configFile.registerConfig();
         loadConfig();
     }
@@ -50,9 +52,9 @@ public class MainConfigManager {
         replenishNameLore = config.getString("config.enchantments.replenish.lore-name");
         farmersgraceNameLore = config.getString("config.enchantments.farmers-grace.lore-name");
         delicateNameLore = config.getString("config.enchantments.delicate.lore-name");
-        farmerstepNameLore1 = config.getString("config.enchantments.farmer-step.lore-name1");
-        farmerstepNameLore2 = config.getString("config.enchantments.farmer-step.lore-name2");
-        farmerstepNameLore3 = config.getString("config.enchantments.farmer-step.lore-name3");
+        farmerstepNameLore1 = config.getString("config.enchantments.farmers-step.lore-name1");
+        farmerstepNameLore2 = config.getString("config.enchantments.farmers-step.lore-name2");
+        farmerstepNameLore3 = config.getString("config.enchantments.farmers-step.lore-name3");
         grandtillingNameLore1 = config.getString("config.enchantments.grand-tilling.lore-name1");
         grandtillingNameLore2 = config.getString("config.enchantments.grand-tilling.lore-name2");
         grandtillingNameLore3 = config.getString("config.enchantments.grand-tilling.lore-name3");
@@ -60,7 +62,7 @@ public class MainConfigManager {
         replenishName = config.getString("config.enchantments.replenish.name");
         farmersgraceName = config.getString("config.enchantments.farmers-grace.name");
         delicateName = config.getString("config.enchantments.delicate.name");
-        farmerstepName = config.getString("config.enchantments.farmer-step.name1");
+        farmerstepName = config.getString("config.enchantments.farmers-step.name1");
         grandtillingName = config.getString("config.enchantments.grand-tilling.name1");
         guiEmptySlot = config.getString("config.gui.empty-slot");
         guiSoundOpen = config.getString("config.gui.sound-on-open");
@@ -69,6 +71,10 @@ public class MainConfigManager {
         volumeGuiSoundOpen = (float) config.getDouble("config.gui.volume-on-open");
         volumeGuiSoundClose = (float) config.getDouble("config.gui.volume-on-close");
         volumeReplenishSoundBreak = (float) config.getDouble("config.enchantments.replenish.volume-on-break");
+        farmerstepGuiTitle = config.getString("config.enchantments.farmers-step.gui.title");
+        farmerstepGuiEmptySlot = config.getString("config.enchantments.farmers-step.gui.empty-slot");
+        farmerstepGuiSoundOnSet = config.getString("config.enchantments.farmers-step.gui.sound-on-set");
+        volumeFarmerstepGuiSoundOnSet = (float) config.getDouble("config.enchantments.farmers-step.gui.volume-on-set");
 
     }
 
@@ -176,4 +182,22 @@ public class MainConfigManager {
     public float getVolumeReplenishSoundBreak() {
         return volumeReplenishSoundBreak;
     }
+
+    public String getFarmerstepGuiTitle() {
+        return farmerstepGuiTitle;
+    }
+
+    public String getFarmerstepGuiEmptySlot() {
+        return farmerstepGuiEmptySlot;
+    }
+
+    public String getFarmerstepGuiSoundOnSet() {
+        return farmerstepGuiSoundOnSet;
+    }
+
+    public float getVolumeFarmerstepGuiSoundOnSet() {
+        return volumeFarmerstepGuiSoundOnSet;
+    }
+
+
 }

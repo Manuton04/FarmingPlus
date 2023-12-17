@@ -10,13 +10,11 @@ public class EnchantmentWrapper extends Enchantment {
 
     private final String name;
     private final int MaxLvl;
-    private final EnchantmentTarget type;
 
-    public EnchantmentWrapper(String namespace, String name, int lvl, EnchantmentTarget type) {
+    public EnchantmentWrapper(String namespace, String name, int lvl) {
         super(NamespacedKey.minecraft(namespace));
         this.name = name;
         this.MaxLvl = lvl;
-        this.type = type;
     }
 
     @Override
@@ -36,7 +34,7 @@ public class EnchantmentWrapper extends Enchantment {
 
     @Override
     public EnchantmentTarget getItemTarget() {
-        return type;
+        return null;
     }
 
     @Override

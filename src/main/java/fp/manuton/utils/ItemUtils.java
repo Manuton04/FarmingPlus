@@ -13,17 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemUtils {
-    private static FarmingPlus plugin;
     public static List<Material> hoes = new ArrayList<>();
     public static List<Material> axes = new ArrayList<>();
     public static List<Material> pickaxes = new ArrayList<>();
     public static List<Material> shovels = new ArrayList<>();
     public static List<Material> swords = new ArrayList<>();
     public static List<Material> boots = new ArrayList<>();
-
-    public ItemUtils(FarmingPlus plugin) {
-        this.plugin = plugin;
-    }
+    public static List<Material> crops = new ArrayList<>();
 
     public static void getMaterials(){
         hoes.add(Material.WOODEN_HOE);
@@ -69,8 +65,19 @@ public class ItemUtils {
         boots.add(Material.NETHERITE_BOOTS);
     }
 
+    public static void getCropsStep(){
+        crops.add(Material.WHEAT_SEEDS);
+        crops.add(Material.POTATO);
+        crops.add(Material.CARROT);
+        crops.add(Material.BEETROOT_SEEDS);
+        crops.add(Material.NETHER_WART);
+        crops.add(Material.MELON_SEEDS);
+        crops.add(Material.PUMPKIN_SEEDS);
+    }
+
     public static void enchantItem(List<Material> enchantable, Player player, Enchantment ench, int level){
         ItemStack item = new ItemStack(player.getItemInHand());
+        int slot = player.getInventory().getHeldItemSlot();
         if (item.hasItemMeta())
             if (item.getItemMeta().hasEnchant(ench)) {
                 player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThis item already has that enchantment!"));
@@ -79,12 +86,13 @@ public class ItemUtils {
         boolean enchanted = false;
         for (Material type : enchantable) {
             if (item.getType().equals(type)) {
-                player.getInventory().remove(item);
+                player.getInventory().setItem(slot, new ItemStack(Material.AIR));
                 item.addUnsafeEnchantment(ench, level);
                 ItemMeta meta = item.getItemMeta();
                 List<String> lore = new ArrayList<String>();
                 String loreToAdd = null;
                 boolean existsLore = false;
+                FarmingPlus plugin = FarmingPlus.getPlugin();
                 if (level == 1){
                     if (ench.equals(CustomEnchantments.REPLENISH))
                         loreToAdd = MessageUtils.getColoredMessage(plugin.getMainConfigManager().getReplenishNameLore());
@@ -121,8 +129,9 @@ public class ItemUtils {
                 meta.setLore(lore);
                 item.setItemMeta(meta);
 
-                player.getInventory().addItem(item);
+                player.getInventory().setItem(slot, item);
                 player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&aItem enchanted with "+loreToAdd+"."));
+                enchanted = true;
                 return;
             }
         }
@@ -153,5 +162,6 @@ public class ItemUtils {
             }
         }
     }
+
 
 }

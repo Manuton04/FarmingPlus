@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
 
 public class CustomEnchantments {
 
-    public static final Enchantment REPLENISH = new EnchantmentWrapper("replenish", "Replenish", 1, EnchantmentTarget.TOOL);
-    public static final Enchantment DELICATE = new EnchantmentWrapper("delicate", "Delicate", 1, EnchantmentTarget.TOOL);
-    public static final Enchantment GRANDTILLING = new EnchantmentWrapper("grandtilling", "Grand Tilling", 3, EnchantmentTarget.TOOL);
-    public static final Enchantment FARMERSTEP = new EnchantmentWrapper("farmerstep", "Farmer´s Step", 3, EnchantmentTarget.ARMOR_FEET);
-    public static final Enchantment FARMERSGRACE = new EnchantmentWrapper("farmersgrace", "Farmer´s Grace", 1, EnchantmentTarget.ARMOR_FEET);
+    public static final Enchantment REPLENISH = new EnchantmentWrapper("replenish", "Replenish", 1);
+    public static final Enchantment DELICATE = new EnchantmentWrapper("delicate", "Delicate", 1);
+    public static final Enchantment GRANDTILLING = new EnchantmentWrapper("grandtilling", "Grand Tilling", 3);
+    public static final Enchantment FARMERSTEP = new EnchantmentWrapper("farmerstep", "Farmer´s Step", 3);
+    public static final Enchantment FARMERSGRACE = new EnchantmentWrapper("farmersgrace", "Farmer´s Grace", 1);
 
     public static void registerAll(){
         register(REPLENISH);

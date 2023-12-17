@@ -5,6 +5,7 @@ import fp.manuton.guis.EnchantGui;
 import fp.manuton.utils.ItemUtils;
 import fp.manuton.utils.SoundUtils;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,17 +14,14 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 public class GuiListener implements Listener {
 
-    private static FarmingPlus plugin;
-
-    public GuiListener(FarmingPlus plugin) {
-        this.plugin = plugin;
-    }
-
     @EventHandler
-    public void onClick(InventoryClickEvent event){
+    public void onClickEn(InventoryClickEvent event){
         Player player = (Player) event.getWhoClicked();
         if (!player.hasMetadata("OpenedMenu"))
             return;
@@ -83,14 +81,14 @@ public class GuiListener implements Listener {
     }
 
     @EventHandler
-    public void onClose(InventoryCloseEvent event){
+    public void onCloseEn(InventoryCloseEvent event){
         Player player = (Player) event.getPlayer();
         if (!player.hasMetadata("OpenedMenu"))
             return;
+        FarmingPlus plugin = FarmingPlus.getPlugin();
 
         player.removeMetadata("OpenedMenu", plugin);
         String sound = plugin.getMainConfigManager().getGuiSoundClose();
-        player.sendMessage("You closed the menu.");
         if (SoundUtils.getSoundFromString(sound) != null) {
             float volume = plugin.getMainConfigManager().getVolumeGuiSoundClose();
             player.playSound(player.getLocation(), SoundUtils.getSoundFromString(sound), volume, 1.0f);
@@ -113,5 +111,74 @@ public class GuiListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onClickBoots(InventoryClickEvent event){
+        Player player = (Player) event.getWhoClicked();
+        if (!player.hasMetadata("BootsMenu"))
+            return;
+
+        event.setCancelled(true);
+        int slot = event.getSlot();
+        if (event.getClickedInventory().getType().equals(InventoryType.PLAYER)){
+            ItemStack item = event.getCurrentItem();
+            if (item != null || item.getType() != Material.AIR){
+                ItemStack itemT = item.clone();
+                itemT.setAmount(1);
+                for (Material crops: ItemUtils.crops){
+                    if (crops.equals(item.getType()))
+                        event.getInventory().setItem(13, itemT);
+
+                }
+            }
+        }
+
+        if (!(slot == 13)) {
+            if (slot == 31)
+                player.closeInventory();
+        }else
+            event.getInventory().setItem(13, null);
+
+    }
+
+    @EventHandler
+    public void onCloseBoots(InventoryCloseEvent event){
+        Player player = (Player) event.getPlayer();
+        if (!player.hasMetadata("BootsMenu"))
+            return;
+
+        FarmingPlus plugin = FarmingPlus.getPlugin();
+        player.removeMetadata("BootsMenu", plugin);
+
+        Inventory inventory = event.getInventory();
+        if (inventory.getSize() == 36){
+            ItemStack slot13 = inventory.getItem(13);
+            ItemStack boots = player.getInventory().getItemInMainHand();
+            ItemMeta bootsMeta = boots.getItemMeta();
+            PersistentDataContainer data = bootsMeta.getPersistentDataContainer();
+            if (slot13 == null || slot13.getType().equals(Material.AIR)){
+                if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING))
+                    data.remove(new NamespacedKey(FarmingPlus.getPlugin(), "crop"));
+                boots.setItemMeta(bootsMeta);
+                player.sendMessage("No hay Cultivo");
+                return;
+            }else{
+                String cropS = slot13.getType().toString();
+                if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING)){
+                    ItemStack item = new ItemStack(Material.valueOf(data.get(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING)));
+                    if (!item.equals(slot13)){
+                        data.set(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING, cropS);
+                        boots.setItemMeta(bootsMeta);
+                        player.sendMessage("Se guardo: "+cropS);
+                    }else
+                        player.sendMessage("Ya tenia: "+cropS);
+                }else{
+                    data.set(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING, cropS);
+                    boots.setItemMeta(bootsMeta);
+                    player.sendMessage("Se guardo: "+cropS);
+                }
+            }
+
+        }
+    }
 
 }

@@ -1,11 +1,13 @@
 package fp.manuton;
 
 import fp.manuton.commands.MainCommand;
+import fp.manuton.config.CustomConfig;
 import fp.manuton.config.MainConfigManager;
 import fp.manuton.enchantments.CustomEnchantments;
 import fp.manuton.events.GuiListener;
 import fp.manuton.events.PlayerListener;
 import fp.manuton.guis.EnchantGui;
+import fp.manuton.guis.FarmersStepGui;
 import fp.manuton.utils.ItemUtils;
 import fp.manuton.utils.MessageUtils;
 import fp.manuton.utils.Metrics;
@@ -16,11 +18,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class FarmingPlus extends JavaPlugin {
     public static String prefix = "&6&l[&2&lFarmingPlus&6&l] ";
     private final String version = getDescription().getVersion();
+    private static FarmingPlus plugin;
     private MainConfigManager mainConfigManager;
     private final String link = "https://www.spigotmc.org/resources/bettersleeps-abandoned.82243/"; // BETTERSLEEPS Plugin for tests
 
     public void onEnable(){
-        mainConfigManager = new MainConfigManager(this);
+        plugin = this;
+        mainConfigManager = new MainConfigManager();
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&fHas been enabled. &cVersion: "+version));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
@@ -42,9 +46,10 @@ public class FarmingPlus extends JavaPlugin {
         registerEvents();
         registerCommands();
         registerItemUtils();
-        ItemUtils.getMaterials();
         registerEnchantGui();
-
+        registerFarmerStepGui();
+        ItemUtils.getMaterials();
+        ItemUtils.getCropsStep();
     }
 
     public void onDisable(){
@@ -53,17 +58,21 @@ public class FarmingPlus extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
     }
 
+    public static FarmingPlus getPlugin(){
+        return plugin;
+    }
+
     public void registerCommands(){
-        this.getCommand("farmingplus").setExecutor(new MainCommand(this));
+        this.getCommand("farmingplus").setExecutor(new MainCommand());
     }
 
     public void registerEvents(){
-        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
-        getServer().getPluginManager().registerEvents(new GuiListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        getServer().getPluginManager().registerEvents(new GuiListener(), this);
     }
 
     public void registerItemUtils(){
-        new ItemUtils(this);
+        new ItemUtils();
     }
 
     public MainConfigManager getMainConfigManager(){
@@ -71,7 +80,12 @@ public class FarmingPlus extends JavaPlugin {
     }
 
     public void registerEnchantGui(){
-        new EnchantGui(this);
+        new EnchantGui();
+
+    }
+
+    public void registerFarmerStepGui(){
+        new FarmersStepGui();
     }
 
 }

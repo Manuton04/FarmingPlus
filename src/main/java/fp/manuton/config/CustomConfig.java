@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class CustomConfig {
-    private FarmingPlus plugin;
     private String fileName;
     private FileConfiguration fileConfiguration = null;
     private File file = null;
@@ -18,7 +17,6 @@ public class CustomConfig {
     public CustomConfig(String fileName, String folderName, FarmingPlus plugin){
         this.fileName = fileName;
         this.folderName = folderName;
-        this.plugin = plugin;
     }
 
     public String getPath(){
@@ -26,6 +24,7 @@ public class CustomConfig {
     }
 
     public void registerConfig(){
+        FarmingPlus plugin = FarmingPlus.getPlugin();
         if(folderName != null){
             file = new File(plugin.getDataFolder() +File.separator + folderName,fileName);
         }else{
@@ -66,6 +65,7 @@ public class CustomConfig {
 
     public boolean reloadConfig() {
         if (fileConfiguration == null) {
+            FarmingPlus plugin = FarmingPlus.getPlugin();
             if(folderName != null){
                 file = new File(plugin.getDataFolder() +File.separator + folderName, fileName);
             }else{

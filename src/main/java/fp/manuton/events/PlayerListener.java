@@ -2,13 +2,14 @@ package fp.manuton.events;
 
 import fp.manuton.FarmingPlus;
 import fp.manuton.enchantments.CustomEnchantments;
+import fp.manuton.guis.FarmersStepGui;
 import fp.manuton.utils.ItemUtils;
 import fp.manuton.utils.MessageUtils;
 import fp.manuton.utils.SoundUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.Ageable;
@@ -21,6 +22,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+
 import java.util.Collection;
 import java.util.Objects;
 
@@ -29,13 +34,7 @@ import static org.bukkit.event.block.Action.*;
 //
 public class PlayerListener implements Listener {
 
-    private FarmingPlus plugin;
-
-    public PlayerListener(FarmingPlus plugin) {
-        this.plugin = plugin;
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void Replenish(BlockBreakEvent event){
         if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR)
             return;
@@ -60,9 +59,9 @@ public class PlayerListener implements Listener {
             for (ItemStack drop: drops){
                 block.getWorld().dropItemNaturally(block.getLocation(), drop);
             }
-            String sound = plugin.getMainConfigManager().getReplenishSoundBreak();
+            String sound = FarmingPlus.getPlugin().getMainConfigManager().getReplenishSoundBreak();
             if (SoundUtils.getSoundFromString(sound) != null){
-                float volume = plugin.getMainConfigManager().getVolumeReplenishSoundBreak();
+                float volume = FarmingPlus.getPlugin().getMainConfigManager().getVolumeReplenishSoundBreak();
                 player.getLocation().getWorld().playSound(player.getLocation(), SoundUtils.getSoundFromString(sound), volume, 1.0f);
             }
         }
@@ -72,43 +71,68 @@ public class PlayerListener implements Listener {
 
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void setFarmersStepCrop(PlayerInteractEvent event){
-        if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR)
-            return;
-        if (!event.getPlayer().getInventory().getItemInMainHand().hasItemMeta())
-            return;
-        if (!event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasEnchant(CustomEnchantments.FARMERSTEP))
-            return;
-        if (event.getPlayer().getGameMode() == GameMode.SPECTATOR)
-            return;
-        if (!(event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK))
-            return;
-
         Player player = event.getPlayer();
+        Action action = event.getAction();
 
-        if (event.getAction() == LEFT_CLICK_BLOCK){
-            player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix +"&cLeft click this item while pointing the air!"));
-        }else if (event.getAction() == LEFT_CLICK_AIR){
-
+        //player.sendMessage("0");
+        if ((!action.equals(LEFT_CLICK_BLOCK)) && (!action.equals(LEFT_CLICK_AIR)))
+            return;
+        //player.sendMessage("1");
+        if (player.getInventory().getItemInMainHand().getType() == Material.AIR)
+            return;
+        //player.sendMessage("2");
+        if (!player.getInventory().getItemInMainHand().hasItemMeta())
+            return;
+        //player.sendMessage("3");
+        boolean areBoots = false;
+        for (Material boots: ItemUtils.boots){
+            if (player.getInventory().getItemInMainHand().getType() == boots) {
+                areBoots = true;
+                break;
+            }
         }
+        if (!areBoots)
+            return;
+        //player.sendMessage("4");
+        if (!player.getInventory().getItemInMainHand().getItemMeta().hasEnchant(CustomEnchantments.FARMERSTEP))
+            return;
+        //player.sendMessage("5");
+        if (player.getGameMode() == GameMode.SPECTATOR)
+            return;
+        //player.sendMessage("6");
 
-
+        if (action == LEFT_CLICK_BLOCK){
+            player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix +"&cLeft click this item while pointing the air!"));
+            event.setCancelled(true);
+            player.sendMessage("7");
+        }else if(action == LEFT_CLICK_AIR){
+            FarmersStepGui.bootGui(player, player.getInventory().getItemInMainHand());
+            player.sendMessage("8");
+        }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void FarmersStep(PlayerMoveEvent event){
-        if (event.getPlayer().getInventory().getBoots() == null)
+        Player player = event.getPlayer();
+        if (player.getInventory().getBoots() == null)
             return;
-        if (!event.getPlayer().getInventory().getBoots().hasItemMeta())
+        if (!player.getInventory().getBoots().hasItemMeta())
             return;
-        if (!event.getPlayer().getInventory().getBoots().getItemMeta().hasEnchant(CustomEnchantments.FARMERSTEP))
+        if (!player.getInventory().getBoots().getItemMeta().hasEnchant(CustomEnchantments.FARMERSTEP))
             return;
-        if (event.getPlayer().getGameMode() == GameMode.SPECTATOR)
+        if (player.getGameMode() == GameMode.SPECTATOR)
+            return;
+        ItemMeta bootsMeta = player.getInventory().getBoots().getItemMeta();
+        PersistentDataContainer data = bootsMeta.getPersistentDataContainer();
+        if (!data.has(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING))
             return;
 
-        Player player = event.getPlayer();
+
         Location xyz = event.getTo();
+
+        player.sendMessage("Tiene Persistent");
 
         // If player in CREATIVE, don't check if they have crops in inventory //
         if (event.getPlayer().getGameMode() == GameMode.CREATIVE){
@@ -120,7 +144,7 @@ public class PlayerListener implements Listener {
 
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void FarmersGrace(PlayerInteractEvent event){
         if (event.getPlayer().getInventory().getBoots() == null)
             return;
@@ -130,7 +154,7 @@ public class PlayerListener implements Listener {
             return;
         if (event.getPlayer().getGameMode() == GameMode.SPECTATOR)
             return;
-        if (!(event.getAction() == Action.PHYSICAL))
+        if (!(event.getAction() == PHYSICAL))
             return;
         if (event.getClickedBlock() == null)
             return;

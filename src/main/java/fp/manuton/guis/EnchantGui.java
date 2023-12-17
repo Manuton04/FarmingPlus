@@ -17,13 +17,8 @@ import java.util.List;
 
 public class EnchantGui{
 
-    private static FarmingPlus plugin;
-
-    public EnchantGui(FarmingPlus plugin) {
-        this.plugin = plugin;
-    }
-
     public static void createGui(Player player){
+        FarmingPlus plugin = FarmingPlus.getPlugin();
         ItemStack empty = new ItemStack(Material.valueOf(plugin.getMainConfigManager().getGuiEmptySlot()));
         ItemMeta emptyMeta = empty.getItemMeta();
         emptyMeta.setDisplayName(" ");
@@ -72,7 +67,7 @@ public class EnchantGui{
     public static void enchantGui(Player player, Inventory inventory){
         ItemStack replenish = new ItemStack(Material.ENCHANTED_BOOK);
         ItemMeta replenishMeta = replenish.getItemMeta();
-        replenishMeta.setDisplayName(MessageUtils.getColoredMessage(plugin.getMainConfigManager().getReplenishNameLore()));
+        replenishMeta.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getReplenishNameLore()));
         ItemStack delicate = new ItemStack(Material.ENCHANTED_BOOK);
         ItemMeta delicateMeta = delicate.getItemMeta();
         ItemStack grandtilling = new ItemStack(Material.ENCHANTED_BOOK);
@@ -88,7 +83,7 @@ public class EnchantGui{
         ItemMeta farmerstepMeta = farmerstep.getItemMeta();
         ItemStack farmersgrace = new ItemStack(Material.ENCHANTED_BOOK);
         ItemMeta farmersgraceMeta = farmersgrace.getItemMeta();
-        ItemStack empty = new ItemStack(Material.valueOf(plugin.getMainConfigManager().getGuiEmptySlot()));
+        ItemStack empty = new ItemStack(Material.valueOf(FarmingPlus.getPlugin().getMainConfigManager().getGuiEmptySlot()));
         ItemMeta emptyMeta = empty.getItemMeta();
         emptyMeta.setDisplayName(" ");
         empty.setItemMeta(emptyMeta);
@@ -100,7 +95,7 @@ public class EnchantGui{
     }
 
     public static void enchantGuiEmpty(Player player, Inventory inventory){
-        ItemStack empty = new ItemStack(Material.valueOf(plugin.getMainConfigManager().getGuiEmptySlot()));
+        ItemStack empty = new ItemStack(Material.valueOf(FarmingPlus.getPlugin().getMainConfigManager().getGuiEmptySlot()));
         ItemMeta emptyMeta = empty.getItemMeta();
         emptyMeta.setDisplayName(" ");
         empty.setItemMeta(emptyMeta);

@@ -31,6 +31,12 @@ config:
       lore-name1: "&7Farmer's Step I"
       lore-name2: "&7Farmer's Step II"
       lore-name3: "&7Farmer's Step III"
+      # This gui opens when using LEFT click in the air with the enchanted boots #
+      gui:
+        title: "&7Farmer's Step Menu"
+        empty-slot: "BLACK_STAINED_GLASS_PANE"
+        sound-on-set: "ENTITY_EXPERIENCE_ORB_PICKUP"
+        volume-on-set: 0.5
     grand-tilling:
       name: "Grand Tilling"
       lore-name1: "&7Grand Tilling I"

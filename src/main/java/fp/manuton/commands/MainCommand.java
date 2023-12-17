@@ -11,21 +11,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class MainCommand implements CommandExecutor, TabExecutor {
-
-    private FarmingPlus plugin;
-
-    public MainCommand(FarmingPlus plugin) {
-        this.plugin = plugin;
-    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
@@ -51,8 +43,33 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                         enchantable.addAll(ItemUtils.axes); // AXES //
                         ItemUtils.enchantItem(enchantable, player, CustomEnchantments.REPLENISH,1);
                     } else if (args[1].equalsIgnoreCase("farmersgrace")){
-                        enchantable.addAll(ItemUtils.boots); // HOES //
+                        enchantable.addAll(ItemUtils.boots); // BOOTS //
                         ItemUtils.enchantItem(enchantable, player, CustomEnchantments.FARMERSGRACE,1);
+                    }else if (args[1].equalsIgnoreCase("delicate")){
+                        enchantable.addAll(ItemUtils.axes); // AXES //
+                        ItemUtils.enchantItem(enchantable, player, CustomEnchantments.DELICATE,1);
+                    }else if (args[1].equalsIgnoreCase("farmerstep")){
+                        enchantable.addAll(ItemUtils.boots); // BOOTS //
+                        if (args.length == 3){
+                            if (args[2].equalsIgnoreCase("1"))
+                                ItemUtils.enchantItem(enchantable, player, CustomEnchantments.FARMERSTEP,1);
+                            else if (args[2].equalsIgnoreCase("2"))
+                                ItemUtils.enchantItem(enchantable, player, CustomEnchantments.FARMERSTEP,2);
+                            else if (args[2].equalsIgnoreCase("3"))
+                                ItemUtils.enchantItem(enchantable, player, CustomEnchantments.FARMERSTEP,3);
+                        }else
+                            ItemUtils.enchantItem(enchantable, player, CustomEnchantments.FARMERSTEP,1);
+                    }else if (args[1].equalsIgnoreCase("grandtilling")){
+                        enchantable.addAll(ItemUtils.hoes); // HOES //
+                        if (args.length == 3){
+                            if (args[2].equalsIgnoreCase("1"))
+                                ItemUtils.enchantItem(enchantable, player, CustomEnchantments.GRANDTILLING,1);
+                            else if (args[2].equalsIgnoreCase("2"))
+                                ItemUtils.enchantItem(enchantable, player, CustomEnchantments.GRANDTILLING,2);
+                            else if (args[2].equalsIgnoreCase("3"))
+                                ItemUtils.enchantItem(enchantable, player, CustomEnchantments.GRANDTILLING,3);
+                        }else
+                            ItemUtils.enchantItem(enchantable, player, CustomEnchantments.GRANDTILLING,1);
                     }else {
                         player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThat enchantment doesn't exist!"));
                     }
@@ -98,12 +115,12 @@ public class MainCommand implements CommandExecutor, TabExecutor {
     // Reload config if player has permissions //
     public void subCommandReload(CommandSender sender){
         if (!sender.hasPermission("fp.commands.reload") && !sender.isOp()){
-            sender.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+plugin.getMainConfigManager().getNoPermissionCommand()));
+            sender.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
             return;
         }
-        plugin.getMainConfigManager().reloadConfig();
-        sender.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+plugin.getMainConfigManager().getReloadedConfig()));
-        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+plugin.getMainConfigManager().getReloadedConfig()));
+        FarmingPlus.getPlugin().getMainConfigManager().reloadConfig();
+        sender.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+FarmingPlus.getPlugin().getMainConfigManager().getReloadedConfig()));
+        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+FarmingPlus.getPlugin().getMainConfigManager().getReloadedConfig()));
     }
 
     @Override
