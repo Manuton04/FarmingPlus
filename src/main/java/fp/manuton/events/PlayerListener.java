@@ -4,6 +4,7 @@ import fp.manuton.FarmingPlus;
 import fp.manuton.enchantments.CustomEnchantments;
 import fp.manuton.guis.FarmersStepGui;
 import fp.manuton.utils.ItemUtils;
+import fp.manuton.utils.LocationUtils;
 import fp.manuton.utils.MessageUtils;
 import fp.manuton.utils.SoundUtils;
 import org.bukkit.GameMode;
@@ -26,8 +27,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
 import static org.bukkit.event.block.Action.*;
 
@@ -106,16 +106,22 @@ public class PlayerListener implements Listener {
         if (action == LEFT_CLICK_BLOCK){
             player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix +"&cLeft click this item while pointing the air!"));
             event.setCancelled(true);
-            player.sendMessage("7");
+            //player.sendMessage("7");
         }else if(action == LEFT_CLICK_AIR){
             FarmersStepGui.bootGui(player, player.getInventory().getItemInMainHand());
-            player.sendMessage("8");
+            //player.sendMessage("8");
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void FarmersStep(PlayerMoveEvent event){
         Player player = event.getPlayer();
+        //int x = location.getBlockX();
+        //int y = location.getBlockY();
+        //int z = location.getBlockZ();
+        //player.sendMessage("x: "+x+" y: "+y+" z: "+z);
+        if (event.getTo().getBlockX() == event.getFrom().getBlockX() && event.getTo().getBlockY() == event.getFrom().getBlockY() && event.getTo().getBlockZ() == event.getFrom().getBlockZ())
+            return; //The player hasn't moved
         if (player.getInventory().getBoots() == null)
             return;
         if (!player.getInventory().getBoots().hasItemMeta())
@@ -129,19 +135,101 @@ public class PlayerListener implements Listener {
         if (!data.has(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING))
             return;
 
-
-        Location xyz = event.getTo();
-
-        player.sendMessage("Tiene Persistent");
+        Location location = player.getLocation();
 
         // If player in CREATIVE, don't check if they have crops in inventory //
-        if (event.getPlayer().getGameMode() == GameMode.CREATIVE){
+        if (player.getGameMode() == GameMode.CREATIVE || player.hasPermission("fp.farmerstep.bypass")){
+            List<Location> blocks = new ArrayList<>();
+            int level = player.getInventory().getBoots().getItemMeta().getEnchantLevel(CustomEnchantments.FARMERSTEP);
+            if (level > 3)
+                level = 3;
+            int yDifference = -1;
+            double yFraction = location.getY() % 1;
+            if (yFraction != 0) // If player is not in a complete block Ex: Slabs, Farmland, etc.
+                yDifference = 0;
+            blocks = LocationUtils.getRadiusBlocks(player.getLocation(), level, yDifference);
+            Material crop = Material.valueOf(data.get(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING));
+            if (crop.equals(Material.POTATO)){
+                crop = Material.POTATOES;
+            } else if (crop.equals(Material.CARROT)) {
+                crop = Material.CARROTS;
+            }else if (crop.equals(Material.BEETROOT_SEEDS)) {
+                crop = Material.BEETROOTS;
+            }else if (crop.equals(Material.WHEAT_SEEDS)) {
+                crop = Material.WHEAT;
+            }else if (crop.equals(Material.MELON_SEEDS)) {
+                crop = Material.MELON_STEM;
+            }else if (crop.equals(Material.PUMPKIN_SEEDS)) {
+                crop = Material.PUMPKIN_STEM;
+            }
+            for (Location block: blocks){
+                if (block.getBlock().getType() == Material.FARMLAND && !crop.equals(Material.NETHER_WART)){
+                    block.setY(block.getY() + 1);
+                    if (block.getBlock().getType() == Material.AIR)
+                        block.getBlock().setType(crop);
+                }else if (crop.equals(Material.NETHER_WART) && block.getBlock().getType() == Material.SOUL_SAND){
+                    block.setY(block.getY() + 1);
+                    if (block.getBlock().getType() == Material.AIR)
+                        block.getBlock().setType(crop);
+                }
+            }
 
         }else{
+            // If player in SURVIVAL, check if they have crops in inventory //
+            if (!player.getInventory().contains(Material.valueOf(data.get(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING))))
+                return;
+            List<Location> blocks = new ArrayList<>();
+            int level = player.getInventory().getBoots().getItemMeta().getEnchantLevel(CustomEnchantments.FARMERSTEP);
+            if (level > 3)
+                level = 3;
+            int yDifference = -1;
+            double yFraction = location.getY() % 1;
+            if (yFraction != 0)
+                yDifference = 0;
+            blocks = LocationUtils.getRadiusBlocks(player.getLocation(), level, yDifference);
+            Material crop = Material.valueOf(data.get(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING));
+            Material cropT = crop;
+            if (crop.equals(Material.POTATO)){
+                cropT = Material.POTATOES;
+            } else if (crop.equals(Material.CARROT)) {
+                cropT = Material.CARROTS;
+            }else if (crop.equals(Material.BEETROOT_SEEDS)) {
+                cropT = Material.BEETROOTS;
+            }else if (crop.equals(Material.WHEAT_SEEDS)) {
+                cropT = Material.WHEAT;
+            }else if (crop.equals(Material.MELON_SEEDS)) {
+                cropT = Material.MELON_STEM;
+            }else if (crop.equals(Material.PUMPKIN_SEEDS)) {
+                cropT = Material.PUMPKIN_STEM;
+            }
+            for (Location block: blocks){
+                if (block.getBlock().getType() == Material.FARMLAND && !cropT.equals(Material.NETHER_WART)){
+                    if (player.getInventory().contains(crop)) {
+                        block.setY(block.getY() + 1);
+                        if (block.getBlock().getType() == Material.AIR) {
+                            block.getBlock().setType(cropT);
+                            ItemStack item = new ItemStack(crop, 1);
+                            player.getInventory().removeItem(item);
+                        }
+                    }else
+                        break;
+
+
+                }else if (cropT.equals(Material.NETHER_WART) && block.getBlock().getType() == Material.SOUL_SAND){
+                    if (player.getInventory().contains(crop)) {
+                        block.setY(block.getY() + 1);
+                        if (block.getBlock().getType() == Material.AIR) {
+                            block.getBlock().setType(cropT);
+                            ItemStack item = new ItemStack(crop, 1);
+                            player.getInventory().removeItem(item);
+                        }
+                    }else
+                        break;
+
+                }
+            }
 
         }
-
-
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

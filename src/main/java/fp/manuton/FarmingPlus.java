@@ -8,10 +8,7 @@ import fp.manuton.events.GuiListener;
 import fp.manuton.events.PlayerListener;
 import fp.manuton.guis.EnchantGui;
 import fp.manuton.guis.FarmersStepGui;
-import fp.manuton.utils.ItemUtils;
-import fp.manuton.utils.MessageUtils;
-import fp.manuton.utils.Metrics;
-import fp.manuton.utils.UpdateChecker;
+import fp.manuton.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 

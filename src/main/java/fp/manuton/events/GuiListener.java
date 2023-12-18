@@ -127,7 +127,6 @@ public class GuiListener implements Listener {
                 for (Material crops: ItemUtils.crops){
                     if (crops.equals(item.getType()))
                         event.getInventory().setItem(13, itemT);
-
                 }
             }
         }
@@ -159,7 +158,6 @@ public class GuiListener implements Listener {
                 if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING))
                     data.remove(new NamespacedKey(FarmingPlus.getPlugin(), "crop"));
                 boots.setItemMeta(bootsMeta);
-                player.sendMessage("No hay Cultivo");
                 return;
             }else{
                 String cropS = slot13.getType().toString();
@@ -168,13 +166,10 @@ public class GuiListener implements Listener {
                     if (!item.equals(slot13)){
                         data.set(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING, cropS);
                         boots.setItemMeta(bootsMeta);
-                        player.sendMessage("Se guardo: "+cropS);
-                    }else
-                        player.sendMessage("Ya tenia: "+cropS);
+                    }
                 }else{
                     data.set(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING, cropS);
                     boots.setItemMeta(bootsMeta);
-                    player.sendMessage("Se guardo: "+cropS);
                 }
             }
 
