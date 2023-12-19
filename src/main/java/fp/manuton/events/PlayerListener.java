@@ -135,10 +135,11 @@ public class PlayerListener implements Listener {
         if (!data.has(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING))
             return;
 
+        boolean usedSetted = false;
         Location location = player.getLocation();
 
         // If player in CREATIVE, don't check if they have crops in inventory //
-        if (player.getGameMode() == GameMode.CREATIVE || player.hasPermission("fp.farmerstep.bypass")){
+        if (player.getGameMode() == GameMode.CREATIVE || player.hasPermission("fp.bypass.farmerstep")){
             List<Location> blocks = new ArrayList<>();
             int level = player.getInventory().getBoots().getItemMeta().getEnchantLevel(CustomEnchantments.FARMERSTEP);
             if (level > 3)
@@ -165,15 +166,27 @@ public class PlayerListener implements Listener {
             for (Location block: blocks){
                 if (block.getBlock().getType() == Material.FARMLAND && !crop.equals(Material.NETHER_WART)){
                     block.setY(block.getY() + 1);
-                    if (block.getBlock().getType() == Material.AIR)
+                    if (block.getBlock().getType() == Material.AIR){
                         block.getBlock().setType(crop);
+                        if (!usedSetted)
+                            if (player.getGameMode() != GameMode.CREATIVE) {
+                                ItemUtils.setDurabilityBoots(player.getInventory().getBoots(), player);
+                                usedSetted = true;
+                            }
+                    }
                 }else if (crop.equals(Material.NETHER_WART) && block.getBlock().getType() == Material.SOUL_SAND){
                     block.setY(block.getY() + 1);
-                    if (block.getBlock().getType() == Material.AIR)
+                    if (block.getBlock().getType() == Material.AIR) {
                         block.getBlock().setType(crop);
+                        if (usedSetted)
+                            if (player.getGameMode() != GameMode.CREATIVE) {
+                                ItemUtils.setDurabilityBoots(player.getInventory().getBoots(), player);
+                                usedSetted = true;
+                            }
+                    }
                 }
-            }
 
+            }
         }else{
             // If player in SURVIVAL, check if they have crops in inventory //
             if (!player.getInventory().contains(Material.valueOf(data.get(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING))))
@@ -206,10 +219,16 @@ public class PlayerListener implements Listener {
                 if (block.getBlock().getType() == Material.FARMLAND && !cropT.equals(Material.NETHER_WART)){
                     if (player.getInventory().contains(crop)) {
                         block.setY(block.getY() + 1);
+                        player.sendMessage("1");
                         if (block.getBlock().getType() == Material.AIR) {
                             block.getBlock().setType(cropT);
                             ItemStack item = new ItemStack(crop, 1);
                             player.getInventory().removeItem(item);
+                            player.sendMessage("2");
+                            if (!usedSetted){
+                                ItemUtils.setDurabilityBoots(player.getInventory().getBoots(), player);
+                                usedSetted = true;
+                            }
                         }
                     }else
                         break;
@@ -218,17 +237,22 @@ public class PlayerListener implements Listener {
                 }else if (cropT.equals(Material.NETHER_WART) && block.getBlock().getType() == Material.SOUL_SAND){
                     if (player.getInventory().contains(crop)) {
                         block.setY(block.getY() + 1);
+                        player.sendMessage("3");
                         if (block.getBlock().getType() == Material.AIR) {
+                            player.sendMessage("4");
                             block.getBlock().setType(cropT);
                             ItemStack item = new ItemStack(crop, 1);
                             player.getInventory().removeItem(item);
+                            if (!usedSetted){
+                                ItemUtils.setDurabilityBoots(player.getInventory().getBoots(), player);
+                                usedSetted = true;
+                            }
                         }
                     }else
                         break;
 
                 }
             }
-
         }
     }
 
