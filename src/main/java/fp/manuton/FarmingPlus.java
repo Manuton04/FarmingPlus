@@ -48,6 +48,7 @@ public class FarmingPlus extends JavaPlugin {
         registerFarmerStepGui();
         ItemUtils.getMaterials();
         ItemUtils.getCropsStep();
+        ItemUtils.getCropsRewards();
     }
 
     public void onDisable(){

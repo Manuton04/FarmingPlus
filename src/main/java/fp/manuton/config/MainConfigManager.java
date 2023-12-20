@@ -6,6 +6,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 public class MainConfigManager {
 
     private final CustomConfig configFile;
+    private final CustomConfig messageFile;
     private boolean enabledMetrics;
     private String noPermissionCommand;
     private String noPermissionAction;
@@ -40,15 +41,15 @@ public class MainConfigManager {
     public MainConfigManager(){
         configFile = new CustomConfig("config.yml", null, FarmingPlus.getPlugin());
         configFile.registerConfig();
+        messageFile = new CustomConfig("messages.yml", null, FarmingPlus.getPlugin());
+        messageFile.registerConfig();
         loadConfig();
     }
 
     public void loadConfig(){
         FileConfiguration config = configFile.getConfig();
+        FileConfiguration messages = messageFile.getConfig();
         enabledMetrics = config.getBoolean("config.enabled_metrics");
-        noPermissionCommand = config.getString("messages.no-permission-command");
-        noPermissionAction = config.getString("messages.no-permission-action");
-        reloadedConfig = config.getString("messages.reloaded-config");
         replenishNameLore = config.getString("config.enchantments.replenish.lore-name");
         farmersgraceNameLore = config.getString("config.enchantments.farmers-grace.lore-name");
         delicateNameLore = config.getString("config.enchantments.delicate.lore-name");
@@ -76,6 +77,9 @@ public class MainConfigManager {
         farmerstepGuiSoundOnSet = config.getString("config.enchantments.farmers-step.gui.sound-on-set");
         volumeFarmerstepGuiSoundOnSet = (float) config.getDouble("config.enchantments.farmers-step.gui.volume-on-set");
 
+        noPermissionCommand = messages.getString("messages.no-permission-command");
+        noPermissionAction = messages.getString("messages.no-permission-action");
+        reloadedConfig = messages.getString("messages.reloaded-config");
     }
 
     public void reloadConfig(){

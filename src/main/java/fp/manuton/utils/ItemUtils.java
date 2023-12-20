@@ -20,6 +20,7 @@ public class ItemUtils {
     public static List<Material> swords = new ArrayList<>();
     public static List<Material> boots = new ArrayList<>();
     public static List<Material> crops = new ArrayList<>();
+    public static List<Material> cropsR = new ArrayList<>();
 
     public static void getMaterials(){
         hoes.add(Material.WOODEN_HOE);
@@ -75,11 +76,25 @@ public class ItemUtils {
         crops.add(Material.PUMPKIN_SEEDS);
     }
 
+    public static void getCropsRewards(){
+        cropsR.add(Material.WHEAT);
+        cropsR.add(Material.POTATOES);
+        cropsR.add(Material.CARROTS);
+        cropsR.add(Material.BEETROOT);
+        cropsR.add(Material.NETHER_WART);
+        cropsR.add(Material.MELON);
+        cropsR.add(Material.PUMPKIN);
+        cropsR.add(Material.SUGAR_CANE);
+        cropsR.add(Material.CACTUS);
+        cropsR.add(Material.COCOA_BEANS);
+
+    }
+
     public static void enchantItem(List<Material> enchantable, Player player, Enchantment ench, int level){
         ItemStack item = new ItemStack(player.getItemInHand());
         int slot = player.getInventory().getHeldItemSlot();
         if (item.hasItemMeta())
-            if (item.getItemMeta().hasEnchant(ench)) {
+            if (item.getItemMeta().hasEnchant(ench) && item.getItemMeta().getEnchantLevel(ench) == level) {
                 player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThis item already has that enchantment!"));
                 return;
             }

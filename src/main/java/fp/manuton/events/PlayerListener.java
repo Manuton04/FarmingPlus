@@ -46,6 +46,25 @@ import static org.bukkit.event.block.Action.*;
 public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
+    public void Rewards(BlockBreakEvent event){
+        Player player = event.getPlayer();
+        if (player.getGameMode() != GameMode.SURVIVAL)
+            return;
+        Block block = event.getBlock();
+        if (block.getState() instanceof Container)
+            return;
+        boolean isType = false;
+        for (Material type : ItemUtils.cropsR){
+            if (block.getType() == type) {
+                isType = true;
+                break;
+            }
+        }
+        if (!isType)
+            return;
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
     public void Replenish(BlockBreakEvent event){
         if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR)
             return;

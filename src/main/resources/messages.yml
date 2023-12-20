@@ -1,0 +1,5 @@
+# Messages for the plugin #
+messages:
+  no-permission-command: "&cYou don't have permissions to use this command."
+  no-permission-action: "&cYou don't have permissions to perform this action."
+  reloaded-config: "&aConfig reloaded successfully."
