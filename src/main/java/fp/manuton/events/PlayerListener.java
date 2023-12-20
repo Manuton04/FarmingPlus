@@ -62,6 +62,28 @@ public class PlayerListener implements Listener {
             return;
 
         Player player = event.getPlayer();
+
+        // Get the WorldGuard instance
+        WorldGuard worldGuard = WorldGuard.getInstance();
+        // Get the region container
+        RegionContainer regionContainer = worldGuard.getPlatform().getRegionContainer();
+        // Create a query from the region container
+        RegionQuery query = regionContainer.createQuery();
+        // Get the WorldGuardPlugin instance for the player
+        WorldGuardPlugin pluginW = WorldGuardPlugin.inst();
+        // Get the LocalPlayer instance for the player
+        LocalPlayer localPlayer = pluginW.wrapPlayer(player);
+
+        // Get all regions at the block's location
+        ApplicableRegionSet regions = query.getApplicableRegions(BukkitAdapter.adapt(block.getLocation()));
+        // Check if the player has permission to place blocks in these regions
+        boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
+
+        // If the player does not have permission to place blocks, skip this iteration
+        if (!canPlace && !player.hasPermission("fp.bypass.replenish.protection")) {
+            return;
+        }
+
         Ageable ageable = (Ageable) block.getState().getBlockData();
         Collection<ItemStack> drops = block.getDrops(player.getInventory().getItemInMainHand());
         ItemStack tool = player.getInventory().getItemInMainHand();
