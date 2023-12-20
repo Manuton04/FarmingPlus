@@ -1,5 +1,13 @@
 # FarmingPlus
 Permissions:
   - fp.commands.reload: Reloading config.yml.
-  - fp.bypass.farmerstep: Not needing crops in inventory to plant them.
-  - fp.bypass.durability-damage: Not taking durability damage when using tools or boots.
+  - fp.bypass.farmerstep: Plants not needed in inventory when using Farmer's Step.
+  - fp.bypass.farmerstep.protection: Let the player use Farmer's step on WorldGuard regions. 
+  - fp.bypass.durability-damage: Tools or boots don't take durability damage when used by that player.
+
+# Compatibilities:
+- Vault:
+  - Setup economic costs when enchanting items.
+
+- WorldGuard:
+  - Region control for Farmer's Step and replenish.

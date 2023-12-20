@@ -10,6 +10,7 @@ import fp.manuton.guis.EnchantGui;
 import fp.manuton.guis.FarmersStepGui;
 import fp.manuton.utils.*;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class FarmingPlus extends JavaPlugin {

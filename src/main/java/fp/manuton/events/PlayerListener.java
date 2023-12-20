@@ -1,5 +1,16 @@
 package fp.manuton.events;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.world.World;
+import com.sk89q.worldguard.LocalPlayer;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
+import com.sk89q.worldguard.protection.regions.RegionQuery;
 import fp.manuton.FarmingPlus;
 import fp.manuton.enchantments.CustomEnchantments;
 import fp.manuton.guis.FarmersStepGui;
@@ -113,13 +124,9 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void FarmersStep(PlayerMoveEvent event){
         Player player = event.getPlayer();
-        //int x = location.getBlockX();
-        //int y = location.getBlockY();
-        //int z = location.getBlockZ();
-        //player.sendMessage("x: "+x+" y: "+y+" z: "+z);
         if (event.getTo().getBlockX() == event.getFrom().getBlockX() && event.getTo().getBlockY() == event.getFrom().getBlockY() && event.getTo().getBlockZ() == event.getFrom().getBlockZ())
             return; //The player hasn't moved
         if (player.getInventory().getBoots() == null)
@@ -138,17 +145,29 @@ public class PlayerListener implements Listener {
         boolean usedSetted = false;
         Location location = player.getLocation();
 
+        List<Location> blocks = new ArrayList<>();
+        int level = player.getInventory().getBoots().getItemMeta().getEnchantLevel(CustomEnchantments.FARMERSTEP);
+        if (level > 3)
+            level = 3;
+        int yDifference = -1;
+        double yFraction = location.getY() % 1;
+        if (yFraction != 0) // If player is not in a complete block Ex: Slabs, Farmland, etc.
+            yDifference = 0;
+        blocks = LocationUtils.getRadiusBlocks(player.getLocation(), level, yDifference);
+
+        // Get the WorldGuard instance
+        WorldGuard worldGuard = WorldGuard.getInstance();
+        // Get the region container
+        RegionContainer regionContainer = worldGuard.getPlatform().getRegionContainer();
+        // Create a query from the region container
+        RegionQuery query = regionContainer.createQuery();
+        // Get the WorldGuardPlugin instance for the player
+        WorldGuardPlugin pluginW = WorldGuardPlugin.inst();
+        // Get the LocalPlayer instance for the player
+        LocalPlayer localPlayer = pluginW.wrapPlayer(player);
+
         // If player in CREATIVE, don't check if they have crops in inventory //
         if (player.getGameMode() == GameMode.CREATIVE || player.hasPermission("fp.bypass.farmerstep")){
-            List<Location> blocks = new ArrayList<>();
-            int level = player.getInventory().getBoots().getItemMeta().getEnchantLevel(CustomEnchantments.FARMERSTEP);
-            if (level > 3)
-                level = 3;
-            int yDifference = -1;
-            double yFraction = location.getY() % 1;
-            if (yFraction != 0) // If player is not in a complete block Ex: Slabs, Farmland, etc.
-                yDifference = 0;
-            blocks = LocationUtils.getRadiusBlocks(player.getLocation(), level, yDifference);
             Material crop = Material.valueOf(data.get(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING));
             if (crop.equals(Material.POTATO)){
                 crop = Material.POTATOES;
@@ -164,6 +183,17 @@ public class PlayerListener implements Listener {
                 crop = Material.PUMPKIN_STEM;
             }
             for (Location block: blocks){
+
+                // Get all regions at the block's location
+                ApplicableRegionSet regions = query.getApplicableRegions(BukkitAdapter.adapt(block));
+                // Check if the player has permission to place blocks in these regions
+                boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
+
+                // If the player does not have permission to place blocks, skip this iteration
+                if (!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) {
+                    continue;
+                }
+
                 if (block.getBlock().getType() == Material.FARMLAND && !crop.equals(Material.NETHER_WART)){
                     block.setY(block.getY() + 1);
                     if (block.getBlock().getType() == Material.AIR){
@@ -191,15 +221,6 @@ public class PlayerListener implements Listener {
             // If player in SURVIVAL, check if they have crops in inventory //
             if (!player.getInventory().contains(Material.valueOf(data.get(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING))))
                 return;
-            List<Location> blocks = new ArrayList<>();
-            int level = player.getInventory().getBoots().getItemMeta().getEnchantLevel(CustomEnchantments.FARMERSTEP);
-            if (level > 3)
-                level = 3;
-            int yDifference = -1;
-            double yFraction = location.getY() % 1;
-            if (yFraction != 0)
-                yDifference = 0;
-            blocks = LocationUtils.getRadiusBlocks(player.getLocation(), level, yDifference);
             Material crop = Material.valueOf(data.get(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING));
             Material cropT = crop;
             if (crop.equals(Material.POTATO)){
@@ -216,15 +237,25 @@ public class PlayerListener implements Listener {
                 cropT = Material.PUMPKIN_STEM;
             }
             for (Location block: blocks){
+                
+
+                // Get all regions at the block's location
+                ApplicableRegionSet regions = query.getApplicableRegions(BukkitAdapter.adapt(block));
+                // Check if the player has permission to place blocks in these regions
+                boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
+
+                // If the player does not have permission to place blocks, skip this iteration
+                if (!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) {
+                    continue;
+                }
+
                 if (block.getBlock().getType() == Material.FARMLAND && !cropT.equals(Material.NETHER_WART)){
                     if (player.getInventory().contains(crop)) {
                         block.setY(block.getY() + 1);
-                        player.sendMessage("1");
                         if (block.getBlock().getType() == Material.AIR) {
                             block.getBlock().setType(cropT);
                             ItemStack item = new ItemStack(crop, 1);
                             player.getInventory().removeItem(item);
-                            player.sendMessage("2");
                             if (!usedSetted){
                                 ItemUtils.setDurabilityBoots(player.getInventory().getBoots(), player);
                                 usedSetted = true;
@@ -237,9 +268,7 @@ public class PlayerListener implements Listener {
                 }else if (cropT.equals(Material.NETHER_WART) && block.getBlock().getType() == Material.SOUL_SAND){
                     if (player.getInventory().contains(crop)) {
                         block.setY(block.getY() + 1);
-                        player.sendMessage("3");
                         if (block.getBlock().getType() == Material.AIR) {
-                            player.sendMessage("4");
                             block.getBlock().setType(cropT);
                             ItemStack item = new ItemStack(crop, 1);
                             player.getInventory().removeItem(item);
