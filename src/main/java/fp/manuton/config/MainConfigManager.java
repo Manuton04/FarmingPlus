@@ -38,6 +38,7 @@ public class MainConfigManager {
     private String farmerstepGuiEmptySlot;
     private String farmerstepGuiSoundOnSet;
     private float volumeFarmerstepGuiSoundOnSet;
+    private int grandTilling3Blocks;
 
     public MainConfigManager(){
         configFile = new CustomConfig("config.yml", null, FarmingPlus.getPlugin());
@@ -79,6 +80,7 @@ public class MainConfigManager {
         farmerstepGuiEmptySlot = config.getString("config.enchantments.farmers-step.gui.empty-slot");
         farmerstepGuiSoundOnSet = config.getString("config.enchantments.farmers-step.gui.sound-on-set");
         volumeFarmerstepGuiSoundOnSet = (float) config.getDouble("config.enchantments.farmers-step.gui.volume-on-set");
+        grandTilling3Blocks = config.getInt("config.enchantments.grand-tilling.level3-max-blocks");
 
         noPermissionCommand = messages.getString("messages.no-permission-command");
         noPermissionAction = messages.getString("messages.no-permission-action");
@@ -207,4 +209,7 @@ public class MainConfigManager {
     }
 
 
+    public int getGrandTilling3Blocks() {
+        return grandTilling3Blocks;
+    }
 }

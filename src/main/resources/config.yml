@@ -47,3 +47,6 @@ config:
       lore-name1: "&7Grand Tilling I"
       lore-name2: "&7Grand Tilling II"
       lore-name3: "&7Grand Tilling III"
+      # Max blocks that can be tilled at once in a row #
+      # Blocks are tilled until its max or until it reaches a block that can't be tilled #
+      level3-max-blocks: 64

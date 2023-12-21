@@ -365,7 +365,7 @@ public class PlayerListener implements Listener {
                 ItemUtils.setDurability(event.getPlayer().getInventory().getItemInMainHand(), event.getPlayer());
                 break;
             case 3:
-                List<Location> blocksL = LocationUtils.getRowBlocks(event.getClickedBlock().getLocation(), 64, LocationUtils.getCardinalDirection(player), 0);
+                List<Location> blocksL = LocationUtils.getRowBlocks(event.getClickedBlock().getLocation(), FarmingPlus.getPlugin().getMainConfigManager().getGrandTilling3Blocks(), LocationUtils.getCardinalDirection(player), 0);
                 for (Location block: blocksL){
 
                     // Get all regions at the block's location
