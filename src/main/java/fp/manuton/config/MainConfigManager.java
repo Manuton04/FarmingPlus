@@ -39,6 +39,9 @@ public class MainConfigManager {
     private String farmerstepGuiSoundOnSet;
     private float volumeFarmerstepGuiSoundOnSet;
     private int grandTilling3Blocks;
+    private String irrigateName;
+    private String irrigateNameLore;
+    private int irrigateMaxBlocks;
 
     public MainConfigManager(){
         configFile = new CustomConfig("config.yml", null, FarmingPlus.getPlugin());
@@ -81,6 +84,9 @@ public class MainConfigManager {
         farmerstepGuiSoundOnSet = config.getString("config.enchantments.farmers-step.gui.sound-on-set");
         volumeFarmerstepGuiSoundOnSet = (float) config.getDouble("config.enchantments.farmers-step.gui.volume-on-set");
         grandTilling3Blocks = config.getInt("config.enchantments.grand-tilling.level3-max-blocks");
+        irrigateName = config.getString("config.enchantments.irrigate.name");
+        irrigateNameLore = config.getString("config.enchantments.irrigate.lore-name");
+        irrigateMaxBlocks = config.getInt("config.enchantments.irrigate.max-blocks");
 
         noPermissionCommand = messages.getString("messages.no-permission-command");
         noPermissionAction = messages.getString("messages.no-permission-action");
@@ -211,5 +217,17 @@ public class MainConfigManager {
 
     public int getGrandTilling3Blocks() {
         return grandTilling3Blocks;
+    }
+
+    public String getIrrigateName() {
+        return irrigateName;
+    }
+
+    public String getIrrigateNameLore() {
+        return irrigateNameLore;
+    }
+
+    public int getIrrigateMaxBlocks() {
+        return irrigateMaxBlocks;
     }
 }

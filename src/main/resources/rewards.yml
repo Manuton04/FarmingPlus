@@ -16,10 +16,14 @@
     # - CACTUS
     # - COCOA
     # - NETHER_WART
-    # - ALL
+    # - ALL (This includes all the crops above)
 Rewards:
   example-1:
-    crops: "WHEAT, CARROT, POTATO, BEETROOT"
+    crops:
+      - "WHEAT"
+      - "CARROT"
+      - "POTATO"
+      - "BEETROOT"
     type: "Command"
     chance: 0.05
     commands:
@@ -28,26 +32,29 @@ Rewards:
     message: "%pluginprefix% &aYou won 300$ and 1 diamond!"
     sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
   example-2:
-    crops: "PUMPKIN, MELON"
+    crops:
+      - "PUMPKIN"
+      - "MELON"
     type: "Money"
     chance: 0.1
     amount: 500
     message: "%pluginprefix% &aYou won 500$!"
   example-3:
-    crops: "ALL"
+    crops:
+      - "ALL"
     type: "Item"
     chance: 0.03
     items:
-      - "NETHERITE_INGOT 1"
+      - "IRON_INGOT 1"
       - "GOLD_INGOT 8"
   example-4:
-    crops: "SUGAR_CANE"
+    crop: "SUGAR_CANE"
     type: "Summon"
     chance: 0.003
     mob: "ZOMBIE"
     amount: 2
   example-5:
-    crops: "NETHER_WART"
+    crop: "NETHER_WART"
     type: "MythicMob Summon"
     chance: 0.0004
     mob: "SkeletalMinion"

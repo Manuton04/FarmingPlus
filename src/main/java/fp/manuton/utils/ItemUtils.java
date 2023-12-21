@@ -119,6 +119,8 @@ public class ItemUtils {
                         loreToAdd = MessageUtils.getColoredMessage(plugin.getMainConfigManager().getFarmerstepNameLore1());
                     if (ench.equals(CustomEnchantments.GRANDTILLING))
                         loreToAdd = MessageUtils.getColoredMessage(plugin.getMainConfigManager().getGrandtillingNameLore1());
+                    if (ench.equals(CustomEnchantments.IRRIGATE))
+                        loreToAdd = MessageUtils.getColoredMessage(plugin.getMainConfigManager().getIrrigateNameLore());
                 }else if (level == 2){
                     if (ench.equals(CustomEnchantments.FARMERSTEP))
                         loreToAdd = MessageUtils.getColoredMessage(plugin.getMainConfigManager().getFarmerstepNameLore2());

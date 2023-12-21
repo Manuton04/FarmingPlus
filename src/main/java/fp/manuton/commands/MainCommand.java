@@ -70,6 +70,9 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                                 ItemUtils.enchantItem(enchantable, player, CustomEnchantments.GRANDTILLING,3);
                         }else
                             ItemUtils.enchantItem(enchantable, player, CustomEnchantments.GRANDTILLING,1);
+                    }else if (args[1].equalsIgnoreCase("irrigate")){
+                        enchantable.add(Material.WATER_BUCKET);
+                        ItemUtils.enchantItem(enchantable, player, CustomEnchantments.IRRIGATE,1);
                     }else {
                         player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThat enchantment doesn't exist!"));
                     }

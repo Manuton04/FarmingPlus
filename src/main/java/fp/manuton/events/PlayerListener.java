@@ -20,8 +20,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.Ageable;
+import org.bukkit.block.data.Openable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -424,5 +426,62 @@ public class PlayerListener implements Listener {
         if (!(block.getType().equals(Material.MELON_STEM) || block.getType().equals(Material.PUMPKIN_STEM) || block.getType().equals(Material.ATTACHED_MELON_STEM) || block.getType().equals(Material.ATTACHED_PUMPKIN_STEM)))
             return;
         event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void Irrigate(PlayerInteractEvent event){
+        Player player = event.getPlayer();
+        if (!(event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.WATER_BUCKET)))
+            return;
+        if (!event.getPlayer().getInventory().getItemInMainHand().hasItemMeta())
+            return;
+        if (!event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasEnchant(CustomEnchantments.IRRIGATE))
+            return;
+        if (event.getPlayer().getGameMode() == GameMode.SPECTATOR)
+            return;
+        if (!(event.getAction() == RIGHT_CLICK_BLOCK))
+            return;
+        Block blockC = event.getClickedBlock();
+        if (blockC == null)
+            return;
+        if (blockC.getRelative(BlockFace.UP).getType() != Material.AIR  && event.getClickedBlock().getRelative(BlockFace.UP).getType() != Material.WATER)
+            return;
+        if (blockC.getState() instanceof Container)
+            return;
+        if (blockC.getType().isInteractable())
+            return;
+
+        event.setCancelled(true);
+
+        // Get the WorldGuard instance
+        WorldGuard worldGuard = WorldGuard.getInstance();
+        // Get the region container
+        RegionContainer regionContainer = worldGuard.getPlatform().getRegionContainer();
+        // Create a query from the region container
+        RegionQuery query = regionContainer.createQuery();
+        // Get the WorldGuardPlugin instance for the player
+        WorldGuardPlugin pluginW = WorldGuardPlugin.inst();
+        // Get the LocalPlayer instance for the player
+        LocalPlayer localPlayer = pluginW.wrapPlayer(player);
+
+        BlockFace blockFace = event.getBlockFace();
+
+        List<Location> blocks = LocationUtils.getRowBlocks(event.getClickedBlock().getRelative(blockFace).getLocation(), FarmingPlus.getPlugin().getMainConfigManager().getIrrigateMaxBlocks(), LocationUtils.getCardinalDirection(player), 0);
+        for (Location block : blocks){
+            // Get all regions at the block's location
+            ApplicableRegionSet regions = query.getApplicableRegions(BukkitAdapter.adapt(block));
+            // Check if the player has permission to place blocks in these regions
+            boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
+
+            // If the player does not have permission to place blocks, skip this iteration
+            if (!canPlace && !player.hasPermission("fp.bypass.irrigate.protection")) {
+                break;
+            }
+            if (block.getBlock().getType() == Material.AIR || block.getBlock().getType() == Material.WATER)
+                block.getBlock().setType(Material.WATER);
+            else
+                break;
+        }
+
     }
 }

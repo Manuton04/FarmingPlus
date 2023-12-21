@@ -13,6 +13,7 @@ public class CustomEnchantments {
     public static final Enchantment GRANDTILLING = new EnchantmentWrapper("grandtilling", "Grand Tilling", 3);
     public static final Enchantment FARMERSTEP = new EnchantmentWrapper("farmerstep", "Farmer´s Step", 3);
     public static final Enchantment FARMERSGRACE = new EnchantmentWrapper("farmersgrace", "Farmer´s Grace", 1);
+    public static final Enchantment IRRIGATE = new EnchantmentWrapper("irrigate", "Irrigate", 1);
 
     public static void registerAll(){
         register(REPLENISH);
@@ -20,6 +21,7 @@ public class CustomEnchantments {
         register(GRANDTILLING);
         register(FARMERSTEP);
         register(FARMERSGRACE);
+        register(IRRIGATE);
     }
 
 

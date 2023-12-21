@@ -50,3 +50,9 @@ config:
       # Max blocks that can be tilled at once in a row #
       # Blocks are tilled until its max or until it reaches a block that can't be tilled #
       level3-max-blocks: 64
+    irrigate:
+      name: "Irrigate"
+      lore-name: "&7Irrigate I"
+      # Max blocks that can be irrigated at once in a row #
+      # Blocks are filled with water until its max or until it reaches a block #
+      max-blocks: 64
