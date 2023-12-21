@@ -1,7 +1,12 @@
+# Support: https://discord.gg/TrNpu3dacW
+# GitHub: https://github.com/Manuton04/FarmingPlus
+#
+# Developers: Manuton
+# GitHub: https://github.com/Manuton04
+#
 # Configuration for the plugin #
 config:
-  # This sends information that is util to me(mainly to see quantity of people using it). It's not necessary for the plugin, but it helps to maintain me motivated. #
-  # true/false #
+  # This sends anonymous statistics that helps me improve the plugin. It's not necessary, but it helps to maintain me motivated. #
   enabled_metrics: true
   gui:
     title: "&7Enchanting Menu"

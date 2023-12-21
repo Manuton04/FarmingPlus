@@ -6,7 +6,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 public class MainConfigManager {
 
     private final CustomConfig configFile;
-    private final CustomConfig messageFile;
+    private final CustomConfig messagesFile;
+    private final CustomConfig rewardsFile;
     private boolean enabledMetrics;
     private String noPermissionCommand;
     private String noPermissionAction;
@@ -41,14 +42,16 @@ public class MainConfigManager {
     public MainConfigManager(){
         configFile = new CustomConfig("config.yml", null, FarmingPlus.getPlugin());
         configFile.registerConfig();
-        messageFile = new CustomConfig("messages.yml", null, FarmingPlus.getPlugin());
-        messageFile.registerConfig();
+        messagesFile = new CustomConfig("messages.yml", null, FarmingPlus.getPlugin());
+        messagesFile.registerConfig();
+        rewardsFile = new CustomConfig("rewards.yml", null, FarmingPlus.getPlugin());
+        rewardsFile.registerConfig();
         loadConfig();
     }
 
     public void loadConfig(){
         FileConfiguration config = configFile.getConfig();
-        FileConfiguration messages = messageFile.getConfig();
+        FileConfiguration messages = messagesFile.getConfig();
         enabledMetrics = config.getBoolean("config.enabled_metrics");
         replenishNameLore = config.getString("config.enchantments.replenish.lore-name");
         farmersgraceNameLore = config.getString("config.enchantments.farmers-grace.lore-name");

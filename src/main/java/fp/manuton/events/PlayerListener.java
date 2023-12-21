@@ -45,25 +45,6 @@ import static org.bukkit.event.block.Action.*;
 //
 public class PlayerListener implements Listener {
 
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void Rewards(BlockBreakEvent event){
-        Player player = event.getPlayer();
-        if (player.getGameMode() != GameMode.SURVIVAL)
-            return;
-        Block block = event.getBlock();
-        if (block.getState() instanceof Container)
-            return;
-        boolean isType = false;
-        for (Material type : ItemUtils.cropsR){
-            if (block.getType() == type) {
-                isType = true;
-                break;
-            }
-        }
-        if (!isType)
-            return;
-    }
-
     @EventHandler(priority = EventPriority.LOW)
     public void Replenish(BlockBreakEvent event){
         if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR)
@@ -123,7 +104,7 @@ public class PlayerListener implements Listener {
 
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void setFarmersStepCrop(PlayerInteractEvent event){
         Player player = event.getPlayer();
         Action action = event.getAction();
@@ -326,6 +307,59 @@ public class PlayerListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.LOW)
+    public void GrandTilling(PlayerInteractEvent event){
+        Player player = event.getPlayer();
+        boolean isHoe = false;
+        for (Material hoe: ItemUtils.hoes){
+            if (event.getPlayer().getInventory().getItemInMainHand().getType() == hoe){
+                isHoe = true;
+                break;
+            }
+        }
+        if (!isHoe)
+            return;
+        if (!event.getPlayer().getInventory().getItemInMainHand().hasItemMeta())
+            return;
+        if (!event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasEnchant(CustomEnchantments.GRANDTILLING))
+            return;
+        if (event.getPlayer().getGameMode() == GameMode.SPECTATOR)
+            return;
+        if (!(event.getAction() == RIGHT_CLICK_BLOCK))
+            return;
+        if (event.getClickedBlock() == null)
+            return;
+        if (!(event.getClickedBlock().getType() == Material.GRASS_BLOCK || event.getClickedBlock().getType() == Material.DIRT || event.getClickedBlock().getType() == Material.DIRT_PATH))
+            return;
+        int level = event.getPlayer().getInventory().getItemInMainHand().getItemMeta().getEnchantLevel(CustomEnchantments.GRANDTILLING);
+        if (level > 3)
+            level = 3;
+
+        switch (level){
+            case 1, 2:
+                List<Location> blocksR = LocationUtils.getRadiusBlocks(event.getClickedBlock().getLocation(), level, 0);
+                for (Location block: blocksR){
+                    if (block.getBlock().getType() == Material.GRASS_BLOCK || block.getBlock().getType() == Material.DIRT || block.getBlock().getType() == Material.DIRT_PATH){
+                        block.getBlock().setType(Material.FARMLAND);
+                    }
+                }
+                ItemUtils.setDurability(event.getPlayer().getInventory().getItemInMainHand(), event.getPlayer());
+                break;
+            case 3:
+                List<Location> blocksL = LocationUtils.getRowBlocks(event.getClickedBlock().getLocation(), 64, LocationUtils.getCardinalDirection(player), 0);
+                for (Location block: blocksL){
+                    if (block.getBlock().getType() == Material.GRASS_BLOCK || block.getBlock().getType() == Material.DIRT || block.getBlock().getType() == Material.DIRT_PATH){
+                        block.getBlock().setType(Material.FARMLAND);
+                    }else if(block.getBlock().getType() == Material.FARMLAND){
+                        continue;
+                    }else
+                        break;
+                }
+                ItemUtils.setDurability(event.getPlayer().getInventory().getItemInMainHand(), event.getPlayer());
+                break;
+        }
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void FarmersGrace(PlayerInteractEvent event){
         if (event.getPlayer().getInventory().getBoots() == null)
@@ -342,5 +376,23 @@ public class PlayerListener implements Listener {
             return;
         if (event.getClickedBlock().getType() == Material.FARMLAND)
             event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void Delicate(BlockBreakEvent event){
+        if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR)
+            return;
+        if (!event.getPlayer().getInventory().getItemInMainHand().hasItemMeta())
+            return;
+        if (!event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasEnchant(CustomEnchantments.DELICATE))
+            return;
+        if (event.getPlayer().getGameMode() != GameMode.SURVIVAL)
+            return;
+        Block block = event.getBlock();
+        if (block.getState() instanceof Container)
+            return;
+        if (!(block.getType().equals(Material.MELON_STEM) || block.getType().equals(Material.PUMPKIN_STEM) || block.getType().equals(Material.ATTACHED_MELON_STEM) || block.getType().equals(Material.ATTACHED_PUMPKIN_STEM)))
+            return;
+        event.setCancelled(true);
     }
 }
