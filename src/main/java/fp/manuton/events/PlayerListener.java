@@ -332,10 +332,32 @@ public class PlayerListener implements Listener {
         if (level > 3)
             level = 3;
 
+        // Get the WorldGuard instance
+        WorldGuard worldGuard = WorldGuard.getInstance();
+        // Get the region container
+        RegionContainer regionContainer = worldGuard.getPlatform().getRegionContainer();
+        // Create a query from the region container
+        RegionQuery query = regionContainer.createQuery();
+        // Get the WorldGuardPlugin instance for the player
+        WorldGuardPlugin pluginW = WorldGuardPlugin.inst();
+        // Get the LocalPlayer instance for the player
+        LocalPlayer localPlayer = pluginW.wrapPlayer(player);
+
         switch (level){
             case 1, 2:
                 List<Location> blocksR = LocationUtils.getRadiusBlocks(event.getClickedBlock().getLocation(), level, 0);
                 for (Location block: blocksR){
+
+                    // Get all regions at the block's location
+                    ApplicableRegionSet regions = query.getApplicableRegions(BukkitAdapter.adapt(block));
+                    // Check if the player has permission to place blocks in these regions
+                    boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
+
+                    // If the player does not have permission to place blocks, skip this iteration
+                    if (!canPlace && !player.hasPermission("fp.bypass.grandtilling.protection")) {
+                        continue;
+                    }
+
                     if (block.getBlock().getType() == Material.GRASS_BLOCK || block.getBlock().getType() == Material.DIRT || block.getBlock().getType() == Material.DIRT_PATH || block.getBlock().getType() == Material.FARMLAND){
                         block.getBlock().setType(Material.FARMLAND);
                     }
@@ -345,6 +367,17 @@ public class PlayerListener implements Listener {
             case 3:
                 List<Location> blocksL = LocationUtils.getRowBlocks(event.getClickedBlock().getLocation(), 64, LocationUtils.getCardinalDirection(player), 0);
                 for (Location block: blocksL){
+
+                    // Get all regions at the block's location
+                    ApplicableRegionSet regions = query.getApplicableRegions(BukkitAdapter.adapt(block));
+                    // Check if the player has permission to place blocks in these regions
+                    boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
+
+                    // If the player does not have permission to place blocks, skip this iteration
+                    if (!canPlace && !player.hasPermission("fp.bypass.grandtilling.protection")) {
+                        break;
+                    }
+
                     if (block.getBlock().getType() == Material.GRASS_BLOCK || block.getBlock().getType() == Material.DIRT || block.getBlock().getType() == Material.DIRT_PATH){
                         block.getBlock().setType(Material.FARMLAND);
                     }else if(block.getBlock().getType() == Material.FARMLAND){
