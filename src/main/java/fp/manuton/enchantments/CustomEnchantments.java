@@ -1,7 +1,6 @@
 package fp.manuton.enchantments;
 
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.enchantments.EnchantmentTarget;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;

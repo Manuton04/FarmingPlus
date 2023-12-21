@@ -1,7 +1,6 @@
 package fp.manuton.utils;
 
 import org.bukkit.Location;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;

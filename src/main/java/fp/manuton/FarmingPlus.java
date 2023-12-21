@@ -1,7 +1,6 @@
 package fp.manuton;
 
 import fp.manuton.commands.MainCommand;
-import fp.manuton.config.CustomConfig;
 import fp.manuton.config.MainConfigManager;
 import fp.manuton.enchantments.CustomEnchantments;
 import fp.manuton.events.GuiListener;
@@ -10,7 +9,6 @@ import fp.manuton.guis.EnchantGui;
 import fp.manuton.guis.FarmersStepGui;
 import fp.manuton.utils.*;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class FarmingPlus extends JavaPlugin {

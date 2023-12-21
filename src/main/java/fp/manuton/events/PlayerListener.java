@@ -1,14 +1,11 @@
 package fp.manuton.events;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.Flags;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import fp.manuton.FarmingPlus;
@@ -339,7 +336,7 @@ public class PlayerListener implements Listener {
             case 1, 2:
                 List<Location> blocksR = LocationUtils.getRadiusBlocks(event.getClickedBlock().getLocation(), level, 0);
                 for (Location block: blocksR){
-                    if (block.getBlock().getType() == Material.GRASS_BLOCK || block.getBlock().getType() == Material.DIRT || block.getBlock().getType() == Material.DIRT_PATH){
+                    if (block.getBlock().getType() == Material.GRASS_BLOCK || block.getBlock().getType() == Material.DIRT || block.getBlock().getType() == Material.DIRT_PATH || block.getBlock().getType() == Material.FARMLAND){
                         block.getBlock().setType(Material.FARMLAND);
                     }
                 }
