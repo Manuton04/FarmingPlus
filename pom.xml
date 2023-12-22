@@ -28,6 +28,12 @@
             <id>sk89q-repo</id>
             <url>https://maven.enginehub.org/repo/</url>
         </repository>
+        <repository>
+            <id>nexus</id>
+            <name>Lumine Releases</name>
+            <url>https://mvn.lumine.io/repository/maven-public/</url>
+        </repository>
+
     </repositories>
 
     <dependencies>
@@ -50,5 +56,12 @@
             <version>7.0.9</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>io.lumine</groupId>
+            <artifactId>Mythic-Dist</artifactId>
+            <version>5.3.5</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 </project>

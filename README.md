@@ -7,10 +7,15 @@ Permissions:
   - fp.bypass.grandtilling.protection: Let the player use Grand Tilling on WorldGuard regions.
   - fp.bypass.irrigate.protection: Let the player use Irrigate on WorldGuard regions.
   - fp.bypass.durability-damage: Tools or boots don't take durability damage when used by that player.
+  - fp.admin: Administrative permissions.
 
 # Compatibilities:
 - Vault:
   - Setup economic costs when enchanting items.
+  - Setup economic rewards.
 
 - WorldGuard:
   - Region control for Farmer's Step and replenish.
+
+- MythicMobs:
+  - You can summon MythicMobs as rewards.

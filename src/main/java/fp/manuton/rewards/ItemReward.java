@@ -1,6 +1,12 @@
 package fp.manuton.rewards;
 
+import fp.manuton.utils.MessageUtils;
+import fp.manuton.utils.SoundUtils;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -31,6 +37,19 @@ public class ItemReward extends Reward{
 
     @Override
     public void give(Player player) {
-        // Implement the logic to give this reward to a player
+        Sound sound1 = SoundUtils.getSoundFromString(getSound());
+        if (sound1 != null)
+            player.playSound(player.getLocation(), sound1, 1, 1);
+        for (String message : getMessages()){
+            player.sendMessage(MessageUtils.getColoredMessage(message));
+        }
+        for (String item : getItems()){
+            Inventory playerInventory = player.getInventory();
+            int emptySlot = playerInventory.firstEmpty();
+            if (emptySlot != -1)
+                player.getInventory().addItem(new ItemStack(Material.valueOf(item.toUpperCase())));
+            else
+                player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.valueOf(item.toUpperCase())));
+        }
     }
 }

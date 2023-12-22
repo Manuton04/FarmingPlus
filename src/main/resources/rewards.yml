@@ -55,11 +55,14 @@ Rewards:
     chance: 0.003
     mob: "ZOMBIE"
     amount: 2
+# You can also summon MythicMobs, just add the name of the mob in the mob field.
+# If you don't put a level, it will spawn the mob with the default level of 1.
   example5:
     crop: "NETHER_WART"
-    type: "MythicMob Summon"
+    type: "Summon"
     chance: 0.0004
     mob: "SkeletalMinion"
     amount: 1
+    level: 5
 
 

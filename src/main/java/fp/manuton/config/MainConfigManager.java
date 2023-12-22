@@ -1,10 +1,7 @@
 package fp.manuton.config;
 
 import fp.manuton.FarmingPlus;
-import fp.manuton.rewards.CommandReward;
-import fp.manuton.rewards.ItemReward;
-import fp.manuton.rewards.MoneyReward;
-import fp.manuton.rewards.Reward;
+import fp.manuton.rewards.*;
 import fp.manuton.utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -93,13 +90,26 @@ public class MainConfigManager {
                 List<String> messages = rewardSection.getStringList("messages");
                 String sound = rewardSection.getString("sound");
 
-                reward= new MoneyReward(crops, chance, amount, messages, sound);
+                reward = new MoneyReward(crops, chance, amount, messages, sound);
             } else if (type.equals("Item")) {
                 List<String> items = rewardSection.getStringList("items");
                 List<String> messages = rewardSection.getStringList("messages");
                 String sound = rewardSection.getString("sound");
 
-                reward= new ItemReward(crops, chance, items, messages, sound);
+                reward = new ItemReward(crops, chance, items, messages, sound);
+            }else if (type.equals("Summon")) {
+                String mob = rewardSection.getString("mob");
+                List<String> messages = rewardSection.getStringList("messages");
+                String sound = rewardSection.getString("sound");
+                int amount = rewardSection.getInt("amount");
+                int level = rewardSection.getInt("level");
+
+                if (!rewardsFile.getConfig().isSet("amount"))
+                    amount = 1;
+                if (!rewardsFile.getConfig().isSet("level"))
+                    level = 1;
+
+                reward = new SummonReward(crops, chance, messages, mob, sound, amount, level);
             } else {
                 continue;
             }
