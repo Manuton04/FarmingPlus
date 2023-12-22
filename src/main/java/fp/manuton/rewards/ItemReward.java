@@ -44,12 +44,18 @@ public class ItemReward extends Reward{
             player.sendMessage(MessageUtils.getColoredMessage(message));
         }
         for (String item : getItems()){
-            Inventory playerInventory = player.getInventory();
-            int emptySlot = playerInventory.firstEmpty();
-            if (emptySlot != -1)
-                player.getInventory().addItem(new ItemStack(Material.valueOf(item.toUpperCase())));
-            else
-                player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.valueOf(item.toUpperCase())));
+            String[] parts = item.split(" ");
+            item = parts[0];
+            int amount = Integer.parseInt(parts[1]);
+
+            for (int i = 0; i < amount; i++) {
+                Inventory playerInventory = player.getInventory();
+                int emptySlot = playerInventory.firstEmpty();
+                if (emptySlot != -1)
+                    player.getInventory().addItem(new ItemStack(Material.valueOf(item.toUpperCase())));
+                else
+                    player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.valueOf(item.toUpperCase())));
+            }
         }
     }
 }

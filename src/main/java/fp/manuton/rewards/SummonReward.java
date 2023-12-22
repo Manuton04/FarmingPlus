@@ -1,15 +1,18 @@
 package fp.manuton.rewards;
 
+import fp.manuton.FarmingPlus;
 import fp.manuton.utils.MessageUtils;
 import fp.manuton.utils.SoundUtils;
 import io.lumine.mythic.api.mobs.MythicMob;
 import io.lumine.mythic.bukkit.BukkitAdapter;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.core.mobs.ActiveMob;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
@@ -60,15 +63,36 @@ public class SummonReward extends Reward{
         for (String message : getMessages()){
             player.sendMessage(MessageUtils.getColoredMessage(message));
         }
-        MythicMob mob = MythicBukkit.inst().getMobManager().getMythicMob("SkeletalKnight").orElse(null);
-        Location spawnLocation = player.getLocation();
 
-        for (int i = 0; i < getAmount(); i++) {
-            if(mob != null){
-                ActiveMob knight = mob.spawn(BukkitAdapter.adapt(spawnLocation),getLevel());
-                Entity entity = knight.getEntity().getBukkitEntity();
-            }else{
-                player.getWorld().spawnEntity(spawnLocation, EntityType.valueOf(getEntity()));
+        Location spawnLocation = player.getLocation();
+        int quantity = getAmount();
+        int level = getLevel();
+        if (quantity < 1)
+            quantity = 1;
+        if (level < 1)
+            level = 1;
+
+        if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
+            MythicMob mob = MythicBukkit.inst().getMobManager().getMythicMob(getEntity()).orElse(null);
+            for (int i = 0; i < quantity; i++) {
+                if(mob != null){
+                    ActiveMob knight = mob.spawn(BukkitAdapter.adapt(spawnLocation),level);
+                    Entity entity = knight.getEntity().getBukkitEntity();
+                }else{
+                    try{
+                        player.getWorld().spawnEntity(spawnLocation, EntityType.valueOf(getEntity()));
+                    }catch(IllegalArgumentException exp){
+                        break;
+                    }
+                }
+            }
+        }else {
+            for (int i = 0; i < quantity; i++) {
+                try{
+                    player.getWorld().spawnEntity(spawnLocation, EntityType.valueOf(getEntity()));
+                }catch(IllegalArgumentException exp){
+                    break;
+                }
             }
         }
     }

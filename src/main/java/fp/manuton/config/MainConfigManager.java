@@ -104,11 +104,6 @@ public class MainConfigManager {
                 int amount = rewardSection.getInt("amount");
                 int level = rewardSection.getInt("level");
 
-                if (!rewardsFile.getConfig().isSet("amount"))
-                    amount = 1;
-                if (!rewardsFile.getConfig().isSet("level"))
-                    level = 1;
-
                 reward = new SummonReward(crops, chance, messages, mob, sound, amount, level);
             } else {
                 continue;

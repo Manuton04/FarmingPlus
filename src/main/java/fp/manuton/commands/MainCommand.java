@@ -3,19 +3,25 @@ package fp.manuton.commands;
 import fp.manuton.FarmingPlus;
 import fp.manuton.enchantments.CustomEnchantments;
 import fp.manuton.guis.EnchantGui;
+import fp.manuton.rewards.Reward;
+import fp.manuton.rewards.SummonReward;
 import fp.manuton.utils.ItemUtils;
 import fp.manuton.utils.MessageUtils;
+import io.lumine.mythic.bukkit.MythicBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.sk89q.worldedit.command.util.PrintCommandHelp.help;
 
 public class MainCommand implements CommandExecutor, TabExecutor {
 
@@ -91,6 +97,55 @@ public class MainCommand implements CommandExecutor, TabExecutor {
             }else if (args[0].equalsIgnoreCase("gui")){
                 EnchantGui.createGui(player);
             }else if (args[0].equalsIgnoreCase("reward")){
+                if (player.hasPermission("fp.admin")){
+                    if (args[1].equalsIgnoreCase("give")){
+                        String target = args[2];
+                        boolean isOnline = false;
+                        for (String players: Bukkit.getOnlinePlayers().stream().map(Player::getName).toList()){
+                            if (players.equalsIgnoreCase(target)){
+                                isOnline = true;
+                                break;
+                            }
+                        }
+                        if (isOnline){
+                            if (FarmingPlus.getPlugin().getMainConfigManager().getAllRewardNames().contains(args[3])) {
+                                Reward reward = FarmingPlus.getPlugin().getMainConfigManager().getReward(args[3]);
+                                reward.give(Bukkit.getPlayer(target));
+                                boolean done = true;
+                                if (reward instanceof SummonReward){
+                                    if (Bukkit.getPluginManager().getPlugin("MythicMobs") == null){
+                                        try{
+                                            EntityType.valueOf(((SummonReward) reward).getEntity());
+                                        }catch(IllegalArgumentException exp){
+                                            done = false;
+                                            player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThat entity is invalid or you don't have MythicMobs installed!"));
+                                        }
+                                    }else{
+                                        boolean isMythic = MythicBukkit.inst().getMobManager().getMythicMob(((SummonReward) reward).getEntity()).orElse(null) != null;
+                                        if (!isMythic){
+                                            try{
+                                                EntityType.valueOf(((SummonReward) reward).getEntity());
+                                            }catch(IllegalArgumentException exp){
+                                                done = false;
+                                                player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThat entity is invalid!"));
+                                            }
+                                        }
+
+                                    }
+
+                                }
+                                if (done)
+                                    player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix + "&aYou gave &e" + target + " &athe " + args[3] + " reward!"));
+                            }else
+                                player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThat reward does not exist!"));
+
+                        }else
+                            player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThat player is not online!"));
+
+                    }
+                }else
+                    player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
+
 
             }else{
                 sender.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThat command does not exist!"));
