@@ -1,5 +1,10 @@
 package fp.manuton.rewards;
 
+import fp.manuton.utils.MessageUtils;
+import fp.manuton.utils.SoundUtils;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -10,7 +15,7 @@ public class CommandReward extends Reward {
     private String sound;
 
     public CommandReward(List<String> crops, double chance, List<String> commands, List<String> messages, String sound){
-        super(crops, chance, "Command");
+        super(crops, chance);
         this.commands = commands;
         this.messages = messages;
         this.sound = sound;
@@ -30,6 +35,14 @@ public class CommandReward extends Reward {
 
     @Override
     public void give(Player player) {
-        // Implement the logic to give this reward to a player
+        Sound sound1 = SoundUtils.getSoundFromString(getSound());
+        if (sound1 != null)
+            player.playSound(player.getLocation(), sound1, 1, 1);
+        for (String message : getMessages()){
+            player.sendMessage(MessageUtils.getColoredMessage(message));
+        }
+        for (String command : getCommands()){
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), MessageUtils.translatePlayer(player, command));
+        }
     }
 }

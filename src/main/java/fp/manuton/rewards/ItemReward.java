@@ -11,7 +11,7 @@ public class ItemReward extends Reward{
     private String sound;
 
     public ItemReward(List<String> crops, double chance, List<String> items, List<String> messages, String sound) {
-        super(crops, chance, "Item");
+        super(crops, chance);
         this.items = items;
         this.messages = messages;
         this.sound = sound;

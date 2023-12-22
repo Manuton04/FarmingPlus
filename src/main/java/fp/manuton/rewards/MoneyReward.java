@@ -15,7 +15,7 @@ public class MoneyReward extends Reward {
     private String sound;
 
     public MoneyReward(List<String> crops, double chance, double amount, List<String> messages, String sound) {
-        super(crops, chance, "Money");
+        super(crops, chance);
         this.amount = amount;
         this.messages = messages;
     }
@@ -37,10 +37,11 @@ public class MoneyReward extends Reward {
         Sound sound1 = SoundUtils.getSoundFromString(getSound());
         if (sound1 != null)
             player.playSound(player.getLocation(), sound1, 1, 1);
-        VaultUtils.deposit(player, getAmount());
         for (String message : getMessages()){
             player.sendMessage(MessageUtils.getColoredMessage(message));
         }
+        VaultUtils.deposit(player, getAmount());
+
 
     }
 

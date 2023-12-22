@@ -6,13 +6,11 @@ import java.util.List;
 
 public abstract class Reward {
     private List<String> crops;
-    private String type;
     private double chance;
 
-    public Reward(List<String> crops, double chance, String type) {
+    public Reward(List<String> crops, double chance) {
         this.crops = crops;
         this.chance = chance;
-        this.type = type;
     }
 
     public List<String> getCrops() {
@@ -21,10 +19,6 @@ public abstract class Reward {
 
     public double getChance() {
         return chance;
-    }
-
-    public String getType() {
-        return type;
     }
 
     public abstract void give(Player player);
