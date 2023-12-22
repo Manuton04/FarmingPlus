@@ -20,25 +20,17 @@ public class FarmingPlus extends JavaPlugin {
 
     public void onEnable(){
         plugin = this;
-        mainConfigManager = new MainConfigManager();
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&fHas been enabled. &cVersion: "+version));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
-        new UpdateChecker(this, 82243).getVersion(versionn -> { // ADD PLUGIN ID SPIGOT //
-            if (version.equals(versionn)) {
-                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&fThere is not a new update available."));
-            } else {
-                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&fThere is a new update available."));
-                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&cVersion: "+versionn+ " &eLink: "+link));
-            }
-        });
+        mainConfigManager = new MainConfigManager();
         if (getMainConfigManager().isEnabledMetrics()){
             int pluginId = 20430; // ID OF PLUGIN IN BSTATS //
             Metrics metrics = new Metrics(this, pluginId);
-            CustomEnchantments.registerAll();
             Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&aMetrics are enabled."));
         }else
             Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&cMetrics are not enabled :c."));
+        CustomEnchantments.registerAll();
         registerEvents();
         registerCommands();
         registerItemUtils();
@@ -47,6 +39,14 @@ public class FarmingPlus extends JavaPlugin {
         ItemUtils.getMaterials();
         ItemUtils.getCropsStep();
         ItemUtils.getCropsRewards();
+        new UpdateChecker(this, 82243).getVersion(versionn -> { // ADD PLUGIN ID SPIGOT //
+            if (version.equals(versionn)) {
+                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&fThere is not a new update available."));
+            } else {
+                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&fThere is a new update available."));
+                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&cVersion: "+versionn+ " &eLink: "+link));
+            }
+        });
     }
 
     public void onDisable(){

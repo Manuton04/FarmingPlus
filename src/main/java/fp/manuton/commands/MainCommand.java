@@ -90,6 +90,8 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                 subCommandReload(player);
             }else if (args[0].equalsIgnoreCase("gui")){
                 EnchantGui.createGui(player);
+            }else if (args[0].equalsIgnoreCase("reward")){
+
             }else{
                 sender.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThat command does not exist!"));
                 help(player);
@@ -122,7 +124,8 @@ public class MainCommand implements CommandExecutor, TabExecutor {
             return;
         }
         FarmingPlus.getPlugin().getMainConfigManager().reloadConfig();
-        sender.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+FarmingPlus.getPlugin().getMainConfigManager().getReloadedConfig()));
+        if (sender instanceof Player)
+            sender.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+FarmingPlus.getPlugin().getMainConfigManager().getReloadedConfig()));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+FarmingPlus.getPlugin().getMainConfigManager().getReloadedConfig()));
     }
 
@@ -130,11 +133,11 @@ public class MainCommand implements CommandExecutor, TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 
         if (args.length == 1)
-            return Arrays.asList("enchant", "reload");
+            return Arrays.asList("enchant", "reload", "gui", "reward");
 
         if (args[0].equalsIgnoreCase("enchant")) {
             if (args.length == 2)
-                return Arrays.asList("delicate", "farmersgrace", "farmerstep", "grandtilling", "replenish");
+                return Arrays.asList("delicate", "farmersgrace", "farmerstep", "grandtilling", "replenish", "irrigate");
             if (args.length == 3) {
                 if (args[1].equalsIgnoreCase("delicate"))
                     return List.of("1");
@@ -146,9 +149,21 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                     return Arrays.asList("1", "2", "3");
                 if (args[1].equalsIgnoreCase("replenish"))
                     return List.of("1");
+                if (args[1].equalsIgnoreCase("irrigate"))
+                    return List.of("1");
             }
+        }
 
-
+        if (args[0].equalsIgnoreCase("reward")) {
+            if (args.length == 2)
+                return Arrays.asList("give");
+            if (args.length == 3)
+                if (args[1].equalsIgnoreCase("give"))
+                    return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+            if (args.length == 4) {
+                if (args[1].equalsIgnoreCase("give"))
+                    return FarmingPlus.getPlugin().getMainConfigManager().getAllRewardNames();
+            }
         }
 
 

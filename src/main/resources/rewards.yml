@@ -18,7 +18,7 @@
     # - NETHER_WART
     # - ALL (This includes all the crops above)
 Rewards:
-  example-1:
+  example1:
     crops:
       - "WHEAT"
       - "CARROT"
@@ -29,17 +29,19 @@ Rewards:
     commands:
       - 'give %player% diamond 1'
       - 'economy give %player% 300'
-    message: "%pluginprefix% &aYou won 300$ and 1 diamond!"
+    messages: "%pluginprefix% &aYou won 300$ and 1 diamond!"
     sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
-  example-2:
+  example2:
     crops:
       - "PUMPKIN"
       - "MELON"
     type: "Money"
     chance: 0.1
     amount: 500
-    message: "%pluginprefix% &aYou won 500$!"
-  example-3:
+    messages:
+      - "%pluginprefix% &aYou won 500$!"
+      - "%pluginprefix% &aCongratulations!"
+  example3:
     crops:
       - "ALL"
     type: "Item"
@@ -47,13 +49,13 @@ Rewards:
     items:
       - "IRON_INGOT 1"
       - "GOLD_INGOT 8"
-  example-4:
+  example4:
     crop: "SUGAR_CANE"
     type: "Summon"
     chance: 0.003
     mob: "ZOMBIE"
     amount: 2
-  example-5:
+  example5:
     crop: "NETHER_WART"
     type: "MythicMob Summon"
     chance: 0.0004

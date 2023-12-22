@@ -1,7 +1,20 @@
 package fp.manuton.config;
 
 import fp.manuton.FarmingPlus;
+import fp.manuton.rewards.CommandReward;
+import fp.manuton.rewards.ItemReward;
+import fp.manuton.rewards.MoneyReward;
+import fp.manuton.rewards.Reward;
+import fp.manuton.utils.MessageUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MainConfigManager {
 
@@ -43,6 +56,8 @@ public class MainConfigManager {
     private String irrigateNameLore;
     private int irrigateMaxBlocks;
 
+    private Map<String, Reward> rewards;
+
     public MainConfigManager(){
         configFile = new CustomConfig("config.yml", null, FarmingPlus.getPlugin());
         configFile.registerConfig();
@@ -50,7 +65,62 @@ public class MainConfigManager {
         messagesFile.registerConfig();
         rewardsFile = new CustomConfig("rewards.yml", null, FarmingPlus.getPlugin());
         rewardsFile.registerConfig();
+        loadRewards();
         loadConfig();
+    }
+
+    private void loadRewards() {
+        rewards = new HashMap<>();
+    
+        ConfigurationSection rewardsSection = rewardsFile.getConfig().getConfigurationSection("Rewards");
+    
+        for (String key : rewardsSection.getKeys(false)) {
+            ConfigurationSection rewardSection = rewardsSection.getConfigurationSection(key);
+    
+            List<String> crops = rewardSection.getStringList("crops");
+            String type = rewardSection.getString("type");
+            double chance = rewardSection.getDouble("chance");
+    
+            Reward reward = null;
+            if (type.equals("Command")) {
+                List<String> commands = rewardSection.getStringList("commands");
+                List<String> messages = rewardSection.getStringList("messages");
+                String sound = rewardSection.getString("sound");
+    
+                reward = new CommandReward(crops, chance, commands, messages, sound);
+            } else if (type.equals("Money")) {
+                double amount = rewardSection.getDouble("amount");
+                List<String> messages = rewardSection.getStringList("messages");
+                String sound = rewardSection.getString("sound");
+
+                reward= new MoneyReward(crops, chance, amount, messages, sound);
+            } else if (type.equals("Item")) {
+                List<String> items = rewardSection.getStringList("items");
+                List<String> messages = rewardSection.getStringList("messages");
+                String sound = rewardSection.getString("sound");
+
+                reward= new ItemReward(crops, chance, items, messages, sound);
+            } else {
+                continue;
+            }
+    
+            if (reward != null) {
+                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&fLoaded reward: " + key));
+                rewards.put(key, reward);
+            }
+        }
+    }
+
+    public Reward getReward(String key) {
+        return rewards.get(key);
+    }
+
+    public Collection<Reward> getAllRewards() {
+        return rewards.values();
+    }
+
+    public List<String> getAllRewardNames() {
+        return new ArrayList<>(rewards.keySet());
     }
 
     public void loadConfig(){
@@ -91,11 +161,14 @@ public class MainConfigManager {
         noPermissionCommand = messages.getString("messages.no-permission-command");
         noPermissionAction = messages.getString("messages.no-permission-action");
         reloadedConfig = messages.getString("messages.reloaded-config");
+        
     }
 
     public void reloadConfig(){
         configFile.reloadConfig();
         loadConfig();
+        rewardsFile.reloadConfig();
+        loadRewards();
     }
 
     public boolean isEnabledMetrics() {
