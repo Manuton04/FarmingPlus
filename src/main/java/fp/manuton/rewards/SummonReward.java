@@ -1,6 +1,5 @@
 package fp.manuton.rewards;
 
-import fp.manuton.FarmingPlus;
 import fp.manuton.utils.MessageUtils;
 import fp.manuton.utils.SoundUtils;
 import io.lumine.mythic.api.mobs.MythicMob;
@@ -12,9 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 
 import java.util.List;
 
@@ -61,7 +58,7 @@ public class SummonReward extends Reward{
         if (sound1 != null)
             player.playSound(player.getLocation(), sound1, 1, 1);
         for (String message : getMessages()){
-            player.sendMessage(MessageUtils.getColoredMessage(message));
+            player.sendMessage(MessageUtils.translateAll(player, message));
         }
 
         Location spawnLocation = player.getLocation();

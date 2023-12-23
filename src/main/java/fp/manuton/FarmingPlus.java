@@ -12,7 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class FarmingPlus extends JavaPlugin {
-    public static String prefix = "&6&l[&2&lFarmingPlus&6&l] ";
+    public static String prefix = getPlugin().getMainConfigManager().getPluginPrefix();
     private final String version = getDescription().getVersion();
     private static FarmingPlus plugin;
     private MainConfigManager mainConfigManager;

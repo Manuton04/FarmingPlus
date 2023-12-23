@@ -52,6 +52,7 @@ public class MainConfigManager {
     private String irrigateName;
     private String irrigateNameLore;
     private int irrigateMaxBlocks;
+    private String pluginPrefix;
 
     private Map<String, Reward> rewards;
 
@@ -162,6 +163,7 @@ public class MainConfigManager {
         irrigateName = config.getString("config.enchantments.irrigate.name");
         irrigateNameLore = config.getString("config.enchantments.irrigate.lore-name");
         irrigateMaxBlocks = config.getInt("config.enchantments.irrigate.max-blocks");
+        pluginPrefix = config.getString("config.prefix");
 
         noPermissionCommand = messages.getString("messages.no-permission-command");
         noPermissionAction = messages.getString("messages.no-permission-action");
@@ -307,5 +309,9 @@ public class MainConfigManager {
 
     public int getIrrigateMaxBlocks() {
         return irrigateMaxBlocks;
+    }
+
+    public String getPluginPrefix() {
+        return pluginPrefix;
     }
 }

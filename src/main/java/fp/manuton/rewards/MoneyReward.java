@@ -38,7 +38,7 @@ public class MoneyReward extends Reward {
         if (sound1 != null)
             player.playSound(player.getLocation(), sound1, 1, 1);
         for (String message : getMessages()){
-            player.sendMessage(MessageUtils.getColoredMessage(message));
+            player.sendMessage(MessageUtils.translateAll(player, message));
         }
         VaultUtils.deposit(player, getAmount());
 
