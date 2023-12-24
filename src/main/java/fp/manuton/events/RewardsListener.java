@@ -1,5 +1,13 @@
 package fp.manuton.events;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.LocalPlayer;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
+import com.sk89q.worldguard.protection.regions.RegionQuery;
 import fp.manuton.FarmingPlus;
 import fp.manuton.rewards.Reward;
 import fp.manuton.utils.ItemUtils;
@@ -42,6 +50,27 @@ public class RewardsListener implements Listener {
                 if (ageable.getAge() != ageable.getMaximumAge())
                     return;
             }
+
+        // Get the WorldGuard instance
+        WorldGuard worldGuard = WorldGuard.getInstance();
+        // Get the region container
+        RegionContainer regionContainer = worldGuard.getPlatform().getRegionContainer();
+        // Create a query from the region container
+        RegionQuery query = regionContainer.createQuery();
+        // Get the WorldGuardPlugin instance for the player
+        WorldGuardPlugin pluginW = WorldGuardPlugin.inst();
+        // Get the LocalPlayer instance for the player
+        LocalPlayer localPlayer = pluginW.wrapPlayer(player);
+
+        // Get all regions at the block's location
+        ApplicableRegionSet regions = query.getApplicableRegions(BukkitAdapter.adapt(block.getLocation()));
+        // Check if the player has permission to place blocks in these regions
+        boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
+
+        // If the player does not have permission to place blocks, skip this iteration
+        if (!canPlace && !player.hasPermission("fp.bypass.replenish.protection")) {
+            return;
+        }
 
         boolean rewardGiven = false;
 
