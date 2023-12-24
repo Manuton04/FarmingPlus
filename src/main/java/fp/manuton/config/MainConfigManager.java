@@ -63,8 +63,8 @@ public class MainConfigManager {
         messagesFile.registerConfig();
         rewardsFile = new CustomConfig("rewards.yml", null, FarmingPlus.getPlugin());
         rewardsFile.registerConfig();
-        loadRewards();
         loadConfig();
+        loadRewards();
     }
 
     private void loadRewards() {
@@ -111,7 +111,7 @@ public class MainConfigManager {
             }
     
             if (reward != null) {
-                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&fLoaded reward: " + key));
+                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+"&fLoaded reward: " + key));
                 rewards.put(key, reward);
             }
         }
