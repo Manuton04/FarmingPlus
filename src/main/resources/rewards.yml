@@ -9,7 +9,7 @@
     # - WHEAT
     # - CARROTS
     # - POTATOES
-    # - BEETROOT
+    # - BEETROOTS
     # - PUMPKIN
     # - MELON
     # - SUGAR_CANE
@@ -21,15 +21,16 @@ Rewards:
   example1:
     crops:
       - "WHEAT"
-      - "CARROT"
-      - "POTATO"
-      - "BEETROOT"
+      - "CARROTS"
+      - "POTATOES"
+      - "BEETROOTS"
     type: "Command"
     chance: 0.05
     commands:
       - 'give %player% diamond 1'
       - 'economy give %player% 300'
-    messages: "%pluginprefix% &aYou won 300$ and 1 diamond!"
+    messages:
+      - "%pluginprefix% &aYou won 300$ and 1 diamond!"
     sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
   example2:
     crops:

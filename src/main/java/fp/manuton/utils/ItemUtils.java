@@ -80,13 +80,13 @@ public class ItemUtils {
         cropsR.add(Material.WHEAT);
         cropsR.add(Material.POTATOES);
         cropsR.add(Material.CARROTS);
-        cropsR.add(Material.BEETROOT);
+        cropsR.add(Material.BEETROOTS);
         cropsR.add(Material.NETHER_WART);
         cropsR.add(Material.MELON);
         cropsR.add(Material.PUMPKIN);
         cropsR.add(Material.SUGAR_CANE);
         cropsR.add(Material.CACTUS);
-        cropsR.add(Material.COCOA_BEANS);
+        cropsR.add(Material.COCOA);
 
     }
 

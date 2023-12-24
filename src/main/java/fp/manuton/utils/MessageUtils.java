@@ -23,16 +23,16 @@ public class MessageUtils {
 
     public static String translatePrefix(String message){
         if (message != null)
-            return message.replace("%prefix%", FarmingPlus.getPlugin().getMainConfigManager().getPluginPrefix());
+            return message.replace("%pluginprefix%", FarmingPlus.getPlugin().getMainConfigManager().getPluginPrefix());
         else
             return "";
     }
 
     public static String translateAll(Player player, String message){
         if (message != null) {
-            message = getColoredMessage(message);
             message = translatePlayer(player, message);
             message = translatePrefix(message);
+            message = getColoredMessage(message);
             return message;
         }
         else

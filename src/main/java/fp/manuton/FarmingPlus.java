@@ -5,6 +5,7 @@ import fp.manuton.config.MainConfigManager;
 import fp.manuton.enchantments.CustomEnchantments;
 import fp.manuton.events.GuiListener;
 import fp.manuton.events.PlayerListener;
+import fp.manuton.events.RewardsListener;
 import fp.manuton.guis.EnchantGui;
 import fp.manuton.guis.FarmersStepGui;
 import fp.manuton.utils.*;
@@ -12,7 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class FarmingPlus extends JavaPlugin {
-    public static String prefix = getPlugin().getMainConfigManager().getPluginPrefix();
+    public static String prefix = null;
     private final String version = getDescription().getVersion();
     private static FarmingPlus plugin;
     private MainConfigManager mainConfigManager;
@@ -20,10 +21,11 @@ public class FarmingPlus extends JavaPlugin {
 
     public void onEnable(){
         plugin = this;
+        mainConfigManager = new MainConfigManager();
+        prefix = getPlugin().getMainConfigManager().getPluginPrefix();
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&fHas been enabled. &cVersion: "+version));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
-        mainConfigManager = new MainConfigManager();
         if (getMainConfigManager().isEnabledMetrics()){
             int pluginId = 20430; // ID OF PLUGIN IN BSTATS //
             Metrics metrics = new Metrics(this, pluginId);
@@ -66,6 +68,7 @@ public class FarmingPlus extends JavaPlugin {
     public void registerEvents(){
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new GuiListener(), this);
+        getServer().getPluginManager().registerEvents(new RewardsListener(), this);
     }
 
     public void registerItemUtils(){
