@@ -59,6 +59,13 @@ public class VaultUtils {
         }
     }
 
+    public static double getMoney(Player target){
+        if (!hasEconomy())
+            throw new UnsupportedOperationException("Vault Economy not found.");
+
+        return economy.getBalance(target);
+    }
+
     public static String formatCurrencySymbol(double amount){
         if (!hasEconomy())
             throw new UnsupportedOperationException("Vault Economy not found.");

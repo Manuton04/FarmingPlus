@@ -1,6 +1,10 @@
 package fp.manuton.costs;
 
+import fp.manuton.utils.VaultUtils;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -30,7 +34,17 @@ public class Cost {
     }
 
     public void execute(Player player){
+        player.setLevel(player.getLevel() - getXpLevels());
+        VaultUtils.extract(player, getMoney());
+        for (String item : getItems()){
+            String[] parts = item.split(" ");
+            item = parts[0];
+            int amount = Integer.parseInt(parts[1]);
 
+            for (int i = 0; i < amount; i++) {
+                Inventory playerInventory = player.getInventory();
+                player.getInventory().remove(new ItemStack(Material.valueOf(item.toUpperCase())));
+            }
+        }
     }
-
 }
