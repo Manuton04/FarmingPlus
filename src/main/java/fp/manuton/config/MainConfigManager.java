@@ -1,6 +1,7 @@
 package fp.manuton.config;
 
 import fp.manuton.FarmingPlus;
+import fp.manuton.costs.Cost;
 import fp.manuton.rewards.*;
 import fp.manuton.utils.MessageUtils;
 import org.bukkit.Bukkit;
@@ -55,6 +56,7 @@ public class MainConfigManager {
     private String pluginPrefix;
 
     private Map<String, Reward> rewards;
+    private Map<String, Cost> costs;
 
     public MainConfigManager(){
         configFile = new CustomConfig("config.yml", null, FarmingPlus.getPlugin());
@@ -65,6 +67,7 @@ public class MainConfigManager {
         rewardsFile.registerConfig();
         loadConfig();
         loadRewards();
+        loadCosts();
     }
 
     private void loadRewards() {
@@ -129,6 +132,47 @@ public class MainConfigManager {
         return new ArrayList<>(rewards.keySet());
     }
 
+    public void loadCosts(){
+        costs = new HashMap<>();
+        ConfigurationSection enchants = configFile.getConfig().getConfigurationSection("config.enchantments");
+        for (String key : enchants.getKeys(false)) {
+            ConfigurationSection enchant = enchants.getConfigurationSection(key);
+
+            Cost cost = null;
+            if (key.equals("grand-tilling") || key.equals("farmers-step")){
+                for(int i = 1; i <= 3; i++){
+                    double money = enchant.getDouble("cost"+i+".money");
+                    List<String> items = enchant.getStringList("cost"+i+".items");
+                    int xpLevels = enchant.getInt("cost"+i+".exp");
+                    cost = new Cost(xpLevels, money, items);
+
+                    if (cost != null) {
+                        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+"&fLoaded cost: " + key+i));
+                        costs.put(key+i, cost);
+                    }
+                }
+            }else{
+                double money = enchant.getDouble("cost.money");
+                List<String> items = enchant.getStringList("cost.items");
+                int xpLevels = enchant.getInt("cost.exp");
+                cost = new Cost(xpLevels, money, items);
+
+                if (cost != null) {
+                    Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+"&fLoaded cost: " + key));
+                    costs.put(key, cost);
+                }
+            }
+        }
+    }
+
+    public Cost getCost(String key) {
+        return costs.get(key);
+    }
+
+    public Collection<Cost> getAllCosts() {
+        return costs.values();
+    }
+
     public void loadConfig(){
         FileConfiguration config = configFile.getConfig();
         FileConfiguration messages = messagesFile.getConfig();
@@ -176,6 +220,7 @@ public class MainConfigManager {
         loadConfig();
         rewardsFile.reloadConfig();
         loadRewards();
+        loadCosts();
     }
 
     public boolean isEnabledMetrics() {

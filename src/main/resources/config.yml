@@ -28,7 +28,7 @@ config:
       sound-on-break: "BLOCK_COMPOSTER_READY"
       volume-on-break: 0.5
       cost:
-        # Exp is in levels #
+        # Exp in levels #
         exp: 30
         money: 10000
         items:
@@ -46,6 +46,18 @@ config:
     delicate:
       name: "Delicate"
       lore-name: "&7Delicate I"
+      cost:
+        exp: 30
+        money: 10000
+        items:
+          - "DIAMOND 1"
+          - "GOLD_INGOT 8"
+    irrigate:
+      name: "Irrigate"
+      lore-name: "&7Irrigate I"
+      # Max blocks that can be irrigated at once in a row #
+      # Blocks are filled with water until its max or until it reaches a block #
+      max-blocks: 64
       cost:
         exp: 30
         money: 10000
@@ -103,15 +115,3 @@ config:
       # Max blocks that can be tilled at once in a row #
       # Blocks are tilled until its max or until it reaches a block that can't be tilled #
       level3-max-blocks: 64
-    irrigate:
-      name: "Irrigate"
-      lore-name: "&7Irrigate I"
-      # Max blocks that can be irrigated at once in a row #
-      # Blocks are filled with water until its max or until it reaches a block #
-      max-blocks: 64
-      cost:
-        exp: 30
-        money: 10000
-        items:
-          - "DIAMOND 1"
-          - "GOLD_INGOT 8"
