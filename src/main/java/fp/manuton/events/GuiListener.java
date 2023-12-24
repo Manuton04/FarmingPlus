@@ -27,8 +27,13 @@ public class GuiListener implements Listener {
             return;
         int slot = event.getSlot();
         if (event.getClickedInventory().getType().equals(InventoryType.PLAYER)){
-            ItemStack item = event.getCurrentItem();
-            if (item != null || item.getType() != Material.AIR){
+            ItemStack item;
+            try {
+                item = event.getCurrentItem();
+            }catch (NullPointerException e){
+                item = null;
+            }
+            if (item != null){
                 if (event.getInventory().getItem(19) == null || event.getInventory().getItem(19).getType() == Material.AIR){
                     event.getInventory().setItem(19, item);
                     player.getInventory().setItem(slot, new ItemStack(Material.AIR));
@@ -58,25 +63,32 @@ public class GuiListener implements Listener {
                 }
 
             }
-        }
+        }else{
+            if (!(slot == 19)) {
+                event.setCancelled(true);
+                if (slot == 49)
+                    player.closeInventory();
 
-        if (!(slot == 19)) {
-            event.setCancelled(true);
-            if (slot == 49)
-                player.closeInventory();
+            }else {
+                ItemStack item;
+                try{
+                    item = event.getClickedInventory().getItem(slot);
+                }catch (NullPointerException e) {
+                    item = null;
+                }
 
-        }else {
-            ItemStack item = event.getClickedInventory().getItem(slot);
-            Inventory playerInventory = player.getInventory();
-            int emptySlot = playerInventory.firstEmpty();
-            if (emptySlot != -1)
-                player.getInventory().addItem(item);
-            else {
-                player.getWorld().dropItemNaturally(player.getLocation(), item);
+                if (item != null){
+                    Inventory playerInventory = player.getInventory();
+                    int emptySlot = playerInventory.firstEmpty();
+                    if (emptySlot != -1)
+                        player.getInventory().addItem(item);
+                    else {
+                        player.getWorld().dropItemNaturally(player.getLocation(), item);
+                    }
+                    event.getInventory().setItem(slot, null);
+                    EnchantGui.enchantGuiEmpty(player, event.getInventory());
+                }
             }
-            event.getInventory().setItem(slot, null);
-            EnchantGui.enchantGuiEmpty(player, event.getInventory());
-
         }
     }
 

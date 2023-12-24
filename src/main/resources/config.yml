@@ -27,17 +27,52 @@ config:
       # Volume goes from 0.1 to 1.0 #
       sound-on-break: "BLOCK_COMPOSTER_READY"
       volume-on-break: 0.5
+      cost:
+        # Exp is in levels #
+        exp: 30
+        money: 10000
+        items:
+          - "DIAMOND 1"
+          - "GOLD_INGOT 8"
     farmers-grace:
       name: "Farmer's Grace"
       lore-name: "&7Farmer's Grace I"
+      cost:
+        exp: 30
+        money: 10000
+        items:
+          - "DIAMOND 1"
+          - "GOLD_INGOT 8"
     delicate:
       name: "Delicate"
       lore-name: "&7Delicate I"
+      cost:
+        exp: 30
+        money: 10000
+        items:
+          - "DIAMOND 1"
+          - "GOLD_INGOT 8"
     farmers-step:
       name: "Farmer's Step"
       lore-name1: "&7Farmer's Step I"
       lore-name2: "&7Farmer's Step II"
       lore-name3: "&7Farmer's Step III"
+      cost1:
+        exp: 30
+        money: 5000
+        items:
+          - "DIAMOND 1"
+          - "GOLD_INGOT 8"
+      cost2:
+        exp: 45
+        money: 10000
+        items:
+          - "DIAMOND 32"
+      cost3:
+        exp: 60
+        money: 15000
+        items:
+          - "DIAMOND_BLOCK 8"
       # This gui opens when using LEFT click in the air with the enchanted boots #
       gui:
         title: "&7Farmer's Step Menu"
@@ -49,6 +84,22 @@ config:
       lore-name1: "&7Grand Tilling I"
       lore-name2: "&7Grand Tilling II"
       lore-name3: "&7Grand Tilling III"
+      cost1:
+        exp: 30
+        money: 5000
+        items:
+          - "DIAMOND 1"
+          - "GOLD_INGOT 8"
+      cost2:
+        exp: 45
+        money: 10000
+        items:
+          - "DIAMOND 32"
+      cost3:
+        exp: 60
+        money: 15000
+        items:
+          - "DIAMOND_BLOCK 8"
       # Max blocks that can be tilled at once in a row #
       # Blocks are tilled until its max or until it reaches a block that can't be tilled #
       level3-max-blocks: 64
@@ -58,3 +109,9 @@ config:
       # Max blocks that can be irrigated at once in a row #
       # Blocks are filled with water until its max or until it reaches a block #
       max-blocks: 64
+      cost:
+        exp: 30
+        money: 10000
+        items:
+          - "DIAMOND 1"
+          - "GOLD_INGOT 8"

@@ -17,7 +17,8 @@ public class FarmingPlus extends JavaPlugin {
     private final String version = getDescription().getVersion();
     private static FarmingPlus plugin;
     private MainConfigManager mainConfigManager;
-    private final String link = "https://www.spigotmc.org/resources/bettersleeps-abandoned.82243/"; // BETTERSLEEPS Plugin for tests
+    private final String link = ""; // MODRINTH LINK //
+    private final int pluginIdSpigot = 1; // ADD PLUGIN ID SPIGOT //
 
     public void onEnable(){
         plugin = this;
@@ -41,7 +42,7 @@ public class FarmingPlus extends JavaPlugin {
         ItemUtils.getMaterials();
         ItemUtils.getCropsStep();
         ItemUtils.getCropsRewards();
-        new UpdateChecker(this, 82243).getVersion(versionn -> { // ADD PLUGIN ID SPIGOT //
+        new UpdateChecker(this, pluginIdSpigot).getVersion(versionn -> {
             if (version.equals(versionn)) {
                 Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&fThere is not a new update available."));
             } else {
