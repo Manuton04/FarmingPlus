@@ -54,6 +54,19 @@ public class MainConfigManager {
     private String irrigateNameLore;
     private int irrigateMaxBlocks;
     private String pluginPrefix;
+    private String guiConfirm;
+    private String guiCancel;
+
+    private List<String> replenishLore;
+    private List<String> farmersgraceLore;
+    private List<String> delicateLore;
+    private List<String> irrigateLore;
+    private List<String> farmerstepLore1;
+    private List<String> farmerstepLore2;
+    private List<String> farmerstepLore3;
+    private List<String> grandtillingLore1;
+    private List<String> grandtillingLore2;
+    private List<String> grandtillingLore3;
 
     private Map<String, Reward> rewards;
     private Map<String, Cost> costs;
@@ -190,8 +203,8 @@ public class MainConfigManager {
         replenishName = config.getString("config.enchantments.replenish.name");
         farmersgraceName = config.getString("config.enchantments.farmers-grace.name");
         delicateName = config.getString("config.enchantments.delicate.name");
-        farmerstepName = config.getString("config.enchantments.farmers-step.name1");
-        grandtillingName = config.getString("config.enchantments.grand-tilling.name1");
+        farmerstepName = config.getString("config.enchantments.farmers-step.name");
+        grandtillingName = config.getString("config.enchantments.grand-tilling.name");
         guiEmptySlot = config.getString("config.gui.empty-slot");
         guiSoundOpen = config.getString("config.gui.sound-on-open");
         guiSoundClose = config.getString("config.gui.sound-on-close");
@@ -208,6 +221,19 @@ public class MainConfigManager {
         irrigateNameLore = config.getString("config.enchantments.irrigate.lore-name");
         irrigateMaxBlocks = config.getInt("config.enchantments.irrigate.max-blocks");
         pluginPrefix = config.getString("config.prefix");
+        guiConfirm = config.getString("config.gui.confirm");
+        guiCancel = config.getString("config.gui.cancel");
+
+        replenishLore = messages.getStringList("messages.enchantments.replenish.lore");
+        farmersgraceLore = messages.getStringList("messages.enchantments.farmers-grace.lore");
+        delicateLore = messages.getStringList("messages.enchantments.delicate.lore");
+        irrigateLore = messages.getStringList("messages.enchantments.irrigate.lore");
+        farmerstepLore1 = messages.getStringList("messages.enchantments.farmers-step.lore1");
+        farmerstepLore2 = messages.getStringList("messages.enchantments.farmers-step.lore2");
+        farmerstepLore3 = messages.getStringList("messages.enchantments.farmers-step.lore3");
+        grandtillingLore1 = messages.getStringList("messages.enchantments.grand-tilling.lore1");
+        grandtillingLore2 = messages.getStringList("messages.enchantments.grand-tilling.lore2");
+        grandtillingLore3 = messages.getStringList("messages.enchantments.grand-tilling.lore3");
 
         noPermissionCommand = messages.getString("messages.no-permission-command");
         noPermissionAction = messages.getString("messages.no-permission-action");
@@ -358,5 +384,53 @@ public class MainConfigManager {
 
     public String getPluginPrefix() {
         return pluginPrefix;
+    }
+
+    public List<String> getReplenishLore() {
+        return replenishLore;
+    }
+
+    public List<String> getFarmersgraceLore() {
+        return farmersgraceLore;
+    }
+
+    public List<String> getDelicateLore() {
+        return delicateLore;
+    }
+
+    public List<String> getIrrigateLore() {
+        return irrigateLore;
+    }
+
+    public List<String> getFarmerstepLore1() {
+        return farmerstepLore1;
+    }
+
+    public List<String> getFarmerstepLore2() {
+        return farmerstepLore2;
+    }
+
+    public List<String> getFarmerstepLore3() {
+        return farmerstepLore3;
+    }
+
+    public List<String> getGrandtillingLore1() {
+        return grandtillingLore1;
+    }
+
+    public List<String> getGrandtillingLore2() {
+        return grandtillingLore2;
+    }
+
+    public List<String> getGrandtillingLore3() {
+        return grandtillingLore3;
+    }
+
+    public String getGuiConfirm() {
+        return guiConfirm;
+    }
+
+    public String getGuiCancel() {
+        return guiCancel;
     }
 }

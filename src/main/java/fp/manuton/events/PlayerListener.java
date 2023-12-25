@@ -106,6 +106,8 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         Action action = event.getAction();
 
+        if (action.equals(PHYSICAL))
+            return;
         //player.sendMessage("0");
         if ((!action.equals(LEFT_CLICK_BLOCK)) && (!action.equals(LEFT_CLICK_AIR)))
             return;

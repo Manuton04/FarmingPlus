@@ -40,6 +40,8 @@ public class Cost {
             String[] parts = item.split(" ");
             item = parts[0];
             int amount = Integer.parseInt(parts[1]);
+            if (amount <= 0)
+                amount = 1;
 
             for (int i = 0; i < amount; i++) {
                 Inventory playerInventory = player.getInventory();
