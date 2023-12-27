@@ -134,13 +134,32 @@ public class ItemUtils {
                 }
 
                 if (meta.hasLore()) {
-                    for (String already : meta.getLore()){
-                        if (already.equals(loreToAdd))
+                    for (String already : meta.getLore()) {
+                        if (already.equals(loreToAdd)) {
                             existsLore = true;
+                            break;
+                        }
                     }
                 }
-                if (!existsLore)
-                    lore.add(loreToAdd);
+
+                if (!existsLore) {
+                    List<String> updatedLore = new ArrayList<>(meta.getLore());
+                    boolean loreUpdated = false;
+                    for (int i = 0; i < updatedLore.size(); i++) {
+                        String already = updatedLore.get(i);
+                        if (already.contains(loreToAdd) || loreToAdd.contains(already)) {
+                            updatedLore.set(i, loreToAdd);
+                            loreUpdated = true;
+                            break;
+                        }
+                    }
+                    if (!loreUpdated) {
+                        updatedLore.add(loreToAdd);
+                    }
+                    meta.setLore(updatedLore);
+                    item.setItemMeta(meta);
+                }
+                
                 if (meta.hasLore())
                     lore.addAll(meta.getLore());
                 meta.setLore(lore);
