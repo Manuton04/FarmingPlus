@@ -7,7 +7,6 @@ import fp.manuton.utils.MessageUtils;
 import fp.manuton.utils.SoundUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,6 +16,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -29,72 +29,82 @@ public class GuiListener implements Listener {
             return;
         if (!player.hasMetadata("OpenedMenu"))
             return;
+        event.setCancelled(true);
         int slot = event.getSlot();
         if (event.getClickedInventory().getType().equals(InventoryType.PLAYER)){
-            ItemStack item;
+            ItemStack clicked;
             try {
-                item = event.getCurrentItem();
+                clicked = event.getClickedInventory().getItem(event.getSlot());
             }catch (NullPointerException e){
-                item = null;
+                clicked = null;
             }
-            if (item != null && !player.hasMetadata("menuConfirm")){
-                if (event.getInventory().getItem(19) == null || event.getInventory().getItem(19).getType() == Material.AIR){
-                    event.getInventory().setItem(19, item);
-                    player.getInventory().setItem(slot, new ItemStack(Material.AIR));
+
+            ItemStack item = null;
+            if (!player.hasMetadata("menuConfirm")){
+                try {
+                    item = player.getOpenInventory().getTopInventory().getItem(19);
+                }catch (NullPointerException e){
+                }
+            }
+
+            if (clicked != null && !player.hasMetadata("menuConfirm")){
+                if (player.getOpenInventory().getTopInventory().getItem(19) == null){
+                    player.getOpenInventory().getTopInventory().setItem(19, clicked);
+                    player.getOpenInventory().getBottomInventory().setItem(slot, null);
                 }else{
                     ItemStack item19 = event.getInventory().getItem(19);
-                    event.getInventory().setItem(19, item);
-                    player.getInventory().setItem(slot, new ItemStack(Material.AIR));
+                    player.getOpenInventory().getTopInventory().setItem(19, clicked);
+                    player.getOpenInventory().getBottomInventory().setItem(slot, null);
                     Inventory playerInventory = player.getInventory();
                     int emptySlot = playerInventory.firstEmpty();
                     if (emptySlot != -1)
-                        player.getInventory().setItem(emptySlot, item);
+                        player.getOpenInventory().getBottomInventory().setItem(emptySlot, clicked);
                     else {
                         player.getWorld().dropItemNaturally(player.getLocation(), item19);
                     }
                 }
                 boolean Enchantable = false;
 
-                if (item.getType() == Material.WATER_BUCKET){
-                    EnchantGui.enchantGuiWater(player, event.getInventory());
+                if (clicked.getType() == Material.WATER_BUCKET){
+                    EnchantGui.guiMenu(player, "water" , player.getOpenInventory().getTopInventory(), null, null);
                     Enchantable = true;
                 }
                 for (Material type : ItemUtils.boots){
-                    if (item.getType() == type) {
-                        EnchantGui.enchantGuiBoots(player, event.getInventory());
+                    if (clicked.getType() == type) {
+                        EnchantGui.guiMenu(player, "boots", player.getOpenInventory().getTopInventory(), null, null);
                         Enchantable = true;
                     }
                 }
                 for (Material type : ItemUtils.hoes){
-                    if (item.getType() == type) {
-                        EnchantGui.enchantGuiHoes(player, event.getInventory());
+                    if (clicked.getType() == type) {
+                        EnchantGui.guiMenu(player, "hoe", player.getOpenInventory().getTopInventory(), null, item);
                         Enchantable = true;
                     }
                 }
                 for (Material type : ItemUtils.axes){
-                    if (item.getType() == type) {
-                        EnchantGui.enchantGuiAxes(player, event.getInventory());
+                    if (clicked.getType() == type) {
+                        EnchantGui.guiMenu(player, "axe", player.getOpenInventory().getTopInventory(), null, item);
                         Enchantable = true;
                     }
                 }
 
                 if (!Enchantable){
-                    EnchantGui.enchantGuiEmpty(player, event.getInventory());
+                    EnchantGui.guiMenu(player, "empty", player.getOpenInventory().getTopInventory(), null, item);
                 }
 
             }
         }else{
             if (!(slot == 19) && !(slot == 12 && player.hasMetadata("menuConfirm"))){
-                event.setCancelled(true);
                 if (slot == 49){
                     player.closeInventory();
                     return;
                 }
-
+                if (slot == 13 && player.hasMetadata("menuConfirm"))
+                    return;
 
                 ItemStack enchant;
                 try {
-                    enchant = event.getInventory().getItem(slot);
+                    enchant = event.getClickedInventory().getItem(slot);
                 }catch (NullPointerException e){
                     enchant = null;
                 }
@@ -114,7 +124,7 @@ public class GuiListener implements Listener {
                         }else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()))) {
                             // code
                         }else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName()))) {
-                            EnchantGui.enchantGuiConfirm(player, event.getInventory(), enchant, item);
+                            EnchantGui.guiMenu(player, "confirm", player.getOpenInventory().getTopInventory(), enchant, item);
                         }else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getIrrigateName()))) {
                             // code
                         }else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getDelicateName()))) {
@@ -132,6 +142,10 @@ public class GuiListener implements Listener {
                 }
 
             }else {
+                if (player.hasMetadata("menuConfirm") && slot == 19)
+                    return;
+                if (!player.hasMetadata("menuConfirm") && slot == 12)
+                    return;
 
                 Inventory inventory = event.getInventory();
                 if (player.hasMetadata("menuConfirm")){
@@ -142,7 +156,7 @@ public class GuiListener implements Listener {
 
                 ItemStack item;
                 try{
-                    item = event.getClickedInventory().getItem(slot);
+                    item = player.getOpenInventory().getTopInventory().getItem(slot);
                 }catch (NullPointerException e) {
                     item = null;
                 }
@@ -151,14 +165,12 @@ public class GuiListener implements Listener {
                     Inventory playerInventory = player.getInventory();
                     int emptySlot = playerInventory.firstEmpty();
                     if (emptySlot != -1)
-                        player.getInventory().setItem(emptySlot, item);
-                    else {
+                        playerInventory.setItem(emptySlot, item);
+                    else
                         player.getWorld().dropItemNaturally(player.getLocation(), item);
-                    }
-                    if (slot == 12)
-                        EnchantGui.enchantGuiChange(player, inventory);
-                    event.getInventory().setItem(19, null);
-                    EnchantGui.enchantGuiEmpty(player, event.getInventory());
+                    
+                    player.getOpenInventory().getTopInventory().setItem(19, null);
+                    EnchantGui.guiMenu(player, "empty", player.getOpenInventory().getTopInventory(), null, null);
                 }
             }
         }

@@ -95,7 +95,7 @@ public class MainCommand implements CommandExecutor, TabExecutor {
             }else if (args[0].equalsIgnoreCase("reload")){
                 subCommandReload(player);
             }else if (args[0].equalsIgnoreCase("gui")){
-                EnchantGui.createGui(player);
+                EnchantGui.createGui(player, null);
             }else if (args[0].equalsIgnoreCase("reward")){
                 if (player.hasPermission("fp.admin")){
                     if (args[1].equalsIgnoreCase("give")){
