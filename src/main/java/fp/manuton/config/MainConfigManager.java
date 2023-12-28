@@ -56,6 +56,16 @@ public class MainConfigManager {
     private String pluginPrefix;
     private String guiConfirm;
     private String guiCancel;
+    private List<String> enchantsList;
+    private List<String> commandList;
+    private String rewardListTitle;
+    private String notCommand;
+    private String notEnchantment;
+    private String notReward;
+    private String playerOffline;
+    private String entityInvalid;
+    private String entityInvalidMythic;
+    private String rewardGiveCommand;
 
     private List<String> replenishLore;
     private List<String> farmersgraceLore;
@@ -242,10 +252,24 @@ public class MainConfigManager {
         noPermissionCommand = messages.getString("messages.no-permission-command");
         noPermissionAction = messages.getString("messages.no-permission-action");
         reloadedConfig = messages.getString("messages.reloaded-config");
+        enchantsList = messages.getStringList("messages.enchants-list");
+        commandList = messages.getStringList("messages.command-list");
+        rewardListTitle = messages.getString("messages.reward-list-title");
+        notCommand = messages.getString("messages.not-command");
+        notEnchantment = messages.getString("messages.not-enchantment");
+        notReward = messages.getString("messages.not-reward");
+        playerOffline = messages.getString("messages.player-offline");
+        entityInvalid = messages.getString("messages.entity-invalid");
+        entityInvalidMythic = messages.getString("messages.entity-invalid-mythic");
+        rewardGiveCommand = messages.getString("messages.reward-give-command");
         
     }
 
+    // If there isn't a file, it will create it and load the default values
     public void reloadConfig(){
+        configFile.registerConfig();
+        messagesFile.registerConfig();
+        rewardsFile.registerConfig();
         configFile.reloadConfig();
         loadConfig();
         rewardsFile.reloadConfig();
@@ -436,5 +460,45 @@ public class MainConfigManager {
 
     public String getGuiCancel() {
         return guiCancel;
+    }
+
+    public List<String> getEnchantsList() {
+        return enchantsList;
+    }
+
+    public List<String> getCommandList() {
+        return commandList;
+    }
+
+    public String getRewardListTitle() {
+        return rewardListTitle;
+    }
+
+    public String getNotCommand() {
+        return notCommand;
+    }
+
+    public String getNotEnchantment() {
+        return notEnchantment;
+    }
+
+    public String getNotReward() {
+        return notReward;
+    }
+
+    public String getPlayerOffline() {
+        return playerOffline;
+    }
+
+    public String getEntityInvalid() {
+        return entityInvalid;
+    }
+
+    public String getEntityInvalidMythic() {
+        return entityInvalidMythic;
+    }
+
+    public String getRewardGiveCommand() {
+        return rewardGiveCommand;
     }
 }

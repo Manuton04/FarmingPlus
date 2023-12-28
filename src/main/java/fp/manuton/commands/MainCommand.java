@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.sk89q.worldedit.command.util.PrintCommandHelp.help;
@@ -42,6 +43,10 @@ public class MainCommand implements CommandExecutor, TabExecutor {
 
         if (args.length >= 1){
             if (args[0].equalsIgnoreCase("enchant")){ // /fp enchant (Enchantment)
+                if (!player.hasPermission("fp.commands.enchant")) {
+                    player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
+                    return true;
+                }
                 if (args.length >= 2) {
                     List<Material> enchantable = new ArrayList<>();
                     if (args[1].equalsIgnoreCase("replenish")) { // /fp enchant replenish
@@ -83,21 +88,24 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                         player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThat enchantment doesn't exist!"));
                     }
                 }else {
-                    sender.sendMessage(MessageUtils.getColoredMessage("&f&l------" + FarmingPlus.prefix + " &fEnchants&f&l-------"));
-                    sender.sendMessage(MessageUtils.getColoredMessage("&e Replenish I"));
-                    sender.sendMessage(MessageUtils.getColoredMessage("&e Farmer's Grace I"));
-                    sender.sendMessage(MessageUtils.getColoredMessage("&e"));
-                    sender.sendMessage(MessageUtils.getColoredMessage("&e"));
-                    sender.sendMessage(MessageUtils.getColoredMessage("&e"));
-                    sender.sendMessage(MessageUtils.getColoredMessage("&f&l---------------------------------"));
+                    for (String line: FarmingPlus.getPlugin().getMainConfigManager().getEnchantsList()){
+                        player.sendMessage(MessageUtils.translateAll(player, line));
+                    }
                 }
 
             }else if (args[0].equalsIgnoreCase("reload")){
                 subCommandReload(player);
             }else if (args[0].equalsIgnoreCase("gui")){
-                EnchantGui.createGui(player, null);
+                if (player.hasPermission("fp.gui.use")) {
+                    EnchantGui.createGui(player, null);
+                    return true;
+                }
+                else {
+                    player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix + FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
+                    return true;
+                }
             }else if (args[0].equalsIgnoreCase("reward")){
-                if (player.hasPermission("fp.admin")){
+                if (player.hasPermission("fp.admin") || player.hasPermission("fp.commands.reward")){
                     if (args[1].equalsIgnoreCase("give")){
                         String target = args[2];
                         boolean isOnline = false;
@@ -106,6 +114,10 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                                 isOnline = true;
                                 break;
                             }
+                        }
+                        if (!isOnline) {
+                            player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix + "&cThat player is not online!"));
+                            return true;
                         }
                         if (isOnline){
                             if (FarmingPlus.getPlugin().getMainConfigManager().getAllRewardNames().contains(args[3])) {
@@ -118,7 +130,7 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                                             EntityType.valueOf(((SummonReward) reward).getEntity());
                                         }catch(IllegalArgumentException exp){
                                             done = false;
-                                            player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThat entity is invalid or you don't have MythicMobs installed!"));
+                                            player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getEntityInvalidMythic()));
                                         }
                                     }else{
                                         boolean isMythic = MythicBukkit.inst().getMobManager().getMythicMob(((SummonReward) reward).getEntity()).orElse(null) != null;
@@ -127,54 +139,69 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                                                 EntityType.valueOf(((SummonReward) reward).getEntity());
                                             }catch(IllegalArgumentException exp){
                                                 done = false;
-                                                player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThat entity is invalid!"));
+                                                player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getEntityInvalid()));
                                             }
                                         }
 
                                     }
 
                                 }
-                                if (done)
-                                    player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix + "&aYou gave &e" + target + " &athe " + args[3] + " reward!"));
+                                if (done) {
+                                    String message = FarmingPlus.getPlugin().getMainConfigManager().getRewardGiveCommand();
+                                    message = message.replace("%reward%", args[3]);
+                                    player.sendMessage(MessageUtils.translateAll(Bukkit.getPlayer(target), message));
+                                }
                             }else
-                                player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThat reward does not exist!"));
+                                player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotReward()));
 
                         }else
-                            player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThat player is not online!"));
+                            player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getPlayerOffline()));
 
+                    }else if (args[1].equalsIgnoreCase("list")) {
+                        List<String> rewardList = new ArrayList<>();
+                        for (String reward : FarmingPlus.getPlugin().getMainConfigManager().getAllRewardNames()) {
+                            rewardList.add(reward);
+                        }
+                        Collections.sort(rewardList);
+                        player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getRewardListTitle()));
+                        for (String reward : rewardList) {
+                            player.sendMessage(MessageUtils.getColoredMessage("&e- " + reward));
+                        }
+                        player.sendMessage(MessageUtils.getColoredMessage("&f&l---------------------------------"));
+                    }else {
+                        player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotCommand()));
+                        help(player);
                     }
                 }else
                     player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
 
 
             }else{
-                sender.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThat command does not exist!"));
+                sender.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotCommand()));
                 help(player);
             }
 
         }else{
             // /farmingplus or /fp //
             help(player);
-
         }
 
         return true;
     }
 
     // RETURNS ALL THE COMMANDS //
-    public void help(CommandSender sender) {
-        sender.sendMessage(MessageUtils.getColoredMessage("&f&l------" + FarmingPlus.prefix + " &fCommands&f&l-------"));
-        sender.sendMessage(MessageUtils.getColoredMessage("&7(All the commands can be used with /fp)"));
-        sender.sendMessage(MessageUtils.getColoredMessage("&e /fp: &7Show this page."));
-        sender.sendMessage(MessageUtils.getColoredMessage("&e /fp reload: &7Reload the Configuration."));
-        sender.sendMessage(MessageUtils.getColoredMessage("&e /fp enchant (enchantment): &7Enchants the item in hand."));
-        sender.sendMessage(MessageUtils.getColoredMessage(""));
-        sender.sendMessage(MessageUtils.getColoredMessage("&f&l---------------------------------"));
+    public void help(Player player) {
+        player.sendMessage("1");
+        if (FarmingPlus.getPlugin().getMainConfigManager().getCommandList().isEmpty())
+            player.sendMessage("empty");
+        for (String line: FarmingPlus.getPlugin().getMainConfigManager().getCommandList()){
+            player.sendMessage(MessageUtils.translateAll(player, line));
+        }
     }
 
     // Reload config if player has permissions //
     public void subCommandReload(CommandSender sender){
-        if (!sender.hasPermission("fp.commands.reload") && !sender.isOp()){
+        if (!sender.hasPermission("fp.commands.reload") && !sender.hasPermission("fp.admin")){
             sender.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
             return;
         }
@@ -190,7 +217,7 @@ public class MainCommand implements CommandExecutor, TabExecutor {
         if (args.length == 1)
             return Arrays.asList("enchant", "reload", "gui", "reward");
 
-        if (args[0].equalsIgnoreCase("enchant")) {
+        if (args[0].equalsIgnoreCase("enchant") && (sender.hasPermission("fp.admin") || sender.hasPermission("fp.commands.enchant"))) {
             if (args.length == 2)
                 return Arrays.asList("delicate", "farmersgrace", "farmerstep", "grandtilling", "replenish", "irrigate");
             if (args.length == 3) {
@@ -209,12 +236,13 @@ public class MainCommand implements CommandExecutor, TabExecutor {
             }
         }
 
-        if (args[0].equalsIgnoreCase("reward")) {
+        if (args[0].equalsIgnoreCase("reward") && (sender.hasPermission("fp.admin") || sender.hasPermission("fp.commands.reward"))) {
             if (args.length == 2)
-                return Arrays.asList("give");
-            if (args.length == 3)
+                return Arrays.asList("give", "list");
+            if (args.length == 3) {
                 if (args[1].equalsIgnoreCase("give"))
                     return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+            }
             if (args.length == 4) {
                 if (args[1].equalsIgnoreCase("give"))
                     return FarmingPlus.getPlugin().getMainConfigManager().getAllRewardNames();
