@@ -218,5 +218,25 @@ public class ItemUtils {
         }
     }
 
+    public static String getReadableMaterialName(Material material) {
+        String name = material.name();
+        name = name.replace('_', ' ').toLowerCase();
+        name = capitalizeFully(name);
+        return name;
+    }
+
+    public static String capitalizeFully(String str) {
+        String[] words = str.split(" ");
+        StringBuilder sb = new StringBuilder();
+
+        for (String word : words) {
+            sb.append(Character.toUpperCase(word.charAt(0)))
+                    .append(word.substring(1))
+                    .append(" ");
+        }
+
+        return sb.toString().trim();
+    }
+
 
 }

@@ -1,8 +1,12 @@
 package fp.manuton.guis;
 
 import fp.manuton.FarmingPlus;
+import fp.manuton.config.MainConfigManager;
+import fp.manuton.costs.Cost;
+import fp.manuton.utils.ItemUtils;
 import fp.manuton.utils.MessageUtils;
 import fp.manuton.utils.SoundUtils;
+import fp.manuton.utils.VaultUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -15,6 +19,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -128,8 +133,10 @@ public class EnchantGui{
             ItemStack farmerstep = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta farmerstepMeta = farmerstep.getItemMeta();
             farmerstepMeta.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()));
+
             List<String> clickLore = new ArrayList<String>();
             clickLore.add(MessageUtils.getColoredMessage("&eClick to see!"));
+
             farmerstepMeta.setLore(clickLore);
             PersistentDataContainer farmersStepContainer = farmerstepMeta.getPersistentDataContainer();
             farmersStepContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
@@ -138,7 +145,13 @@ public class EnchantGui{
             ItemStack farmersgrace = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta farmersgraceMeta = farmersgrace.getItemMeta();
             farmersgraceMeta.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName()));
-            farmersgraceMeta.setLore(clickLore);
+            List<String> loreFarmersgrace = new ArrayList<String>();
+            for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceLore()) {
+                loreFarmersgrace.add(MessageUtils.getColoredMessage(loreL));
+            }
+            loreFarmersgrace.add(null);
+            loreFarmersgrace.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            farmersgraceMeta.setLore(loreFarmersgrace);
             PersistentDataContainer farmersGraceContainer = farmersgraceMeta.getPersistentDataContainer();
             farmersGraceContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
             farmersgrace.setItemMeta(farmersgraceMeta);
@@ -170,14 +183,92 @@ public class EnchantGui{
             PersistentDataContainer confirmContainer = confirmMeta.getPersistentDataContainer();
             confirmContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuConfirmItem"), PersistentDataType.STRING, "yes");
             confirm.setItemMeta(confirmMeta);
+
             ItemStack cancel = new ItemStack(Material.valueOf(FarmingPlus.getPlugin().getMainConfigManager().getGuiCancel()));
             ItemMeta cancelMeta = cancel.getItemMeta();
             cancelMeta.setDisplayName(MessageUtils.getColoredMessage("&cCancel"));
             PersistentDataContainer cancelContainer = cancelMeta.getPersistentDataContainer();
             cancelContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuConfirmItem"), PersistentDataType.STRING, "yes");
             cancel.setItemMeta(cancelMeta);
+
+            ItemMeta enchantMeta = enchant.getItemMeta();
+            String name = enchantMeta.getDisplayName();
+
+            if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName())))
+                name = "farmers-grace"; // farmers-grace
+            else if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getIrrigateName())))
+                name = "irrigate"; //
+            else if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getReplenishName())))
+                name = "replenish";
+            else if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getDelicateName())))
+                name = "delicate";
+            else if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()))){
+                if (name.endsWith("III"))
+                    name = "grand-tilling3";
+                else if (name.endsWith("II"))
+                    name = "grand-tilling2";
+                else if (name.endsWith("I"))
+                    name = "grand-tilling1";
+            }else if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()))){
+                if (name.endsWith("III"))
+                    name = "farmers-step3";
+                else if (name.endsWith("II"))
+                    name = "farmers-step2";
+                else if (name.endsWith("I"))
+                    name = "farmers-step1";
+            }
+
+
+            Cost costE = null;
+            for (String cost : FarmingPlus.getPlugin().getMainConfigManager().getAllCostsNames()){
+                if (name.equals(cost.toString())){
+                    costE = FarmingPlus.getPlugin().getMainConfigManager().getCost(cost);
+                    break;
+                }
+            }
+
             ItemStack anvil = new ItemStack(Material.ANVIL);
             ItemMeta anvilMeta = anvil.getItemMeta();
+            anvilMeta.setDisplayName(MessageUtils.getColoredMessage("&eEnchanting item Cost:"));
+            List<String> anvilLore = new ArrayList<String>();
+            anvilLore.add(MessageUtils.getColoredMessage("&7Cost: "));
+
+            // ✓ - ✔ - ✗ - ✘ //
+
+            if (costE != null) {
+                if (costE.getXpLevels() > 0)
+                    if (player.getLevel() >= costE.getXpLevels())
+                        anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + String.valueOf(costE.getXpLevels()) + " XP Levels"));
+                    else
+                        anvilLore.add(MessageUtils.getColoredMessage("&c✘ - " + String.valueOf(costE.getXpLevels()) + " XP Levels"));
+                if (costE.getMoney() > 0)
+                    if (VaultUtils.getMoney(player) >= costE.getMoney())
+                        anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + VaultUtils.formatCurrencySymbol(costE.getMoney())));
+                    else
+                        anvilLore.add(MessageUtils.getColoredMessage("&c✘ - " + VaultUtils.formatCurrencySymbol(costE.getMoney())));
+                if (!costE.getItems().isEmpty()) {
+                    anvilLore.add(MessageUtils.getColoredMessage("&e- Items:"));
+                    for (String itemE : costE.getItems()) {
+                        String[] parts = itemE.split("[\\[\\]]");
+
+                        String[] partsA = itemE.split(" ");
+                        itemE = partsA[0];
+                        int amount = Integer.parseInt(partsA[1]);
+                        if (amount <= 0)
+                            amount = 1;
+
+                        String ItemName = parts[1];
+
+                        if (player.getInventory().containsAtLeast(new ItemStack(Material.valueOf(itemE.toUpperCase())), amount))
+                            anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + amount + " " + ItemName));
+                        else
+                            anvilLore.add(MessageUtils.getColoredMessage("&c✘ - " + amount + " " + ItemName));
+
+                    }
+                }
+            }
+            anvilMeta.setLore(anvilLore);
+            anvil.setItemMeta(anvilMeta);
 
 
             inventory.setItem(12, item);

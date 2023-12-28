@@ -186,6 +186,10 @@ public class MainConfigManager {
         return costs.values();
     }
 
+    public List<String> getAllCostsNames() {
+        return new ArrayList<>(costs.keySet());
+    }
+
     public void loadConfig(){
         FileConfiguration config = configFile.getConfig();
         FileConfiguration messages = messagesFile.getConfig();
@@ -224,16 +228,16 @@ public class MainConfigManager {
         guiConfirm = config.getString("config.gui.confirm");
         guiCancel = config.getString("config.gui.cancel");
 
-        replenishLore = messages.getStringList("messages.enchantments.replenish.lore");
-        farmersgraceLore = messages.getStringList("messages.enchantments.farmers-grace.lore");
-        delicateLore = messages.getStringList("messages.enchantments.delicate.lore");
-        irrigateLore = messages.getStringList("messages.enchantments.irrigate.lore");
-        farmerstepLore1 = messages.getStringList("messages.enchantments.farmers-step.lore1");
-        farmerstepLore2 = messages.getStringList("messages.enchantments.farmers-step.lore2");
-        farmerstepLore3 = messages.getStringList("messages.enchantments.farmers-step.lore3");
-        grandtillingLore1 = messages.getStringList("messages.enchantments.grand-tilling.lore1");
-        grandtillingLore2 = messages.getStringList("messages.enchantments.grand-tilling.lore2");
-        grandtillingLore3 = messages.getStringList("messages.enchantments.grand-tilling.lore3");
+        replenishLore = config.getStringList("config.enchantments.replenish.lore");
+        farmersgraceLore = config.getStringList("config.enchantments.farmers-grace.lore");
+        delicateLore = config.getStringList("config.enchantments.delicate.lore");
+        irrigateLore = config.getStringList("config.enchantments.irrigate.lore");
+        farmerstepLore1 = config.getStringList("config.enchantments.farmers-step.lore1");
+        farmerstepLore2 = config.getStringList("config.enchantments.farmers-step.lore2");
+        farmerstepLore3 = config.getStringList("config.enchantments.farmers-step.lore3");
+        grandtillingLore1 = config.getStringList("config.enchantments.grand-tilling.lore1");
+        grandtillingLore2 = config.getStringList("config.enchantments.grand-tilling.lore2");
+        grandtillingLore3 = config.getStringList("config.enchantments.grand-tilling.lore3");
 
         noPermissionCommand = messages.getString("messages.no-permission-command");
         noPermissionAction = messages.getString("messages.no-permission-action");

@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Cost {
@@ -32,17 +31,6 @@ public class Cost {
 
     public List<String> getItems() {
         return items;
-    }
-
-    public List<String> getCost(){
-        List<String> list = new ArrayList<>();
-        if (getXpLevels() > 0)
-            list.add("Exp Levels: " + getXpLevels());
-        if (getMoney() > 0)
-            list.add("Money: " + getMoney());
-        if (!getItems().isEmpty())
-            list.add("Items: " + getItems());
-        return list;
     }
 
     public void execute(Player player){

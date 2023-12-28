@@ -36,9 +36,10 @@ config:
         # Exp in levels #
         exp: 30
         money: 10000
+        # The format for items is: "MATERIAL AMOUNT [NAME that you want to show in the gui]"
         items:
-          - "DIAMOND 1"
-          - "GOLD_INGOT 8"
+          - "DIAMOND 1 [Diamond]"
+          - "GOLD_INGOT 8 [Gold Ingots]"
     farmers-grace:
       name: "&aFarmer's Grace"
       lore-name: "&7Farmer's Grace I"
@@ -48,8 +49,8 @@ config:
         exp: 30
         money: 10000
         items:
-          - "DIAMOND 1"
-          - "GOLD_INGOT 8"
+          - "DIAMOND 1 [Diamond]"
+          - "GOLD_INGOT 8 [Gold Ingots]"
     delicate:
       name: "&aDelicate"
       lore-name: "&7Delicate I"
@@ -59,8 +60,8 @@ config:
         exp: 30
         money: 10000
         items:
-          - "DIAMOND 1"
-          - "GOLD_INGOT 8"
+          - "DIAMOND 1 [Diamond]"
+          - "GOLD_INGOT 8 [Gold Ingots]"
     irrigate:
       name: "&aIrrigate"
       lore-name: "&7Irrigate I"
@@ -74,8 +75,8 @@ config:
         exp: 30
         money: 10000
         items:
-          - "DIAMOND 1"
-          - "GOLD_INGOT 8"
+          - "DIAMOND 1 [Diamond]"
+          - "GOLD_INGOT 8 [Gold Ingots]"
     farmers-step:
       name: "&aFarmer's Step"
       lore-name1: "&7Farmer's Step I"
@@ -94,18 +95,18 @@ config:
         exp: 30
         money: 5000
         items:
-          - "DIAMOND 1"
-          - "GOLD_INGOT 8"
+          - "DIAMOND 1 [Diamond]"
+          - "GOLD_INGOT 8 [Gold Ingots]"
       cost2:
         exp: 45
         money: 10000
         items:
-          - "DIAMOND 32"
+          - "DIAMOND 32 [Diamonds]"
       cost3:
         exp: 60
         money: 15000
         items:
-          - "DIAMOND_BLOCK 8"
+          - "DIAMOND_BLOCK 8 [Diamond Blocks]"
       # This gui opens when using LEFT click in the air with the enchanted boots #
       gui:
         title: "&7Farmer's Step Menu"
@@ -130,18 +131,18 @@ config:
         exp: 30
         money: 5000
         items:
-          - "DIAMOND 1"
-          - "GOLD_INGOT 8"
+          - "DIAMOND 1 [Diamond]"
+          - "GOLD_INGOT 8 [Gold Ingots]"
       cost2:
         exp: 45
         money: 10000
         items:
-          - "DIAMOND 32"
+          - "DIAMOND 32 [Diamonds]"
       cost3:
         exp: 60
         money: 15000
         items:
-          - "DIAMOND_BLOCK 8"
+          - "DIAMOND_BLOCK 8 [Diamond Blocks]"
       # Max blocks that can be tilled at once in a row #
       # Blocks are tilled until its max or until it reaches a block that can't be tilled #
       level3-max-blocks: 64
