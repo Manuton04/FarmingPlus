@@ -1,6 +1,7 @@
 package fp.manuton.config;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import fp.manuton.FarmingPlus;
 import fp.manuton.costs.Cost;
 import fp.manuton.rewards.*;
@@ -113,7 +114,7 @@ public class MainConfigManager {
     }
 
     public void saveRecordToJson() {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         // Convertir los UUIDs a strings antes de guardar
         Map<String, RewardsCounter> stringKeyedMap = new HashMap<>();

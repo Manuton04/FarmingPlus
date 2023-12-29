@@ -42,7 +42,7 @@ public class MainCommand implements CommandExecutor, TabExecutor {
         if (args.length >= 1){
             if (args[0].equalsIgnoreCase("enchant")){ // /fp enchant (Enchantment)
                 if (!player.hasPermission("fp.commands.enchant")) {
-                    player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
+                    player.sendMessage(MessageUtils.getColoredMessage(MessageUtils.translatePrefix(FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand())));
                     return true;
                 }
                 if (args.length >= 2) {
@@ -99,7 +99,7 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                     return true;
                 }
                 else {
-                    player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix + FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
+                    player.sendMessage(MessageUtils.getColoredMessage(MessageUtils.translatePrefix(FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand())));
                     return true;
                 }
             }else if (args[0].equalsIgnoreCase("reward")){
@@ -180,7 +180,7 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                         help(player);
                     }
                 }else
-                    player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
+                    player.sendMessage(MessageUtils.getColoredMessage(MessageUtils.translatePrefix(FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand())));
 
 
             }else{
