@@ -1,18 +1,24 @@
 package fp.manuton.config;
 
+import com.google.gson.Gson;
 import fp.manuton.FarmingPlus;
 import fp.manuton.costs.Cost;
 import fp.manuton.rewards.*;
+import fp.manuton.rewardsCounter.RewardRecord;
+import fp.manuton.rewardsCounter.RewardsCounter;
 import fp.manuton.utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.io.*;
+import java.util.*;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Map;
 
 public class MainConfigManager {
 
@@ -67,6 +73,7 @@ public class MainConfigManager {
     private String entityInvalidMythic;
     private String rewardGiveCommand;
 
+    private long saveInterval;
     private List<String> replenishLore;
     private List<String> farmersgraceLore;
     private List<String> delicateLore;
@@ -80,6 +87,7 @@ public class MainConfigManager {
 
     private Map<String, Reward> rewards;
     private Map<String, Cost> costs;
+    private Map<UUID, RewardsCounter> rewardsCounter;
 
     public MainConfigManager(){
         configFile = new CustomConfig("config.yml", null, FarmingPlus.getPlugin());
@@ -91,6 +99,54 @@ public class MainConfigManager {
         loadConfig();
         loadRewards();
         loadCosts();
+        initializeRewardsCounter();
+        setSaveInterval(20L * 60 * getSaveInterval());
+    }
+
+    public void initializeRewardsCounter() {
+        File file = new File(FarmingPlus.getPlugin().getDataFolder() + File.separator + "Data", "rewardsRecords.json");
+        if (!file.exists()) {
+            rewardsCounter = new HashMap<>();
+        } else {
+            loadRecordFromJson();
+        }
+    }
+
+    public void saveRecordToJson() {
+        Gson gson = new Gson();
+
+        // Convertir los UUIDs a strings antes de guardar
+        Map<String, RewardsCounter> stringKeyedMap = new HashMap<>();
+        for (Map.Entry<UUID, RewardsCounter> entry : rewardsCounter.entrySet()) {
+            stringKeyedMap.put(entry.getKey().toString(), entry.getValue());
+        }
+
+        String json = gson.toJson(stringKeyedMap);
+
+        File file = new File(FarmingPlus.getPlugin().getDataFolder() + File.separator + "Data" + File.separator + "rewardsRecords.json");
+        file.getParentFile().mkdirs();
+
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadRecordFromJson() {
+        Gson gson = new Gson();
+        Type recordType = new TypeToken<Map<String, RewardsCounter>>(){}.getType();
+
+        try (FileReader reader = new FileReader(FarmingPlus.getPlugin().getDataFolder() + File.separator + "Data" + File.separator + "rewardsRecords.json")) {
+            Map<String, RewardsCounter> stringKeyedMap = gson.fromJson(reader, recordType);
+
+            rewardsCounter = new HashMap<>();
+            for (Map.Entry<String, RewardsCounter> entry : stringKeyedMap.entrySet()) {
+                rewardsCounter.put(UUID.fromString(entry.getKey()), entry.getValue());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void loadRewards() {
@@ -155,6 +211,15 @@ public class MainConfigManager {
         return new ArrayList<>(rewards.keySet());
     }
 
+    public String getKeyFromReward(Reward reward) {
+        for (Map.Entry<String, Reward> entry : rewards.entrySet()) {
+            if (entry.getValue().equals(reward)){
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
     public void loadCosts(){
         costs = new HashMap<>();
         ConfigurationSection enchants = configFile.getConfig().getConfigurationSection("config.enchantments");
@@ -200,10 +265,40 @@ public class MainConfigManager {
         return new ArrayList<>(costs.keySet());
     }
 
+    public String getKeyFromCost(Cost cost) {
+        for (Map.Entry<String, Cost> entry : costs.entrySet()) {
+            if (entry.getValue().equals(cost)){
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    public RewardsCounter getRewardsCounter(UUID key) {
+        return rewardsCounter.get(key);
+    }
+
+    public Collection<RewardsCounter> getAllRewardsCounter() {
+        return rewardsCounter.values();
+    }
+
+    public List<UUID> getAllRewardsCounterUuids() {
+        return new ArrayList<>(rewardsCounter.keySet());
+    }
+
+    public UUID getKeyFromRewardCounter(RewardsCounter rewardCounter) {
+        for (Map.Entry<UUID, RewardsCounter> entry : rewardsCounter.entrySet()) {
+            if (entry.getValue().equals(rewardCounter)){
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
     public void loadConfig(){
         FileConfiguration config = configFile.getConfig();
         FileConfiguration messages = messagesFile.getConfig();
-        enabledMetrics = config.getBoolean("config.enabled_metrics");
+        enabledMetrics = config.getBoolean("config.enabled-metrics");
         replenishNameLore = config.getString("config.enchantments.replenish.lore-name");
         farmersgraceNameLore = config.getString("config.enchantments.farmers-grace.lore-name");
         delicateNameLore = config.getString("config.enchantments.delicate.lore-name");
@@ -262,11 +357,17 @@ public class MainConfigManager {
         entityInvalid = messages.getString("messages.entity-invalid");
         entityInvalidMythic = messages.getString("messages.entity-invalid-mythic");
         rewardGiveCommand = messages.getString("messages.reward-give-command");
+
+        saveInterval = config.getLong("config.save-interval");
+        if (saveInterval <= 0) {
+            saveInterval = 3;
+        }
         
     }
 
     // If there isn't a file, it will create it and load the default values
     public void reloadConfig(){
+        saveRecordToJson();
         configFile.registerConfig();
         messagesFile.registerConfig();
         rewardsFile.registerConfig();
@@ -275,6 +376,18 @@ public class MainConfigManager {
         rewardsFile.reloadConfig();
         loadRewards();
         loadCosts();
+        initializeRewardsCounter();
+        setSaveInterval(20L * 60 * getSaveInterval());
+    }
+
+    public void startSaveTask() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(FarmingPlus.getPlugin(), this::saveRecordToJson, 0L, getSaveInterval());
+    }
+
+    public void setSaveInterval(long interval) {
+        this.saveInterval = interval;
+        Bukkit.getScheduler().cancelTasks(FarmingPlus.getPlugin());
+        startSaveTask();
     }
 
     public boolean isEnabledMetrics() {
@@ -500,5 +613,13 @@ public class MainConfigManager {
 
     public String getRewardGiveCommand() {
         return rewardGiveCommand;
+    }
+
+    public long getSaveInterval() {
+        return saveInterval;
+    }
+
+    public Map<UUID, RewardsCounter> getRewardsCounterMap() {
+        return rewardsCounter;
     }
 }

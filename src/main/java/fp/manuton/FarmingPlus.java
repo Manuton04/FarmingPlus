@@ -25,14 +25,14 @@ public class FarmingPlus extends JavaPlugin {
         mainConfigManager = new MainConfigManager();
         prefix = getPlugin().getMainConfigManager().getPluginPrefix();
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
-        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&fHas been enabled. &cVersion: "+version));
+        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+" &fHas been enabled. &cVersion: "+version));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
         if (getMainConfigManager().isEnabledMetrics()){
             int pluginId = 20430; // ID OF PLUGIN IN BSTATS //
             Metrics metrics = new Metrics(this, pluginId);
-            Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&aMetrics are enabled."));
+            Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+" &aMetrics are enabled."));
         }else
-            Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&cMetrics are not enabled :c."));
+            Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+" &cMetrics are not enabled :c."));
         CustomEnchantments.registerAll();
         registerEvents();
         registerCommands();
@@ -44,18 +44,28 @@ public class FarmingPlus extends JavaPlugin {
         ItemUtils.getCropsRewards();
         new UpdateChecker(this, pluginIdSpigot).getVersion(versionn -> {
             if (version.equals(versionn)) {
-                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&fThere is not a new update available."));
+                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+" &fThere is not a new update available."));
             } else {
-                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&fThere is a new update available."));
-                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&cVersion: "+versionn+ " &eLink: "+link));
+                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+" &fThere is a new update available."));
+                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+" &cVersion: "+versionn+ " &eLink: "+link));
             }
         });
     }
 
     public void onDisable(){
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
-        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&fHas been disabled. &cVersion: "+version));
+        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+" &fHas been disabled. &cVersion: "+version));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
+        boolean saved = true;
+        try {
+            getMainConfigManager().saveRecordToJson();
+            Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+" &aThe rewards records are being saved."));
+        }catch (Exception e) {
+            Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + " &cThe rewards records could not be saved."));
+            saved = false;
+        }
+        if (saved)
+            Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+" &aThe rewards records have been saved."));
     }
 
     public static FarmingPlus getPlugin(){

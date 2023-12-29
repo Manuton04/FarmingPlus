@@ -3,6 +3,7 @@ package fp.manuton.rewards;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Map;
 
 public abstract class Reward {
     private List<String> crops;

@@ -10,6 +10,8 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import fp.manuton.FarmingPlus;
 import fp.manuton.rewards.Reward;
+import fp.manuton.rewardsCounter.RewardRecord;
+import fp.manuton.rewardsCounter.RewardsCounter;
 import fp.manuton.utils.ItemUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -23,7 +25,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collection;
+import java.util.*;
 
 public class RewardsListener implements Listener {
 
@@ -84,6 +86,14 @@ public class RewardsListener implements Listener {
             for (String crop : reward.getCrops()){
                 if (crop.contains(block.getType().toString()) || crop.equals("ALL")){
                     if (Math.random() <= reward.getChance()){
+                        Map<UUID, RewardsCounter> rewardsCounterMap = FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap();
+                        UUID playerId = player.getUniqueId();
+                        RewardsCounter rewardsCounter = new RewardsCounter(new ArrayList<>());
+                        if (!rewardsCounterMap.containsKey(playerId))
+                            rewardsCounterMap.put(playerId, rewardsCounter);
+                        rewardsCounter = rewardsCounterMap.get(playerId);
+                        rewardsCounter.addRecord(FarmingPlus.getPlugin().getMainConfigManager().getKeyFromReward(reward));
+
                         reward.give(player);
                         rewardGiven = true;
                         break;

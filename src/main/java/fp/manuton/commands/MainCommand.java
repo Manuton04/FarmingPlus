@@ -5,6 +5,7 @@ import fp.manuton.enchantments.CustomEnchantments;
 import fp.manuton.guis.EnchantGui;
 import fp.manuton.rewards.Reward;
 import fp.manuton.rewards.SummonReward;
+import fp.manuton.rewardsCounter.RewardsCounter;
 import fp.manuton.utils.ItemUtils;
 import fp.manuton.utils.MessageUtils;
 import io.lumine.mythic.bukkit.MythicBukkit;
@@ -17,10 +18,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.sk89q.worldedit.command.util.PrintCommandHelp.help;
 
@@ -85,7 +83,7 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                         enchantable.add(Material.WATER_BUCKET);
                         ItemUtils.enchantItem(enchantable, player, CustomEnchantments.IRRIGATE,1);
                     }else {
-                        player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThat enchantment doesn't exist!"));
+                        player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotEnchantment()));
                     }
                 }else {
                     for (String line: FarmingPlus.getPlugin().getMainConfigManager().getEnchantsList()){
@@ -147,6 +145,15 @@ public class MainCommand implements CommandExecutor, TabExecutor {
 
                                 }
                                 if (done) {
+
+                                    Map<UUID, RewardsCounter> rewardsCounterMap = FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap();
+                                    UUID playerId = player.getUniqueId();
+                                    RewardsCounter rewardsCounter = new RewardsCounter(new ArrayList<>());
+                                    if (!rewardsCounterMap.containsKey(playerId))
+                                        rewardsCounterMap.put(playerId, rewardsCounter);
+                                    rewardsCounter = rewardsCounterMap.get(playerId);
+                                    rewardsCounter.addRecord(FarmingPlus.getPlugin().getMainConfigManager().getKeyFromReward(reward));
+
                                     String message = FarmingPlus.getPlugin().getMainConfigManager().getRewardGiveCommand();
                                     message = message.replace("%reward%", args[3]);
                                     player.sendMessage(MessageUtils.translateAll(Bukkit.getPlayer(target), message));
@@ -202,13 +209,13 @@ public class MainCommand implements CommandExecutor, TabExecutor {
     // Reload config if player has permissions //
     public void subCommandReload(CommandSender sender){
         if (!sender.hasPermission("fp.commands.reload") && !sender.hasPermission("fp.admin")){
-            sender.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
+            sender.sendMessage(MessageUtils.getColoredMessage(MessageUtils.translatePrefix(FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand())));
             return;
         }
         FarmingPlus.getPlugin().getMainConfigManager().reloadConfig();
         if (sender instanceof Player)
-            sender.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+FarmingPlus.getPlugin().getMainConfigManager().getReloadedConfig()));
-        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+FarmingPlus.getPlugin().getMainConfigManager().getReloadedConfig()));
+            sender.sendMessage(MessageUtils.getColoredMessage(MessageUtils.translatePrefix(FarmingPlus.getPlugin().getMainConfigManager().getReloadedConfig())));
+        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(MessageUtils.translatePrefix(FarmingPlus.getPlugin().getMainConfigManager().getReloadedConfig())));
     }
 
     @Override

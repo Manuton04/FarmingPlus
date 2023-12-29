@@ -7,7 +7,10 @@
 # Configuration for the plugin #
 config:
   # This sends anonymous statistics that helps me improve the plugin. It's not necessary, but it helps to maintain me motivated. #
-  enabled_metrics: true
+  enabled-metrics: true
+  # This is the interval in minutes that the plugin will save the data #
+  # For example, records of rewards #
+  save-interval: 3
   # This is the prefix that will be shown in the messages #
   prefix: "&6&l[&2&lFarmingPlus&6&l] "
   gui:
