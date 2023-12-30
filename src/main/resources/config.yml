@@ -1,4 +1,4 @@
-# Support: https://discord.gg/TrNpu3dacW
+# Support: https://discord.gg/2KhE6xeEnf
 # GitHub: https://github.com/Manuton04/FarmingPlus
 #
 # Developers: Manuton
@@ -14,6 +14,9 @@ config:
   # This is the prefix that will be shown in the messages #
   prefix: "&6&l[&2&lFarmingPlus&6&l] "
   not-top-reward: "&cNo one in the top %farmingplus_top_number%"
+
+
+
   gui:
     title: "&7Enchanting Menu"
     empty-slot: "BLACK_STAINED_GLASS_PANE"
@@ -25,6 +28,9 @@ config:
     volume-on-close: 0.5
     confirm: "LIME_WOOL"
     cancel: "RED_WOOL"
+
+
+
   enchantments:
     replenish:
       name: "&aReplenish"
@@ -44,6 +50,7 @@ config:
         items:
           - "DIAMOND 1 [Diamond]"
           - "GOLD_INGOT 8 [Gold Ingots]"
+
     farmers-grace:
       name: "&aFarmer's Grace"
       lore-name: "&7Farmer's Grace I"
@@ -55,6 +62,7 @@ config:
         items:
           - "DIAMOND 1 [Diamond]"
           - "GOLD_INGOT 8 [Gold Ingots]"
+
     delicate:
       name: "&aDelicate"
       lore-name: "&7Delicate I"
@@ -66,6 +74,7 @@ config:
         items:
           - "DIAMOND 1 [Diamond]"
           - "GOLD_INGOT 8 [Gold Ingots]"
+
     irrigate:
       name: "&aIrrigate"
       lore-name: "&7Irrigate I"
@@ -81,6 +90,7 @@ config:
         items:
           - "DIAMOND 1 [Diamond]"
           - "GOLD_INGOT 8 [Gold Ingots]"
+
     farmers-step:
       name: "&aFarmer's Step"
       lore-name1: "&7Farmer's Step I"
@@ -117,6 +127,7 @@ config:
         empty-slot: "BLACK_STAINED_GLASS_PANE"
         sound-on-set: "ENTITY_EXPERIENCE_ORB_PICKUP"
         volume-on-set: 0.5
+
     grand-tilling:
       name: "&aGrand Tilling"
       lore-name1: "&7Grand Tilling I"
