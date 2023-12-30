@@ -8,7 +8,7 @@ What is **FarmingPlus**?
      - MythicMobs
      - PlaceholderAPI
 # Overview
-FarmingPlus is a plugin that allows players to experience new mechanics in farming. It includes new enchantments, with their own enchanting GUI. Rewards for farming, and more.
+FarmingPlus is a plugin that allows players to experience new mechanics in farming. It includes new enchantments, with their own enchanting GUI, rewards for farming, and more.
 # Features
   - **Enchantments**:
     - Farmer's Grace: Prevent crops from being destroyed when trampled. **(Boots)**
@@ -79,8 +79,8 @@ FarmingPlus is a plugin that allows players to experience new mechanics in farmi
   - %farmingplus_top_position%: Position of the player in the leaderboard.
   - %farmingplus_total_rewards%: Total rewards of the player.
   
-  Only working in the plugin:
-    - %farmingplus_top_number%: Changes to the number top that is unfilled. Used for **not-top-reward** in config.yml.
+Only working in the plugin:
+  - %farmingplus_top_number%: Changes to the number top that is unfilled. Used for **not-top-reward** in config.yml.
   
 # Discord
 If you have any questions, found a bug or want to suggest something, you can join to the official [Discord Server](https://discord.gg/2KhE6xeEnf).
