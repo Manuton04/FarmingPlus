@@ -42,7 +42,7 @@ public class MainCommand implements CommandExecutor, TabExecutor {
         if (args.length >= 1){
             if (args[0].equalsIgnoreCase("enchant")){ // /fp enchant (Enchantment)
                 if (!player.hasPermission("fp.commands.enchant")) {
-                    player.sendMessage(MessageUtils.getColoredMessage(MessageUtils.translatePrefix(FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand())));
+                    player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
                     return true;
                 }
                 if (args.length >= 2) {
@@ -99,7 +99,7 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                     return true;
                 }
                 else {
-                    player.sendMessage(MessageUtils.getColoredMessage(MessageUtils.translatePrefix(FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand())));
+                    player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
                     return true;
                 }
             }else if (args[0].equalsIgnoreCase("reward")){
@@ -175,12 +175,15 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                             player.sendMessage(MessageUtils.getColoredMessage("&e- " + reward));
                         }
                         player.sendMessage(MessageUtils.getColoredMessage("&f&l---------------------------------"));
+                    }else if (args[1].equalsIgnoreCase("top")){
+                        player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getTopReward()));
+                        return true;
                     }else {
                         player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotCommand()));
                         help(player);
                     }
                 }else
-                    player.sendMessage(MessageUtils.getColoredMessage(MessageUtils.translatePrefix(FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand())));
+                    player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
 
 
             }else{
@@ -209,13 +212,13 @@ public class MainCommand implements CommandExecutor, TabExecutor {
     // Reload config if player has permissions //
     public void subCommandReload(CommandSender sender){
         if (!sender.hasPermission("fp.commands.reload") && !sender.hasPermission("fp.admin")){
-            sender.sendMessage(MessageUtils.getColoredMessage(MessageUtils.translatePrefix(FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand())));
+            sender.sendMessage(MessageUtils.translateAll((Player) sender, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
             return;
         }
         FarmingPlus.getPlugin().getMainConfigManager().reloadConfig();
         if (sender instanceof Player)
-            sender.sendMessage(MessageUtils.getColoredMessage(MessageUtils.translatePrefix(FarmingPlus.getPlugin().getMainConfigManager().getReloadedConfig())));
-        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(MessageUtils.translatePrefix(FarmingPlus.getPlugin().getMainConfigManager().getReloadedConfig())));
+            sender.sendMessage(MessageUtils.translateAll((Player) sender, FarmingPlus.getPlugin().getMainConfigManager().getReloadedConfig()));
+        Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll((Player) sender, FarmingPlus.getPlugin().getMainConfigManager().getReloadedConfig()));
     }
 
     @Override
@@ -245,7 +248,7 @@ public class MainCommand implements CommandExecutor, TabExecutor {
 
         if (args[0].equalsIgnoreCase("reward") && (sender.hasPermission("fp.admin") || sender.hasPermission("fp.commands.reward"))) {
             if (args.length == 2)
-                return Arrays.asList("give", "list");
+                return Arrays.asList("give", "list", "top");
             if (args.length == 3) {
                 if (args[1].equalsIgnoreCase("give"))
                     return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();

@@ -16,6 +16,7 @@ import java.io.*;
 import java.util.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.bukkit.entity.Player;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -73,6 +74,8 @@ public class MainConfigManager {
     private String entityInvalid;
     private String entityInvalidMythic;
     private String rewardGiveCommand;
+    private String noTop;
+    private String topReward;
 
     private long saveInterval;
     private List<String> replenishLore;
@@ -296,6 +299,35 @@ public class MainConfigManager {
         return null;
     }
 
+    public String getTopPlayer(int top) {
+        List<Map.Entry<UUID, RewardsCounter>> list = new ArrayList<>(rewardsCounter.entrySet());
+        list.sort((o1, o2) -> o2.getValue().getTotal() - o1.getValue().getTotal());
+        top--;
+        if (top > list.size())
+            return null;
+
+        try {
+            Map.Entry<UUID, RewardsCounter> entry = list.get(top);
+            String player = Bukkit.getOfflinePlayer(entry.getKey()).getName();
+            return player + ": " + entry.getValue().getTotal();
+        }catch (Exception e){
+            return null;
+        }
+
+    }
+
+    public int getTopPlayer(Player player){
+        List<Map.Entry<UUID, RewardsCounter>> list = new ArrayList<>(rewardsCounter.entrySet());
+        list.sort((o1, o2) -> o2.getValue().getTotal() - o1.getValue().getTotal());
+        int position = 1;
+        for (Map.Entry<UUID, RewardsCounter> entry : list){
+            if (entry.getKey().equals(player.getUniqueId()))
+                return position;
+            position++;
+        }
+        return 0;
+    }
+
     public void loadConfig(){
         FileConfiguration config = configFile.getConfig();
         FileConfiguration messages = messagesFile.getConfig();
@@ -333,6 +365,7 @@ public class MainConfigManager {
         pluginPrefix = config.getString("config.prefix");
         guiConfirm = config.getString("config.gui.confirm");
         guiCancel = config.getString("config.gui.cancel");
+        noTop = config.getString("config.not-top-reward");
 
         replenishLore = config.getStringList("config.enchantments.replenish.lore");
         farmersgraceLore = config.getStringList("config.enchantments.farmers-grace.lore");
@@ -358,6 +391,7 @@ public class MainConfigManager {
         entityInvalid = messages.getString("messages.entity-invalid");
         entityInvalidMythic = messages.getString("messages.entity-invalid-mythic");
         rewardGiveCommand = messages.getString("messages.reward-give-command");
+        topReward = messages.getString("messages.top-reward");
 
         saveInterval = config.getLong("config.save-interval");
         if (saveInterval <= 0) {
@@ -622,5 +656,13 @@ public class MainConfigManager {
 
     public Map<UUID, RewardsCounter> getRewardsCounterMap() {
         return rewardsCounter;
+    }
+
+    public String getNoTop() {
+        return noTop;
+    }
+
+    public String getTopReward() {
+        return topReward;
     }
 }

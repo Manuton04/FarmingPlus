@@ -1,6 +1,7 @@
 package fp.manuton.utils;
 
 import fp.manuton.FarmingPlus;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -14,29 +15,14 @@ public class MessageUtils {
             return "";
     }
 
-    public static String translatePlayer(Player player, String message){
-        if (message != null)
-            return message.replace("%player%", player.getName());
-        else
+    public static String translateAll(Player p, String message){
+        if (message == null)
             return "";
-    }
 
-    public static String translatePrefix(String message){
-        if (message != null)
-            return message.replace("%pluginprefix%", FarmingPlus.getPlugin().getMainConfigManager().getPluginPrefix());
-        else
-            return "";
-    }
+        message = PlaceholderAPI.setPlaceholders(p, message);
+        message = getColoredMessage(message);
+        return message;
 
-    public static String translateAll(Player player, String message){
-        if (message != null) {
-            message = translatePlayer(player, message);
-            message = translatePrefix(message);
-            message = getColoredMessage(message);
-            return message;
-        }
-        else
-            return "";
     }
 
     public static boolean isStringEmpty(String string){

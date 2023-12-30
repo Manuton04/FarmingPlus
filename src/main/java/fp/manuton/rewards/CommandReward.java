@@ -42,7 +42,7 @@ public class CommandReward extends Reward {
             player.sendMessage(MessageUtils.translateAll(player, message));
         }
         for (String command : getCommands()){
-            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), MessageUtils.translatePlayer(player, command));
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), MessageUtils.translateAll(player, command));
         }
     }
 }

@@ -13,6 +13,7 @@ config:
   save-interval: 3
   # This is the prefix that will be shown in the messages #
   prefix: "&6&l[&2&lFarmingPlus&6&l] "
+  not-top-reward: "&cNo one in the top %farmingplus_top_number%"
   gui:
     title: "&7Enchanting Menu"
     empty-slot: "BLACK_STAINED_GLASS_PANE"

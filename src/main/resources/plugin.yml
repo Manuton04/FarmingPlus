@@ -6,6 +6,8 @@ api-version: 1.13
 softdepend:
   - [Vault]
   - [WorldGuard]
+  - [MythicMobs]
+  - [PlaceholderAPI]
 
 commands:
   farmingplus:

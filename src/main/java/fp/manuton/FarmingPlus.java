@@ -24,6 +24,9 @@ public class FarmingPlus extends JavaPlugin {
         plugin = this;
         mainConfigManager = new MainConfigManager();
         prefix = getPlugin().getMainConfigManager().getPluginPrefix();
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
+            new PlaceholderAPIHook().register();
+        }
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+" &fHas been enabled. &cVersion: "+version));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
