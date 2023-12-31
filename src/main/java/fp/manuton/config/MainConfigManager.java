@@ -8,7 +8,10 @@ import fp.manuton.rewards.*;
 import fp.manuton.rewardsCounter.RewardRecord;
 import fp.manuton.rewardsCounter.RewardsCounter;
 import fp.manuton.utils.MessageUtils;
+import fp.manuton.utils.PlaceholderAPIHook;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -76,6 +79,10 @@ public class MainConfigManager {
     private String rewardGiveCommand;
     private String noTop;
     private String topReward;
+    private String topRewardsLeaderboard;
+    private String topRewardsLeaderboardLine;
+    private String notPlayer;
+    private String rewardsCleared;
 
     private long saveInterval;
     private List<String> replenishLore;
@@ -299,8 +306,23 @@ public class MainConfigManager {
         return null;
     }
 
+    public List<String> getTopRewardsLeaderboardList(){
+        List<Map.Entry<UUID, RewardsCounter>> list = new ArrayList<>(getRewardsCounterMap().entrySet());
+        list.sort((o1, o2) -> o2.getValue().getTotal() - o1.getValue().getTotal());
+        List<String> leaderboard = new ArrayList<>();
+        int position = 1;
+        for (Map.Entry<UUID, RewardsCounter> entry : list){
+            String player = Bukkit.getOfflinePlayer(entry.getKey()).getName();
+            if (player != null && !player.isEmpty()) {
+                leaderboard.add(player);
+                position++;
+            }
+        }
+        return leaderboard;
+    }
+
     public String getTopPlayer(int top) {
-        List<Map.Entry<UUID, RewardsCounter>> list = new ArrayList<>(rewardsCounter.entrySet());
+        List<Map.Entry<UUID, RewardsCounter>> list = new ArrayList<>(getRewardsCounterMap().entrySet());
         list.sort((o1, o2) -> o2.getValue().getTotal() - o1.getValue().getTotal());
         top--;
         if (top > list.size())
@@ -316,7 +338,7 @@ public class MainConfigManager {
 
     }
 
-    public int getTopPlayer(Player player){
+    public int getTopPlayer(OfflinePlayer player){
         List<Map.Entry<UUID, RewardsCounter>> list = new ArrayList<>(rewardsCounter.entrySet());
         list.sort((o1, o2) -> o2.getValue().getTotal() - o1.getValue().getTotal());
         int position = 1;
@@ -392,6 +414,10 @@ public class MainConfigManager {
         entityInvalidMythic = messages.getString("messages.entity-invalid-mythic");
         rewardGiveCommand = messages.getString("messages.reward-give-command");
         topReward = messages.getString("messages.top-reward");
+        topRewardsLeaderboard = messages.getString("messages.top-reward-leaderboard");
+        topRewardsLeaderboardLine = messages.getString("messages.top-reward-leaderboard-line");
+        notPlayer = messages.getString("messages.not-player");
+        rewardsCleared = messages.getString("messages.rewards-cleared");
 
         saveInterval = config.getLong("config.save-interval");
         if (saveInterval <= 0) {
@@ -664,5 +690,21 @@ public class MainConfigManager {
 
     public String getTopReward() {
         return topReward;
+    }
+
+    public String getTopRewardsLeaderboard() {
+        return topRewardsLeaderboard;
+    }
+
+    public String getTopRewardsLeaderboardLine() {
+        return topRewardsLeaderboardLine;
+    }
+
+    public String getNotPlayer() {
+        return notPlayer;
+    }
+
+    public String getRewardsCleared() {
+        return rewardsCleared;
     }
 }

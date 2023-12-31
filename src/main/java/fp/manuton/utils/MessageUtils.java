@@ -3,6 +3,7 @@ package fp.manuton.utils;
 import fp.manuton.FarmingPlus;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public class MessageUtils {
@@ -15,10 +16,12 @@ public class MessageUtils {
             return "";
     }
 
-    public static String translateAll(Player p, String message){
+    public static String translateAll(OfflinePlayer p, String message){
         if (message == null)
             return "";
 
+        if (p != null)
+            message = message.replace("%player%", p.getName());
         message = PlaceholderAPI.setPlaceholders(p, message);
         message = getColoredMessage(message);
         return message;

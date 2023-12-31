@@ -2,6 +2,8 @@ package fp.manuton.utils;
 
 import fp.manuton.FarmingPlus;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public class PlaceholderAPIHook extends PlaceholderExpansion {
@@ -29,7 +31,9 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
     }
 
     @Override
-    public String onPlaceholderRequest(Player player, String identifier) {
+    public String onRequest(OfflinePlayer player, String identifier) {
+        if (player == null)
+            return "";
         if (identifier.equals("prefix")){ // Usage: %farmingplus_prefix%
             return plugin.getMainConfigManager().getPluginPrefix();
         }
