@@ -11,6 +11,14 @@ public class RewardRecord {
         this.rewardName = rewardName;
     }
 
+    public Date getDate() {
+        return date;
+    }
+
+    public String getRewardName() {
+        return rewardName;
+    }
+
     @Override
     public String toString() {
         return "Event{" +

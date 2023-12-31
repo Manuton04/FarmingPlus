@@ -1,5 +1,7 @@
 # Messages for the plugin #
 messages:
+  error-mysql: "%farmingplus_prefix%&cThere was an error connecting to the database."
+  connected-mysql: "%farmingplus_prefix%&aConnected to the database successfully."
   no-permission-command: "%farmingplus_prefix%&cYou don't have permissions to use this command."
   no-permission-action: "%farmingplus_prefix%&cYou don't have permissions to perform this action."
   reloaded-config: "%farmingplus_prefix%&aConfig reloaded successfully."

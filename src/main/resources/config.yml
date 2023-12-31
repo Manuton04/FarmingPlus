@@ -13,6 +13,15 @@ config:
   save-interval: 3
   # This is the prefix that will be shown in the messages #
   prefix: "&6&l[&2&lFarmingPlus&6&l] "
+  mysql:
+    # This is the interval in minutes that the plugin will download the data from the database #
+    download-interval: 5
+    enabled: false
+    host: ""
+    port:
+    database: ""
+    username: ""
+    password: ""
   not-top-reward: "&cNo one in the top %farmingplus_top_number%"
 
 

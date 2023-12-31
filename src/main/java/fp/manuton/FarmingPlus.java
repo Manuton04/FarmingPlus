@@ -1,6 +1,9 @@
 package fp.manuton;
 
+import fp.manuton.SQL.ConnectionMySQL;
+import fp.manuton.SQL.MySQLData;
 import fp.manuton.commands.MainCommand;
+import fp.manuton.config.CustomConfig;
 import fp.manuton.config.MainConfigManager;
 import fp.manuton.enchantments.CustomEnchantments;
 import fp.manuton.events.GuiListener;
@@ -10,18 +13,36 @@ import fp.manuton.guis.EnchantGui;
 import fp.manuton.guis.FarmersStepGui;
 import fp.manuton.utils.*;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.sql.Connection;
 
 public class FarmingPlus extends JavaPlugin {
     public static String prefix = null;
     private final String version = getDescription().getVersion();
     private static FarmingPlus plugin;
     private MainConfigManager mainConfigManager;
+    private static Connection connectionMySQL;
     private final String link = ""; // MODRINTH LINK //
     private final int pluginIdSpigot = 1; // ADD PLUGIN ID SPIGOT //
 
     public void onEnable(){
         plugin = this;
+        CustomConfig configFile;
+        configFile = new CustomConfig("config.yml", null, FarmingPlus.getPlugin());
+        configFile.registerConfig();
+        FileConfiguration config = configFile.getConfig();
+        boolean mySQLEnabled = config.getBoolean("config.mysql.enabled");
+        String mySQLHost = config.getString("config.mysql.host");
+        int mySQLPort = config.getInt("config.mysql.port");
+        String mySQLDatabase = config.getString("config.mysql.database");
+        String mySQLUsername = config.getString("config.mysql.username");
+        String mySQLPassword = config.getString("config.mysql.password");
+
+        connectionMySQL = null;
+        if (mySQLEnabled)
+            connectionMySQL = new ConnectionMySQL(mySQLHost, mySQLPort, mySQLDatabase, mySQLUsername, mySQLPassword).getConnection();
         mainConfigManager = new MainConfigManager();
         prefix = getPlugin().getMainConfigManager().getPluginPrefix();
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
@@ -30,6 +51,10 @@ public class FarmingPlus extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+" &fHas been enabled. &cVersion: "+version));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
+        if (connectionMySQL != null && MySQLData.isDatabaseConnected(getConnectionMySQL()))
+            Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, getMainConfigManager().getConnectedMySQL()));
+        else
+            Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, getMainConfigManager().getErrorMySQL()));
         if (getMainConfigManager().isEnabledMetrics()){
             int pluginId = 20430; // ID OF PLUGIN IN BSTATS //
             Metrics metrics = new Metrics(this, pluginId);
@@ -62,7 +87,7 @@ public class FarmingPlus extends JavaPlugin {
         boolean saved = true;
         try {
             getMainConfigManager().saveRecordToJson();
-            Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+" &aThe rewards records are being saved."));
+            Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+" &aThe rewards records are being saved in a JSON."));
         }catch (Exception e) {
             Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + " &cThe rewards records could not be saved."));
             saved = false;
@@ -100,6 +125,10 @@ public class FarmingPlus extends JavaPlugin {
 
     public void registerFarmerStepGui(){
         new FarmersStepGui();
+    }
+
+    public static Connection getConnectionMySQL(){
+        return connectionMySQL;
     }
 
 }

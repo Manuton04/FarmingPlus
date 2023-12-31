@@ -9,6 +9,7 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import fp.manuton.FarmingPlus;
+import fp.manuton.SQL.MySQLData;
 import fp.manuton.rewards.Reward;
 import fp.manuton.rewardsCounter.RewardRecord;
 import fp.manuton.rewardsCounter.RewardsCounter;
@@ -86,6 +87,14 @@ public class RewardsListener implements Listener {
             for (String crop : reward.getCrops()){
                 if (crop.contains(block.getType().toString()) || crop.equals("ALL")){
                     if (Math.random() <= reward.getChance()){
+
+                        reward.give(player);
+                        rewardGiven = true;
+                        if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL())) {
+                            UUID playerId = player.getUniqueId();
+                            RewardRecord rewardRecord = new RewardRecord(new Date(), FarmingPlus.getPlugin().getMainConfigManager().getKeyFromReward(reward));
+                            MySQLData.saveRewardCounterToDatabase(FarmingPlus.getConnectionMySQL(), playerId, rewardRecord);
+                        }
                         Map<UUID, RewardsCounter> rewardsCounterMap = FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap();
                         UUID playerId = player.getUniqueId();
                         RewardsCounter rewardsCounter = new RewardsCounter(new ArrayList<>());
@@ -93,9 +102,6 @@ public class RewardsListener implements Listener {
                             rewardsCounterMap.put(playerId, rewardsCounter);
                         rewardsCounter = rewardsCounterMap.get(playerId);
                         rewardsCounter.addRecord(FarmingPlus.getPlugin().getMainConfigManager().getKeyFromReward(reward));
-
-                        reward.give(player);
-                        rewardGiven = true;
                         break;
                     }
                 }

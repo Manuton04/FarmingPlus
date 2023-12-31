@@ -3,27 +3,29 @@ package fp.manuton.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fp.manuton.FarmingPlus;
+import fp.manuton.SQL.MySQLData;
 import fp.manuton.costs.Cost;
 import fp.manuton.rewards.*;
-import fp.manuton.rewardsCounter.RewardRecord;
 import fp.manuton.rewardsCounter.RewardsCounter;
 import fp.manuton.utils.MessageUtils;
-import fp.manuton.utils.PlaceholderAPIHook;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.*;
+import java.sql.Connection;
 import java.util.*;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.bukkit.entity.Player;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import static fp.manuton.SQL.MySQLData.loadRewardsFromDatabase;
 
 public class MainConfigManager {
 
@@ -83,6 +85,16 @@ public class MainConfigManager {
     private String topRewardsLeaderboardLine;
     private String notPlayer;
     private String rewardsCleared;
+    private String errorMySQL;
+    private String connectedMySQL;
+    private String mySQLHost;
+    private int mySQLPort;
+    private String mySQLDatabase;
+    private String mySQLUsername;
+    private String mySQLPassword;
+    private boolean mySQLEnabled;
+    private int mySQLDownloadInterval;
+
 
     private long saveInterval;
     private List<String> replenishLore;
@@ -110,8 +122,20 @@ public class MainConfigManager {
         loadConfig();
         loadRewards();
         loadCosts();
+        if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL())) {
+            databaseDownloadTask();
+        }
         initializeRewardsCounter();
         setSaveInterval(20L * 60 * getSaveInterval());
+    }
+
+    public void databaseDownloadTask(){
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+
+        executorService.scheduleAtFixedRate(() -> {
+            Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+" &fDownloading rewards from database..."));
+            rewardsCounter = loadRewardsFromDatabase(FarmingPlus.getConnectionMySQL());
+        }, 0, getMySQLDownloadInterval(), TimeUnit.MINUTES);
     }
 
     public void initializeRewardsCounter() {
@@ -124,9 +148,9 @@ public class MainConfigManager {
     }
 
     public void saveRecordToJson() {
+        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+" &fSaving rewards records in a JSON..."));
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        // Convertir los UUIDs a strings antes de guardar
         Map<String, RewardsCounter> stringKeyedMap = new HashMap<>();
         for (Map.Entry<UUID, RewardsCounter> entry : rewardsCounter.entrySet()) {
             stringKeyedMap.put(entry.getKey().toString(), entry.getValue());
@@ -388,6 +412,13 @@ public class MainConfigManager {
         guiConfirm = config.getString("config.gui.confirm");
         guiCancel = config.getString("config.gui.cancel");
         noTop = config.getString("config.not-top-reward");
+        mySQLEnabled = config.getBoolean("config.mysql.enabled");
+        mySQLDownloadInterval = config.getInt("config.mysql.download-interval");
+        mySQLHost = config.getString("config.mysql.host");
+        mySQLPort = config.getInt("config.mysql.port");
+        mySQLDatabase = config.getString("config.mysql.database");
+        mySQLUsername = config.getString("config.mysql.username");
+        mySQLPassword = config.getString("config.mysql.password");
 
         replenishLore = config.getStringList("config.enchantments.replenish.lore");
         farmersgraceLore = config.getStringList("config.enchantments.farmers-grace.lore");
@@ -418,6 +449,8 @@ public class MainConfigManager {
         topRewardsLeaderboardLine = messages.getString("messages.top-reward-leaderboard-line");
         notPlayer = messages.getString("messages.not-player");
         rewardsCleared = messages.getString("messages.rewards-cleared");
+        errorMySQL = messages.getString("messages.error-mysql");
+        connectedMySQL = messages.getString("messages.connected-mysql");
 
         saveInterval = config.getLong("config.save-interval");
         if (saveInterval <= 0) {
@@ -437,6 +470,9 @@ public class MainConfigManager {
         rewardsFile.reloadConfig();
         loadRewards();
         loadCosts();
+        if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL())) {
+            databaseDownloadTask();
+        }
         initializeRewardsCounter();
         setSaveInterval(20L * 60 * getSaveInterval());
     }
@@ -706,5 +742,41 @@ public class MainConfigManager {
 
     public String getRewardsCleared() {
         return rewardsCleared;
+    }
+
+    public String getErrorMySQL() {
+        return errorMySQL;
+    }
+
+    public String getConnectedMySQL() {
+        return connectedMySQL;
+    }
+
+    public String getMySQLHost() {
+        return mySQLHost;
+    }
+
+    public int getMySQLPort() {
+        return mySQLPort;
+    }
+
+    public String getMySQLDatabase() {
+        return mySQLDatabase;
+    }
+
+    public String getMySQLUsername() {
+        return mySQLUsername;
+    }
+
+    public String getMySQLPassword() {
+        return mySQLPassword;
+    }
+
+    public boolean isMySQLEnabled() {
+        return mySQLEnabled;
+    }
+
+    public int getMySQLDownloadInterval() {
+        return mySQLDownloadInterval;
     }
 }

@@ -7,6 +7,7 @@ What is **FarmingPlus**?
      - WorldGuard
      - MythicMobs
      - PlaceholderAPI
+  - Compatible with MySQL.
 # Overview
 FarmingPlus is a plugin that allows players to experience new mechanics in farming. It includes new enchantments, with their own enchanting GUI, rewards for farming, and more.
 # Features
