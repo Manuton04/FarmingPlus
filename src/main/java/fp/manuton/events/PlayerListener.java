@@ -60,24 +60,27 @@ public class PlayerListener implements Listener {
 
         Player player = event.getPlayer();
 
-        // Get the WorldGuard instance
-        WorldGuard worldGuard = WorldGuard.getInstance();
-        // Get the region container
-        RegionContainer regionContainer = worldGuard.getPlatform().getRegionContainer();
-        // Create a query from the region container
-        RegionQuery query = regionContainer.createQuery();
-        // Get the WorldGuardPlugin instance for the player
-        WorldGuardPlugin pluginW = WorldGuardPlugin.inst();
-        // Get the LocalPlayer instance for the player
-        LocalPlayer localPlayer = pluginW.wrapPlayer(player);
+        boolean canPlace = true;
+        if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null){
+            // Get the WorldGuard instance
+            WorldGuard worldGuard = WorldGuard.getInstance();
+            // Get the region container
+            RegionContainer regionContainer = worldGuard.getPlatform().getRegionContainer();
+            // Create a query from the region container
+            RegionQuery query = regionContainer.createQuery();
+            // Get the WorldGuardPlugin instance for the player
+            WorldGuardPlugin pluginW = WorldGuardPlugin.inst();
+            // Get the LocalPlayer instance for the player
+            LocalPlayer localPlayer = pluginW.wrapPlayer(player);
 
-        // Get all regions at the block's location
-        ApplicableRegionSet regions = query.getApplicableRegions(BukkitAdapter.adapt(block.getLocation()));
-        // Check if the player has permission to place blocks in these regions
-        boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
+            // Get all regions at the block's location
+            ApplicableRegionSet regions = query.getApplicableRegions(BukkitAdapter.adapt(block.getLocation()));
+            // Check if the player has permission to place blocks in these regions
+            canPlace = regions.testState(localPlayer, Flags.BUILD);
+        }
 
         // If the player does not have permission to place blocks, skip this iteration
-        if (!canPlace && !player.hasPermission("fp.bypass.replenish.protection")) {
+        if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && !canPlace && !player.hasPermission("fp.bypass.replenish.protection")) {
             return;
         }
 
@@ -211,7 +214,7 @@ public class PlayerListener implements Listener {
                 boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
 
                 // If the player does not have permission to place blocks, skip this iteration
-                if (!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) {
+                if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && !canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) {
                     continue;
                 }
 
@@ -266,7 +269,7 @@ public class PlayerListener implements Listener {
                 boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
 
                 // If the player does not have permission to place blocks, skip this iteration
-                if (!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) {
+                if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && !canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) {
                     continue;
                 }
 
@@ -356,7 +359,7 @@ public class PlayerListener implements Listener {
                     boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
 
                     // If the player does not have permission to place blocks, skip this iteration
-                    if (!canPlace && !player.hasPermission("fp.bypass.grandtilling.protection")) {
+                    if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && !canPlace && !player.hasPermission("fp.bypass.grandtilling.protection")) {
                         continue;
                     }
 
@@ -376,7 +379,7 @@ public class PlayerListener implements Listener {
                     boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
 
                     // If the player does not have permission to place blocks, skip this iteration
-                    if (!canPlace && !player.hasPermission("fp.bypass.grandtilling.protection")) {
+                    if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && !canPlace && !player.hasPermission("fp.bypass.grandtilling.protection")) {
                         break;
                     }
 
@@ -474,7 +477,7 @@ public class PlayerListener implements Listener {
             boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
 
             // If the player does not have permission to place blocks, skip this iteration
-            if (!canPlace && !player.hasPermission("fp.bypass.irrigate.protection")) {
+            if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && !canPlace && !player.hasPermission("fp.bypass.irrigate.protection")) {
                 break;
             }
             if (block.getBlock().getType() == Material.AIR || block.getBlock().getType() == Material.WATER)

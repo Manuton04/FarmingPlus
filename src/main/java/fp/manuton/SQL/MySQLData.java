@@ -1,5 +1,6 @@
 package fp.manuton.SQL;
 
+import fp.manuton.FarmingPlus;
 import fp.manuton.rewardsCounter.RewardRecord;
 import fp.manuton.rewardsCounter.RewardsCounter;
 
@@ -11,6 +12,8 @@ import java.util.*;
 public class MySQLData {
 
     public static boolean isDatabaseConnected(Connection connection) {
+        if (connection == null)
+            return false;
         try {
             Statement statement = connection.createStatement();
             statement.executeQuery("SELECT 1");
@@ -28,7 +31,6 @@ public class MySQLData {
             ResultSet resultSet = statement.executeQuery();
             return resultSet.next();
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return false;
     }
@@ -48,7 +50,7 @@ public class MySQLData {
                 statement.setString(3, entry.getValue().getRewardName());
                 statement.executeUpdate();
             } catch (SQLException e) {
-                e.printStackTrace();
+
             }
         }
     }
@@ -66,7 +68,7 @@ public class MySQLData {
             statement.setString(3, rewardRecord.getRewardName());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+
         }
     }
 
@@ -92,7 +94,7 @@ public class MySQLData {
                 rewardsMap.get(uuid).getRecord().add(rewardRecord);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+
         }
 
         return rewardsMap;
@@ -106,7 +108,7 @@ public class MySQLData {
             statement.setString(1, uuid.toString());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+
         }
     }
 
@@ -120,7 +122,7 @@ public class MySQLData {
             Statement statement = connection.createStatement();
             statement.execute(query);
         } catch (SQLException e) {
-            e.printStackTrace();
+
         }
     }
 

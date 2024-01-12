@@ -112,89 +112,136 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                     return true;
                 }
             }else if (args[0].equalsIgnoreCase("reward")){
-                if (player.hasPermission("fp.admin") || player.hasPermission("fp.commands.reward")){
-                    if (args[1].equalsIgnoreCase("give")){
-                        String target = args[2];
-                        boolean isOnline = false;
-                        for (String players: Bukkit.getOnlinePlayers().stream().map(Player::getName).toList()){
-                            if (players.equalsIgnoreCase(target)){
-                                isOnline = true;
-                                break;
-                            }
+                if (args[1].equalsIgnoreCase("give")) {
+                    if (!player.hasPermission("fp.commands.reward.give") && !player.hasPermission("fp.admin")) {
+                        player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
+                        return true;
+                    }
+                    String target = args[2];
+                    boolean isOnline = false;
+                    for (String players : Bukkit.getOnlinePlayers().stream().map(Player::getName).toList()) {
+                        if (players.equalsIgnoreCase(target)) {
+                            isOnline = true;
+                            break;
                         }
-                        if (!isOnline) {
-                            player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix + "&cThat player is not online!"));
-                            return true;
-                        }
-                        if (isOnline){
-                            if (FarmingPlus.getPlugin().getMainConfigManager().getAllRewardNames().contains(args[3])) {
-                                Reward reward = FarmingPlus.getPlugin().getMainConfigManager().getReward(args[3]);
-                                reward.give(Bukkit.getPlayer(target));
-                                boolean done = true;
-                                if (reward instanceof SummonReward){
-                                    if (Bukkit.getPluginManager().getPlugin("MythicMobs") == null){
-                                        try{
+                    }
+                    if (!isOnline) {
+                        player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getPlayerOffline()));
+                        return true;
+                    } else {
+                        if (FarmingPlus.getPlugin().getMainConfigManager().getAllRewardNames().contains(args[3])) {
+                            Reward reward = FarmingPlus.getPlugin().getMainConfigManager().getReward(args[3]);
+                            reward.give(Bukkit.getPlayer(target));
+                            boolean done = true;
+                            if (reward instanceof SummonReward) {
+                                if (Bukkit.getPluginManager().getPlugin("MythicMobs") == null) {
+                                    try {
+                                        EntityType.valueOf(((SummonReward) reward).getEntity());
+                                    } catch (IllegalArgumentException exp) {
+                                        done = false;
+                                        player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getEntityInvalidMythic()));
+                                    }
+                                } else {
+                                    boolean isMythic = MythicBukkit.inst().getMobManager().getMythicMob(((SummonReward) reward).getEntity()).orElse(null) != null;
+                                    if (!isMythic) {
+                                        try {
                                             EntityType.valueOf(((SummonReward) reward).getEntity());
-                                        }catch(IllegalArgumentException exp){
+                                        } catch (IllegalArgumentException exp) {
                                             done = false;
-                                            player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getEntityInvalidMythic()));
+                                            player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getEntityInvalid()));
                                         }
-                                    }else{
-                                        boolean isMythic = MythicBukkit.inst().getMobManager().getMythicMob(((SummonReward) reward).getEntity()).orElse(null) != null;
-                                        if (!isMythic){
-                                            try{
-                                                EntityType.valueOf(((SummonReward) reward).getEntity());
-                                            }catch(IllegalArgumentException exp){
-                                                done = false;
-                                                player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getEntityInvalid()));
-                                            }
-                                        }
-
                                     }
 
                                 }
-                                if (done) {
 
-                                    if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL())) {
-                                        UUID playerId = player.getUniqueId();
-                                        RewardRecord rewardRecord = new RewardRecord(new Date(), args[3]);
-                                        MySQLData.saveRewardCounterToDatabase(FarmingPlus.getConnectionMySQL(), playerId, rewardRecord);
-                                    }
-                                    Map<UUID, RewardsCounter> rewardsCounterMap = FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap();
+                            }
+                            if (done) {
+
+                                if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL())) {
                                     UUID playerId = player.getUniqueId();
-                                    RewardsCounter rewardsCounter = new RewardsCounter(new ArrayList<>());
-                                    if (!rewardsCounterMap.containsKey(playerId))
-                                        rewardsCounterMap.put(playerId, rewardsCounter);
-                                    rewardsCounter = rewardsCounterMap.get(playerId);
-                                    rewardsCounter.addRecord(FarmingPlus.getPlugin().getMainConfigManager().getKeyFromReward(reward));
-
-                                    String message = FarmingPlus.getPlugin().getMainConfigManager().getRewardGiveCommand();
-                                    message = message.replace("%reward%", args[3]);
-                                    player.sendMessage(MessageUtils.translateAll(Bukkit.getPlayer(target), message));
+                                    RewardRecord rewardRecord = new RewardRecord(new Date(), args[3]);
+                                    MySQLData.saveRewardCounterToDatabase(FarmingPlus.getConnectionMySQL(), playerId, rewardRecord);
                                 }
-                            }else
-                                player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotReward()));
+                                Map<UUID, RewardsCounter> rewardsCounterMap = FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap();
+                                UUID playerId = player.getUniqueId();
+                                RewardsCounter rewardsCounter = new RewardsCounter(new ArrayList<>());
+                                if (!rewardsCounterMap.containsKey(playerId))
+                                    rewardsCounterMap.put(playerId, rewardsCounter);
+                                rewardsCounter = rewardsCounterMap.get(playerId);
+                                rewardsCounter.addRecord(FarmingPlus.getPlugin().getMainConfigManager().getKeyFromReward(reward));
 
-                        }else
-                            player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getPlayerOffline()));
+                                String message = FarmingPlus.getPlugin().getMainConfigManager().getRewardGiveCommand();
+                                message = message.replace("%reward%", args[3]);
+                                player.sendMessage(MessageUtils.translateAll(Bukkit.getPlayer(target), message));
+                            }
+                        } else
+                            player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotReward()));
 
-                    }else if (args[1].equalsIgnoreCase("list")) {
-                        List<String> rewardList = new ArrayList<>();
-                        for (String reward : FarmingPlus.getPlugin().getMainConfigManager().getAllRewardNames()) {
-                            rewardList.add(reward);
-                        }
-                        Collections.sort(rewardList);
-                        player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getRewardListTitle()));
-                        for (String reward : rewardList) {
-                            player.sendMessage(MessageUtils.getColoredMessage("&e- " + reward));
+                    }
+
+
+                } else if (args[1].equalsIgnoreCase("list")) {
+                    if (!player.hasPermission("fp.commands.reward.list") && !player.hasPermission("fp.admin")) {
+                        player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
+                        return true;
+                    }
+                    List<String> rewardList = new ArrayList<>();
+                    for (String reward : FarmingPlus.getPlugin().getMainConfigManager().getAllRewardNames()) {
+                        rewardList.add(reward);
+                    }
+                    Collections.sort(rewardList);
+                    player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getRewardListTitle()));
+                    for (String reward : rewardList) {
+                        player.sendMessage(MessageUtils.getColoredMessage("&e- " + reward));
+                    }
+                    player.sendMessage(MessageUtils.getColoredMessage("&f&l---------------------------------"));
+                } else if (args[1].equalsIgnoreCase("top")) {
+                    if (!player.hasPermission("fp.commands.reward.top") && !player.hasPermission("fp.admin")) {
+                        player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
+                        return true;
+                    }
+                    if (args.length == 2) {
+                        int page = 1;
+
+                        List<String> topPlayers = FarmingPlus.getPlugin().getMainConfigManager().getTopRewardsLeaderboardList();
+                        int totalPage = (int) Math.ceil(topPlayers.size() / 10.0);
+
+                        int startIndex = (page - 1) * 10;
+                        int endIndex = Math.min(startIndex + 10, topPlayers.size());
+
+                        player.sendMessage(MessageUtils.translateAll(player, "&ePage " + page + " of " + totalPage));
+                        player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getTopRewardsLeaderboard()));
+                        for (int i = startIndex; i < endIndex; i++) {
+                            player.sendMessage(MessageUtils.translateAll(Bukkit.getOfflinePlayer(topPlayers.get(i)), FarmingPlus.getPlugin().getMainConfigManager().getTopRewardsLeaderboardLine()));
                         }
                         player.sendMessage(MessageUtils.getColoredMessage("&f&l---------------------------------"));
-                    }else if (args[1].equalsIgnoreCase("top")){
-                        if (args.length == 2){
-                            int page = 1;
 
+                        TextComponent previousPage = new TextComponent(MessageUtils.translateAll(player, "&c&l<< Previous"));
+                        previousPage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fp reward top " + (page - 1)));
+                        TextComponent nextPage = new TextComponent(MessageUtils.translateAll(player, "&a&lNext >>"));
+                        nextPage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fp reward top " + (page + 1)));
+
+                        player.spigot().sendMessage(previousPage, new TextComponent(" | "), nextPage);
+                    } else if (args.length > 2) {
+                        boolean isPage;
+                        try {
+                            Integer.parseInt(args[2]);
+                            isPage = true;
+                        } catch (NumberFormatException e) {
+                            isPage = false;
+                        }
+
+                        if (isPage) {
+                            int page = Integer.parseInt(args[2]);
+                            if (page <= 0) {
+                                page = 1;
+                            }
                             List<String> topPlayers = FarmingPlus.getPlugin().getMainConfigManager().getTopRewardsLeaderboardList();
                             int totalPage = (int) Math.ceil(topPlayers.size() / 10.0);
+
+                            if (page > totalPage) {
+                                page = totalPage;
+                            }
 
                             int startIndex = (page - 1) * 10;
                             int endIndex = Math.min(startIndex + 10, topPlayers.size());
@@ -204,107 +251,66 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                             for (int i = startIndex; i < endIndex; i++) {
                                 player.sendMessage(MessageUtils.translateAll(Bukkit.getOfflinePlayer(topPlayers.get(i)), FarmingPlus.getPlugin().getMainConfigManager().getTopRewardsLeaderboardLine()));
                             }
-                            player.sendMessage(MessageUtils.getColoredMessage("&f&l---------------------------------"));
+                            player.sendMessage(MessageUtils.getColoredMessage("&f&l-----------------------------------"));
 
-                            TextComponent previousPage = new TextComponent(MessageUtils.translateAll(player,"&c&l<< Previous"));
+                            TextComponent previousPage = new TextComponent(MessageUtils.translateAll(player, "&c&l<< Previous"));
                             previousPage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fp reward top " + (page - 1)));
-                            TextComponent nextPage = new TextComponent(MessageUtils.translateAll(player,"&a&lNext >>"));
+                            TextComponent nextPage = new TextComponent(MessageUtils.translateAll(player, "&a&lNext >>"));
                             nextPage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fp reward top " + (page + 1)));
 
                             player.spigot().sendMessage(previousPage, new TextComponent(" | "), nextPage);
-                        }else if (args.length > 2) {
-                            boolean isPage;
-                            try {
-                                Integer.parseInt(args[2]);
-                                isPage = true;
-                            } catch(NumberFormatException e){
-                                isPage = false;
-                            }
 
-                            if (isPage){
-                                int page = Integer.parseInt(args[2]);
-                                if (page <= 0){
-                                    page = 1;
-                                }
-                                List<String> topPlayers = FarmingPlus.getPlugin().getMainConfigManager().getTopRewardsLeaderboardList();
-                                int totalPage = (int) Math.ceil(topPlayers.size() / 10.0);
+                            return true;
 
-                                if (page > totalPage){
-                                    page = totalPage;
-                                }
-
-                                int startIndex = (page - 1) * 10;
-                                int endIndex = Math.min(startIndex + 10, topPlayers.size());
-
-                                player.sendMessage(MessageUtils.translateAll(player, "&ePage " + page + " of " + totalPage));
-                                player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getTopRewardsLeaderboard()));
-                                for (int i = startIndex; i < endIndex; i++) {
-                                    player.sendMessage(MessageUtils.translateAll(Bukkit.getOfflinePlayer(topPlayers.get(i)), FarmingPlus.getPlugin().getMainConfigManager().getTopRewardsLeaderboardLine()));
-                                }
-                                player.sendMessage(MessageUtils.getColoredMessage("&f&l-----------------------------------"));
-
-                                TextComponent previousPage = new TextComponent(MessageUtils.translateAll(player,"&c&l<< Previous"));
-                                previousPage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fp reward top " + (page - 1)));
-                                TextComponent nextPage = new TextComponent(MessageUtils.translateAll(player,"&a&lNext >>"));
-                                nextPage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fp reward top " + (page + 1)));
-
-                                player.spigot().sendMessage(previousPage, new TextComponent(" | "), nextPage);
-
+                        } else {
+                            OfflinePlayer targetPlayer = Bukkit.getOfflinePlayer(args[2]);
+                            if (!targetPlayer.hasPlayedBefore()) {
+                                player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotPlayer()));
+                            } else {
+                                int pos = FarmingPlus.getPlugin().getMainConfigManager().getTopPlayer(targetPlayer);
+                                int startIndex = (1 - 1) * 10;
+                                int page = Math.min(startIndex + 10, pos);
+                                if (player.equals(targetPlayer))
+                                    player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getTopReward()));
+                                Bukkit.getServer().dispatchCommand(player, "fp reward top " + page);
                                 return true;
-
-                            }else{
-                                OfflinePlayer targetPlayer = Bukkit.getOfflinePlayer(args[2]);
-                                if (!targetPlayer.hasPlayedBefore()) {
-                                    player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotPlayer()));
-                                }else {
-                                    int pos = FarmingPlus.getPlugin().getMainConfigManager().getTopPlayer(targetPlayer);
-                                    int startIndex = (1 - 1) * 10;
-                                    int page = Math.min(startIndex + 10, pos);
-                                    if (player.equals(targetPlayer))
-                                        player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getTopReward()));
-                                    Bukkit.getServer().dispatchCommand(player, "fp reward top " + page);
-                                    return true;
-                                }
-
                             }
-                        }
 
-                        return true;
-                    }else if (args[1].equalsIgnoreCase("clear")) {
-                        if (player.hasPermission("fp.admin")) {
-                            if (args.length == 3) {
-                                OfflinePlayer targetPlayer = Bukkit.getOfflinePlayer(args[2]);
-                                boolean done = false;
-                                if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL()) && MySQLData.existsUUID(FarmingPlus.getConnectionMySQL(), targetPlayer.getUniqueId().toString())) {
-                                    MySQLData.deleteRewardsForUUID(FarmingPlus.getConnectionMySQL(), targetPlayer.getUniqueId());
-                                    done = true;
-                                }
-                                if (!targetPlayer.hasPlayedBefore()) {
-                                    player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotPlayer()));
-                                } else {
-                                    List<Map.Entry<UUID, RewardsCounter>> list = new ArrayList<>(FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().entrySet());
-                                    for (Map.Entry<UUID, RewardsCounter> entry : list) {
-                                        if (entry.getKey().equals(targetPlayer.getUniqueId())) {
-                                            FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().remove(entry.getKey());
-                                            done = true;
-                                            break;
-                                        }
+                        }
+                    }
+
+                    return true;
+                } else if (args[1].equalsIgnoreCase("clear")) {
+                    if (player.hasPermission("fp.admin")) {
+                        if (args.length == 3) {
+                            OfflinePlayer targetPlayer = Bukkit.getOfflinePlayer(args[2]);
+                            boolean done = false;
+                            if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL()) && MySQLData.existsUUID(FarmingPlus.getConnectionMySQL(), targetPlayer.getUniqueId().toString())) {
+                                MySQLData.deleteRewardsForUUID(FarmingPlus.getConnectionMySQL(), targetPlayer.getUniqueId());
+                                done = true;
+                            }
+                            if (!targetPlayer.hasPlayedBefore()) {
+                                player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotPlayer()));
+                            } else {
+                                List<Map.Entry<UUID, RewardsCounter>> list = new ArrayList<>(FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().entrySet());
+                                for (Map.Entry<UUID, RewardsCounter> entry : list) {
+                                    if (entry.getKey().equals(targetPlayer.getUniqueId())) {
+                                        FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().remove(entry.getKey());
+                                        done = true;
+                                        break;
                                     }
                                 }
-                                if (done)
-                                    player.sendMessage(MessageUtils.translateAll(targetPlayer, FarmingPlus.getPlugin().getMainConfigManager().getRewardsCleared()));
                             }
-                            return true;
-                        }else
-                            player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
-                    }else {
-                        player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotCommand()));
-                        help(player);
-                    }
-                }else
-                    player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
-
-
+                            if (done)
+                                player.sendMessage(MessageUtils.translateAll(targetPlayer, FarmingPlus.getPlugin().getMainConfigManager().getRewardsCleared()));
+                        }
+                        return true;
+                    } else
+                        player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
+                } else {
+                    player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotCommand()));
+                    help(player);
+                }
             }else{
                 sender.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotCommand()));
                 help(player);
