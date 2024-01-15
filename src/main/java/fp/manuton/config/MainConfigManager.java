@@ -171,7 +171,7 @@ public class MainConfigManager {
     public void loadRecordFromJson() {
         if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL()))
             return;
-        Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, FarmingPlus.prefix+" &fLoading rewards records from JSON..."));
+        Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, getPluginPrefix()+" &fLoading rewards records from JSON..."));
         Gson gson = new Gson();
         Type recordType = new TypeToken<Map<String, RewardsCounter>>(){}.getType();
 
