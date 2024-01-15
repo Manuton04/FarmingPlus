@@ -101,7 +101,7 @@ public class EnchantGui{
         ItemMeta enchantItemMeta = enchantItem.getItemMeta();
         List<String> enchantItemlore = new ArrayList<String>();
         enchantItemMeta.setDisplayName(MessageUtils.getColoredMessage("&aEnchant Item"));
-        enchantItemlore.add(MessageUtils.getColoredMessage("&7Add and remove FarmingPlus´ enchantments from"));
+        enchantItemlore.add(MessageUtils.getColoredMessage("&7Add FarmingPlus´ enchantments from"));
         enchantItemlore.add(MessageUtils.getColoredMessage("&7the item in the slot above."));
         enchantItemMeta.setLore(enchantItemlore);
         enchantItem.setItemMeta(enchantItemMeta);
@@ -119,6 +119,9 @@ public class EnchantGui{
         putItemlore.add(MessageUtils.getColoredMessage("&7in the open slot!"));
         putItemMeta.setLore(putItemlore);
         putItem.setItemMeta(putItemMeta);
+
+        for (int i = 21; i <= 25; i++)
+            inventory.setItem(i, empty);
 
         if (Page.equals("empty")){
             for (int i = 0; i <= 53; i++){
@@ -270,6 +273,126 @@ public class EnchantGui{
 
             inventory.setItem(23,empty);
             inventory.setItem(21, irrigate);
+
+        }else if (Page.equals("grandTilling")){
+            if (player.hasMetadata("menuConfirm"))
+                player.removeMetadata("menuConfirm", FarmingPlus.getPlugin());
+
+            ItemStack grandTilling1 = new ItemStack(Material.ENCHANTED_BOOK);
+            ItemMeta grandTillingMeta1 = grandTilling1.getItemMeta();
+            grandTillingMeta1.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()+" I"));
+            List<String> clickGrandTillingLore1 = new ArrayList<String>();
+            for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingLore1()) {
+                clickGrandTillingLore1.add(MessageUtils.getColoredMessage(loreL));
+            }
+            clickGrandTillingLore1.add(null);
+            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.GRANDTILLING) && inventory.getItem(19).getItemMeta().getEnchantLevel(CustomEnchantments.GRANDTILLING) == 1)
+                clickGrandTillingLore1.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+            else
+                clickGrandTillingLore1.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            grandTillingMeta1.setLore(clickGrandTillingLore1);
+            PersistentDataContainer grandTillingContainer1 = grandTillingMeta1.getPersistentDataContainer();
+            grandTillingContainer1.set(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING, "yes");
+            grandTilling1.setItemMeta(grandTillingMeta1);
+
+            ItemStack grandTilling2 = new ItemStack(Material.ENCHANTED_BOOK);
+            ItemMeta grandTillingMeta2 = grandTilling2.getItemMeta();
+            grandTillingMeta2.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()+" II"));
+            List<String> clickGrandTillingLore2 = new ArrayList<String>();
+            for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingLore2()) {
+                clickGrandTillingLore2.add(MessageUtils.getColoredMessage(loreL));
+            }
+            clickGrandTillingLore2.add(null);
+            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.GRANDTILLING) && inventory.getItem(19).getItemMeta().getEnchantLevel(CustomEnchantments.GRANDTILLING) == 2)
+                clickGrandTillingLore2.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+            else
+                clickGrandTillingLore2.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            grandTillingMeta2.setLore(clickGrandTillingLore2);
+            PersistentDataContainer grandTillingContainer2 = grandTillingMeta2.getPersistentDataContainer();
+            grandTillingContainer2.set(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING, "yes");
+            grandTilling2.setItemMeta(grandTillingMeta2);
+
+            ItemStack grandTilling3 = new ItemStack(Material.ENCHANTED_BOOK);
+            ItemMeta grandTillingMeta3 = grandTilling3.getItemMeta();
+            grandTillingMeta3.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()+" III"));
+            List<String> clickGrandTillingLore3 = new ArrayList<String>();
+            for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingLore3()) {
+                clickGrandTillingLore3.add(MessageUtils.getColoredMessage(loreL));
+            }
+            clickGrandTillingLore3.add(null);
+            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.GRANDTILLING) && inventory.getItem(19).getItemMeta().getEnchantLevel(CustomEnchantments.GRANDTILLING) == 3)
+                clickGrandTillingLore3.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+            else
+                clickGrandTillingLore3.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            grandTillingMeta3.setLore(clickGrandTillingLore3);
+            PersistentDataContainer grandTillingContainer3 = grandTillingMeta3.getPersistentDataContainer();
+            grandTillingContainer3.set(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING, "yes");
+            grandTilling3.setItemMeta(grandTillingMeta3);
+
+            inventory.setItem(21,grandTilling1);
+            inventory.setItem(23,grandTilling2);
+            inventory.setItem(25,grandTilling3);
+
+
+        }else if (Page.equals("farmersStep")){
+            if (player.hasMetadata("menuConfirm"))
+                player.removeMetadata("menuConfirm", FarmingPlus.getPlugin());
+
+            ItemStack farmersStep1 = new ItemStack(Material.ENCHANTED_BOOK);
+            ItemMeta farmersStepMeta1 = farmersStep1.getItemMeta();
+            farmersStepMeta1.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()+" I"));
+            List<String> clickFarmersStep1 = new ArrayList<String>();
+            for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepLore1()) {
+                clickFarmersStep1.add(MessageUtils.getColoredMessage(loreL));
+            }
+            clickFarmersStep1.add(null);
+            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.FARMERSTEP) && inventory.getItem(19).getItemMeta().getEnchantLevel(CustomEnchantments.FARMERSTEP) == 1)
+                clickFarmersStep1.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+            else
+                clickFarmersStep1.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            farmersStepMeta1.setLore(clickFarmersStep1);
+            PersistentDataContainer grandTillingContainer1 = farmersStepMeta1.getPersistentDataContainer();
+            grandTillingContainer1.set(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING, "yes");
+            farmersStep1.setItemMeta(farmersStepMeta1);
+
+            ItemStack farmersStep2 = new ItemStack(Material.ENCHANTED_BOOK);
+            ItemMeta farmersStepMeta2 = farmersStep2.getItemMeta();
+            farmersStepMeta2.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()+" II"));
+            List<String> clickFarmersStepLore2 = new ArrayList<String>();
+            for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepLore2()) {
+                clickFarmersStepLore2.add(MessageUtils.getColoredMessage(loreL));
+            }
+            clickFarmersStepLore2.add(null);
+            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.FARMERSTEP) && inventory.getItem(19).getItemMeta().getEnchantLevel(CustomEnchantments.FARMERSTEP) == 2)
+                clickFarmersStepLore2.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+            else
+                clickFarmersStepLore2.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            farmersStepMeta2.setLore(clickFarmersStepLore2);
+            PersistentDataContainer grandTillingContainer2 = farmersStepMeta2.getPersistentDataContainer();
+            grandTillingContainer2.set(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING, "yes");
+            farmersStep2.setItemMeta(farmersStepMeta2);
+
+            ItemStack farmersStep3 = new ItemStack(Material.ENCHANTED_BOOK);
+            ItemMeta farmersStepMeta3 = farmersStep3.getItemMeta();
+            farmersStepMeta3.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()+" III"));
+            List<String> clickFarmersStepLore3 = new ArrayList<String>();
+            for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepLore3()) {
+                clickFarmersStepLore3.add(MessageUtils.getColoredMessage(loreL));
+            }
+            clickFarmersStepLore3.add(null);
+            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.FARMERSTEP) && inventory.getItem(19).getItemMeta().getEnchantLevel(CustomEnchantments.FARMERSTEP) == 3)
+                clickFarmersStepLore3.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+            else
+                clickFarmersStepLore3.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            farmersStepMeta3.setLore(clickFarmersStepLore3);
+            PersistentDataContainer grandTillingContainer3 = farmersStepMeta3.getPersistentDataContainer();
+            grandTillingContainer3.set(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING, "yes");
+            farmersStep3.setItemMeta(farmersStepMeta3);
+
+            inventory.setItem(21,farmersStep1);
+            inventory.setItem(23,farmersStep2);
+            inventory.setItem(25,farmersStep3);
+
 
         }else if (Page.equals("confirm")){
 
