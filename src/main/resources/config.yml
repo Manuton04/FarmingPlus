@@ -15,6 +15,7 @@ config:
   prefix: "&6&l[&2&lFarmingPlus&6&l] "
   mysql:
     # This is the interval in minutes that the plugin will download the data from the database #
+    # If this number is major than the save-interval from above, it will be ignored #
     download-interval: 5
     enabled: false
     host: ""

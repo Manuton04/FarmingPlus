@@ -148,6 +148,9 @@ public class MainConfigManager {
     }
 
     public void saveRecordToJson() {
+        if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL()))
+            databaseDownloadTask();
+
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+" &fSaving rewards records in a JSON..."));
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
