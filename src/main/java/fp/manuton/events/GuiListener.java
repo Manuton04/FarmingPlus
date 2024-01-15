@@ -54,13 +54,13 @@ public class GuiListener implements Listener {
                     player.getOpenInventory().getTopInventory().setItem(19, clicked);
                     player.getOpenInventory().getBottomInventory().setItem(slot, null);
                 }else{
-                    ItemStack item19 = event.getInventory().getItem(19);
+                    ItemStack item19 = player.getOpenInventory().getTopInventory().getItem(19);
                     player.getOpenInventory().getTopInventory().setItem(19, clicked);
                     player.getOpenInventory().getBottomInventory().setItem(slot, null);
                     Inventory playerInventory = player.getInventory();
                     int emptySlot = playerInventory.firstEmpty();
                     if (emptySlot != -1)
-                        player.getOpenInventory().getBottomInventory().setItem(emptySlot, clicked);
+                        player.getOpenInventory().getBottomInventory().setItem(emptySlot, item19);
                     else {
                         player.getWorld().dropItemNaturally(player.getLocation(), item19);
                     }
