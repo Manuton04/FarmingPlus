@@ -3,6 +3,7 @@ package fp.manuton.guis;
 import fp.manuton.FarmingPlus;
 import fp.manuton.config.MainConfigManager;
 import fp.manuton.costs.Cost;
+import fp.manuton.enchantments.CustomEnchantments;
 import fp.manuton.utils.ItemUtils;
 import fp.manuton.utils.MessageUtils;
 import fp.manuton.utils.SoundUtils;
@@ -153,7 +154,10 @@ public class EnchantGui{
                 loreFarmersgrace.add(MessageUtils.getColoredMessage(loreL));
             }
             loreFarmersgrace.add(null);
-            loreFarmersgrace.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.FARMERSGRACE))
+                loreFarmersgrace.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+            else
+                loreFarmersgrace.add(MessageUtils.getColoredMessage("&eClick to see!"));
             farmersgraceMeta.setLore(loreFarmersgrace);
             PersistentDataContainer farmersGraceContainer = farmersgraceMeta.getPersistentDataContainer();
             farmersGraceContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
@@ -174,7 +178,10 @@ public class EnchantGui{
                 loreReplenish.add(MessageUtils.getColoredMessage(loreL));
             }
             loreReplenish.add(null);
-            loreReplenish.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.REPLENISH))
+                loreReplenish.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+            else
+                loreReplenish.add(MessageUtils.getColoredMessage("&eClick to see!"));
             replenishMeta.setLore(loreReplenish);
             PersistentDataContainer replenishContainer = replenishMeta.getPersistentDataContainer();
             replenishContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
@@ -210,7 +217,10 @@ public class EnchantGui{
                 loreReplenish.add(MessageUtils.getColoredMessage(loreL));
             }
             loreReplenish.add(null);
-            loreReplenish.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.REPLENISH))
+                loreReplenish.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+            else
+                loreReplenish.add(MessageUtils.getColoredMessage("&eClick to see!"));
             replenishMeta.setLore(loreReplenish);
             PersistentDataContainer replenishContainer = replenishMeta.getPersistentDataContainer();
             replenishContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
@@ -224,7 +234,10 @@ public class EnchantGui{
                 loreDelicate.add(MessageUtils.getColoredMessage(loreL));
             }
             loreDelicate.add(null);
-            loreDelicate.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.DELICATE))
+                loreDelicate.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+            else
+                loreDelicate.add(MessageUtils.getColoredMessage("&eClick to see!"));
             delicateMeta.setLore(loreDelicate);
             PersistentDataContainer delicateContainer = delicateMeta.getPersistentDataContainer();
             delicateContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
@@ -246,7 +259,10 @@ public class EnchantGui{
                 loreIrrigate.add(MessageUtils.getColoredMessage(loreL));
             }
             loreIrrigate.add(null);
-            loreIrrigate.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.IRRIGATE))
+                loreIrrigate.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+            else
+                loreIrrigate.add(MessageUtils.getColoredMessage("&eClick to see!"));
             irrigateMeta.setLore(loreIrrigate);
             PersistentDataContainer irrigateContainer = irrigateMeta.getPersistentDataContainer();
             irrigateContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");

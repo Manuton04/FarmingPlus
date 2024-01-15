@@ -129,6 +129,8 @@ public class GuiListener implements Listener {
                 if (clicked != null && item != null && !player.hasMetadata("menuConfirm")){
                     if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING)){
                         if (clicked.getItemMeta().hasLore()) {
+                            if (clicked.getItemMeta().getLore().contains(MessageUtils.getColoredMessage("&a&l✔ Enchanted")))
+                                return;
                             int i = 0;
                             boolean found = false;
                             ItemMeta clickedMeta = clicked.getItemMeta();
