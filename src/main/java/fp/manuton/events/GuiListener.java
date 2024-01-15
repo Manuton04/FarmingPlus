@@ -75,18 +75,21 @@ public class GuiListener implements Listener {
                     if (clicked.getType() == type) {
                         EnchantGui.guiMenu(player, "boots", player.getOpenInventory().getTopInventory(), null, null);
                         Enchantable = true;
+                        break;
                     }
                 }
                 for (Material type : ItemUtils.hoes){
                     if (clicked.getType() == type) {
                         EnchantGui.guiMenu(player, "hoe", player.getOpenInventory().getTopInventory(), null, item);
                         Enchantable = true;
+                        break;
                     }
                 }
                 for (Material type : ItemUtils.axes){
                     if (clicked.getType() == type) {
                         EnchantGui.guiMenu(player, "axe", player.getOpenInventory().getTopInventory(), null, item);
                         Enchantable = true;
+                        break;
                     }
                 }
 
@@ -173,6 +176,13 @@ public class GuiListener implements Listener {
                             enchant = null;
                         }
 
+                        Material itemType = null;
+                        try {
+                            itemType = player.getOpenInventory().getTopInventory().getItem(12).getType();
+                        }catch (NullPointerException e){
+                            enchant = null;
+                        }
+
                         data = enchant.getItemMeta().getPersistentDataContainer();
                         if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING)){
                             player.getOpenInventory().getTopInventory().setItem(19, player.getOpenInventory().getTopInventory().getItem(12));
@@ -190,13 +200,13 @@ public class GuiListener implements Listener {
                                 EnchantGui.guiMenu(player, "axe", player.getOpenInventory().getTopInventory(), null, null);
                             }else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getReplenishName()))) {
                                 for (Material type : ItemUtils.hoes)
-                                    if (player.getOpenInventory().getTopInventory().getItem(12).getType() == type) {
+                                    if (itemType == type) {
                                         EnchantGui.guiMenu(player, "hoe", player.getOpenInventory().getTopInventory(), null, null);
                                         break;
                                     }
 
                                 for (Material type : ItemUtils.axes)
-                                    if (player.getOpenInventory().getTopInventory().getItem(12).getType() == type) {
+                                    if (itemType == type) {
                                         EnchantGui.guiMenu(player, "axe", player.getOpenInventory().getTopInventory(), null, null);
                                         break;
                                     }

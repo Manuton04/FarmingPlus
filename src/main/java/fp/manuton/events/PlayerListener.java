@@ -476,7 +476,7 @@ public class PlayerListener implements Listener {
             // Check if the player has permission to place blocks in these regions
             boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
 
-            // If the player does not have permission to place blocks, skip this iteration
+            // If the player does not have permission to place blocks, break the iteration
             if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && !canPlace && !player.hasPermission("fp.bypass.irrigate.protection")) {
                 break;
             }

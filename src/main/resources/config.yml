@@ -23,7 +23,7 @@ config:
     database: ""
     username: ""
     password: ""
-  not-top-reward: "&cNo one in the top %farmingplus_top_number%"
+  not-top-reward: "&cNo one in top %farmingplus_top_number%"
 
 
 
@@ -106,6 +106,9 @@ config:
       lore-name1: "&7Farmer's Step I"
       lore-name2: "&7Farmer's Step II"
       lore-name3: "&7Farmer's Step III"
+      general-lore:
+        - "&7Allows you to plant a selected"
+        - "&7crop by walking an area."
       lore1:
         - "&7Allows you to plant a selected"
         - "&7crop by walking on 3x3 blocks."
@@ -143,6 +146,9 @@ config:
       lore-name1: "&7Grand Tilling I"
       lore-name2: "&7Grand Tilling II"
       lore-name3: "&7Grand Tilling III"
+      general-lore:
+        - "&7Allows you to till farmland"
+        - "&7on a selected area."
       lore1:
         - "&7Allows you to till farmland"
         - "&7on 3x3 blocks."

@@ -107,6 +107,8 @@ public class MainConfigManager {
     private List<String> grandtillingLore1;
     private List<String> grandtillingLore2;
     private List<String> grandtillingLore3;
+    private List <String> farmersStepGeneralLore;
+    private List <String> grandTillingGeneralLore;
 
     private Map<String, Reward> rewards;
     private Map<String, Cost> costs;
@@ -436,6 +438,8 @@ public class MainConfigManager {
         grandtillingLore1 = config.getStringList("config.enchantments.grand-tilling.lore1");
         grandtillingLore2 = config.getStringList("config.enchantments.grand-tilling.lore2");
         grandtillingLore3 = config.getStringList("config.enchantments.grand-tilling.lore3");
+        farmersStepGeneralLore = config.getStringList("config.enchantments.farmers-step.general-lore");
+        grandTillingGeneralLore = config.getStringList("config.enchantments.grand-tilling.general-lore");
 
         noPermissionCommand = messages.getString("messages.no-permission-command");
         noPermissionAction = messages.getString("messages.no-permission-action");
@@ -784,5 +788,13 @@ public class MainConfigManager {
 
     public int getMySQLDownloadInterval() {
         return mySQLDownloadInterval;
+    }
+
+    public List<String> getFarmersStepGeneralLore() {
+        return farmersStepGeneralLore;
+    }
+
+    public List<String> getGrandTillingGeneralLore() {
+        return grandTillingGeneralLore;
     }
 }

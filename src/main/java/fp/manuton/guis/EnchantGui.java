@@ -130,14 +130,17 @@ public class EnchantGui{
         }else if (Page.equals("boots")){
             if (player.hasMetadata("menuConfirm"))
                 player.removeMetadata("menuConfirm", FarmingPlus.getPlugin());
+
             ItemStack farmerstep = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta farmerstepMeta = farmerstep.getItemMeta();
             farmerstepMeta.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()));
-
-            List<String> clickLore = new ArrayList<String>();
-            clickLore.add(MessageUtils.getColoredMessage("&eClick to see!"));
-
-            farmerstepMeta.setLore(clickLore);
+            List<String> clickFarmerStepLore = new ArrayList<String>();
+            for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getFarmersStepGeneralLore()) {
+                clickFarmerStepLore.add(MessageUtils.getColoredMessage(loreL));
+            }
+            clickFarmerStepLore.add(null);
+            clickFarmerStepLore.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            farmerstepMeta.setLore(clickFarmerStepLore);
             PersistentDataContainer farmersStepContainer = farmerstepMeta.getPersistentDataContainer();
             farmersStepContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
             farmerstep.setItemMeta(farmerstepMeta);
@@ -163,13 +166,94 @@ public class EnchantGui{
             if (player.hasMetadata("menuConfirm"))
                 player.removeMetadata("menuConfirm", FarmingPlus.getPlugin());
 
+            ItemStack replenish = new ItemStack(Material.ENCHANTED_BOOK);
+            ItemMeta replenishMeta = replenish.getItemMeta();
+            replenishMeta.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getReplenishName()));
+            List<String> loreReplenish = new ArrayList<String>();
+            for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getReplenishLore()) {
+                loreReplenish.add(MessageUtils.getColoredMessage(loreL));
+            }
+            loreReplenish.add(null);
+            loreReplenish.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            replenishMeta.setLore(loreReplenish);
+            PersistentDataContainer replenishContainer = replenishMeta.getPersistentDataContainer();
+            replenishContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
+            replenish.setItemMeta(replenishMeta);
+
+            ItemStack grandTilling = new ItemStack(Material.ENCHANTED_BOOK);
+            ItemMeta grandTillingMeta = grandTilling.getItemMeta();
+            grandTillingMeta.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()));
+            List<String> clickGrandTillingLore = new ArrayList<String>();
+            for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getGrandTillingGeneralLore()) {
+                clickGrandTillingLore.add(MessageUtils.getColoredMessage(loreL));
+            }
+            clickGrandTillingLore.add(null);
+            clickGrandTillingLore.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            grandTillingMeta.setLore(clickGrandTillingLore);
+            PersistentDataContainer grandTillingContainer = grandTillingMeta.getPersistentDataContainer();
+            grandTillingContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
+            grandTilling.setItemMeta(grandTillingMeta);
+
+            inventory.setItem(23,empty);
+            inventory.setItem(21, replenish);
+            inventory.setItem(22, grandTilling);
+
         }else if (Page.equals("axe")){
             if (player.hasMetadata("menuConfirm"))
                 player.removeMetadata("menuConfirm", FarmingPlus.getPlugin());
 
+            ItemStack replenish = new ItemStack(Material.ENCHANTED_BOOK);
+            ItemMeta replenishMeta = replenish.getItemMeta();
+            replenishMeta.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getReplenishName()));
+            List<String> loreReplenish = new ArrayList<String>();
+            for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getReplenishLore()) {
+                loreReplenish.add(MessageUtils.getColoredMessage(loreL));
+            }
+            loreReplenish.add(null);
+            loreReplenish.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            replenishMeta.setLore(loreReplenish);
+            PersistentDataContainer replenishContainer = replenishMeta.getPersistentDataContainer();
+            replenishContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
+            replenish.setItemMeta(replenishMeta);
+
+            ItemStack delicate = new ItemStack(Material.ENCHANTED_BOOK);
+            ItemMeta delicateMeta = delicate.getItemMeta();
+            delicateMeta.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getDelicateName()));
+            List<String> loreDelicate = new ArrayList<String>();
+            for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getDelicateLore()) {
+                loreDelicate.add(MessageUtils.getColoredMessage(loreL));
+            }
+            loreDelicate.add(null);
+            loreDelicate.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            delicateMeta.setLore(loreDelicate);
+            PersistentDataContainer delicateContainer = delicateMeta.getPersistentDataContainer();
+            delicateContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
+            delicate.setItemMeta(delicateMeta);
+
+            inventory.setItem(23,empty);
+            inventory.setItem(21, replenish);
+            inventory.setItem(22, delicate);
+
         }else if (Page.equals("water")){
             if (player.hasMetadata("menuConfirm"))
                 player.removeMetadata("menuConfirm", FarmingPlus.getPlugin());
+
+            ItemStack irrigate = new ItemStack(Material.ENCHANTED_BOOK);
+            ItemMeta irrigateMeta = irrigate.getItemMeta();
+            irrigateMeta.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getIrrigateName()));
+            List<String> loreIrrigate = new ArrayList<String>();
+            for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getIrrigateLore()) {
+                loreIrrigate.add(MessageUtils.getColoredMessage(loreL));
+            }
+            loreIrrigate.add(null);
+            loreIrrigate.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            irrigateMeta.setLore(loreIrrigate);
+            PersistentDataContainer irrigateContainer = irrigateMeta.getPersistentDataContainer();
+            irrigateContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
+            irrigate.setItemMeta(irrigateMeta);
+
+            inventory.setItem(23,empty);
+            inventory.setItem(21, irrigate);
 
         }else if (Page.equals("confirm")){
 
