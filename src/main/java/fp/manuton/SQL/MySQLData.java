@@ -113,7 +113,7 @@ public class MySQLData {
     }
 
     public static void createTableIfNotExists(Connection connection) {
-        String query = "CREATE TABLE IF NOT EXISTS rewards_table (" +
+        String query = "CREATE TABLE IF NOT EXISTS farmingplus_rewards_table (" +
                        "uuid VARCHAR(36), " +
                        "Date TIMESTAMP, " +
                        "rewardName VARCHAR(255))";
