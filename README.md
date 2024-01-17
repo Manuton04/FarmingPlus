@@ -55,6 +55,7 @@ FarmingPlus is a plugin that allows players to experience new mechanics in farmi
   - fp.commands.reward.list: Let the player use /fp reward list. (Or Administrative permissions)
   - fp.commands.reward.give: Let the player use /fp reward give. (Or Administrative permissions)
   - fp.gui.use: Let the player use the GUI for enchanting.
+  - fp.bypass.costs: Let the player enchant without costs.
   - fp.bypass.farmerstep: Plants not needed in inventory when using Farmer's Step.
   - fp.bypass.farmerstep.protection: Let the player use Farmer's step on WorldGuard regions. 
   - fp.bypass.replenish.protection: Let the player use Replenish on WorldGuard regions.

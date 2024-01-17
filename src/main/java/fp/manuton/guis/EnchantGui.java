@@ -460,12 +460,12 @@ public class EnchantGui{
 
             if (costE != null) {
                 if (costE.getXpLevels() > 0)
-                    if (player.getLevel() >= costE.getXpLevels())
+                    if (player.hasPermission("fp.bypass.costs") || player.getLevel() >= costE.getXpLevels())
                         anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + String.valueOf(costE.getXpLevels()) + " XP Levels"));
                     else
                         anvilLore.add(MessageUtils.getColoredMessage("&c✘ - " + String.valueOf(costE.getXpLevels()) + " XP Levels"));
                 if (costE.getMoney() > 0)
-                    if (VaultUtils.getMoney(player) >= costE.getMoney())
+                    if (player.hasPermission("fp.bypass.costs") || VaultUtils.getMoney(player) >= costE.getMoney())
                         anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + VaultUtils.formatCurrencySymbol(costE.getMoney())));
                     else
                         anvilLore.add(MessageUtils.getColoredMessage("&c✘ - " + VaultUtils.formatCurrencySymbol(costE.getMoney())));
@@ -482,7 +482,7 @@ public class EnchantGui{
 
                         String ItemName = parts[1];
 
-                        if (player.getInventory().containsAtLeast(new ItemStack(Material.valueOf(itemE.toUpperCase())), amount))
+                        if (player.hasPermission("fp.bypass.costs") || player.getInventory().containsAtLeast(new ItemStack(Material.valueOf(itemE.toUpperCase())), amount))
                             anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + amount + " " + ItemName));
                         else
                             anvilLore.add(MessageUtils.getColoredMessage("&c✘ - " + amount + " " + ItemName));

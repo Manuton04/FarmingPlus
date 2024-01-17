@@ -1,6 +1,7 @@
 package fp.manuton.utils;
 
 import fp.manuton.FarmingPlus;
+import fp.manuton.costs.Cost;
 import fp.manuton.enchantments.CustomEnchantments;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -88,6 +89,38 @@ public class ItemUtils {
         cropsR.add(Material.CACTUS);
         cropsR.add(Material.COCOA);
 
+    }
+
+    public static boolean canPayEnchantment(Player player, Cost cost){
+        if (player.hasPermission("fp.bypass.costs"))
+            return true;
+
+        if (cost.getMoney() > 0){
+            if (VaultUtils.getMoney(player) <= cost.getMoney())
+                return false;
+        }
+
+        if (cost.getXpLevels() > 0){
+            if (player.getLevel() <= cost.getXpLevels())
+                return false;
+        }
+
+        if (cost.getItems().isEmpty())
+            return true;
+
+        for (String item : cost.getItems()){
+            String[] itemSplit = item.split(" ");
+            Material material = Material.getMaterial(itemSplit[0]);
+            int amount = Integer.parseInt(itemSplit[1]);
+            if (material == null)
+                continue;
+            if (amount <= 0)
+                amount = 1;
+            if (!player.getInventory().contains(material, amount))
+                return false;
+        }
+
+        return true;
     }
 
     public static void enchantItem(List<Material> enchantable, Player player, Enchantment ench, int level){
