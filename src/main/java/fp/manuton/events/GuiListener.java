@@ -164,7 +164,7 @@ public class GuiListener implements Listener {
                             EnchantGui.guiMenu(player, "confirm", player.getOpenInventory().getTopInventory(), clicked, item);
                         }
                     }else if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING)){
-
+                        EnchantGui.guiMenu(player, "confirm", player.getOpenInventory().getTopInventory(), clicked, item);
                     }
                 }
 
@@ -188,7 +188,7 @@ public class GuiListener implements Listener {
                         }
 
                         data = enchant.getItemMeta().getPersistentDataContainer();
-                        if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING)){
+                        if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING) || data.has(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING)){
                             player.getOpenInventory().getTopInventory().setItem(19, player.getOpenInventory().getTopInventory().getItem(12));
                             player.getOpenInventory().getTopInventory().setItem(12, null);
                             EnchantGui.guiMenu(player, "empty", player.getOpenInventory().getTopInventory(), null, null);
