@@ -9,7 +9,7 @@ messages:
   not-enchantment: "%farmingplus_prefix%&cThat enchantment does not exist!"
   not-reward: "%farmingplus_prefix%&cThat reward does not exist!"
   player-offline: "%farmingplus_prefix%&cThat player is not online!"
-  not-player: "%farmingplus_prefix%&cThat player has not played before!"
+  not-player: "%farmingplus_prefix%&cThat player has not obtained a reward before!"
   entity-invalid: "%farmingplus_prefix%&cThat entity is  invalid!"
   entity-invalid-mythic: "%farmingplus_prefix%&cThat entity is invalid or you don't have MythicMobs installed!"
   reward-give-command: "%farmingplus_prefix%&aYou gave &e%player% &athe %reward% reward!"
@@ -20,11 +20,14 @@ messages:
   command-list:
     - "&f&l------%farmingplus_prefix%&fCommands&f&l-------"
     - "&7(All the commands can be used with /fp)"
-    - "&e /fp: &7Show this page."
+    - "&e /fp: &7Enchant an item."
+    - "&e /fp enchants: &7Shows the list of enchants."
+    - "&e /fp help: &7Shows this page."
+    - "&e /fp reward top <page number/player>: &7Shows the top of rewards."
+    - "&e /fp reward give <player>: &7Gives a reward to a player."
+    - "&e /fp reward clear <player>: &7Clears the rewards of a player."
+    - "&e /fp reward list: &7Shows the list of rewards."
     - "&e /fp reload: &7Reload the Configuration."
-    - "&e /fp enchant (enchantment) (level): &7Enchants the item in hand without costs. "
-    - "&e /fp gui: &7Opens the enchantment GUI."
-    - "&e /fp reward"
     - "&f&l---------------------------------"
   # Show when used /fp enchant #
   enchants-list:

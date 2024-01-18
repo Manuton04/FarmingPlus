@@ -153,7 +153,7 @@ public class MainConfigManager {
         if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL()))
             databaseDownloadTask();
 
-        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+" &fSaving rewards records in a JSON..."));
+        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+"&fSaving rewards records in a JSON..."));
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         Map<String, RewardsCounter> stringKeyedMap = new HashMap<>();
@@ -176,7 +176,7 @@ public class MainConfigManager {
     public void loadRecordFromJson() {
         if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL()))
             return;
-        Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, getPluginPrefix()+" &fLoading rewards records from JSON..."));
+        Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, getPluginPrefix()+"&fLoading rewards records from JSON..."));
         Gson gson = new Gson();
         Type recordType = new TypeToken<Map<String, RewardsCounter>>(){}.getType();
 

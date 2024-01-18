@@ -48,75 +48,46 @@ public class MainCommand implements CommandExecutor, TabExecutor {
         // PLAYER //
         Player player = (Player) sender;
 
+        if (args.length == 0){ // /fp //
+            if (player.hasPermission("fp.gui.use")) {
+                EnchantGui.createGui(player, null);
+            }else {
+                player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
+                help(player);
+            }
+            return true;
+        }
+
         if (args.length >= 1){
-            if (args[0].equalsIgnoreCase("enchant")){ // /fp enchant (Enchantment)
-                if (!player.hasPermission("fp.commands.enchant")) {
+            if (args[0].equalsIgnoreCase("enchants") || args[0].equalsIgnoreCase("en")){ // /fp enchants /fp en //
+                if (!player.hasPermission("fp.commands.enchants")) {
                     player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
                     return true;
                 }
-                if (args.length >= 2) {
-                    List<Material> enchantable = new ArrayList<>();
-                    if (args[1].equalsIgnoreCase("replenish")) { // /fp enchant replenish
-                        enchantable.addAll(ItemUtils.hoes); // HOES //
-                        enchantable.addAll(ItemUtils.axes); // AXES //
-                        ItemUtils.enchantItem(enchantable, player, CustomEnchantments.REPLENISH,1);
-                    } else if (args[1].equalsIgnoreCase("farmersgrace")){
-                        enchantable.addAll(ItemUtils.boots); // BOOTS //
-                        ItemUtils.enchantItem(enchantable, player, CustomEnchantments.FARMERSGRACE,1);
-                    }else if (args[1].equalsIgnoreCase("delicate")){
-                        enchantable.addAll(ItemUtils.axes); // AXES //
-                        ItemUtils.enchantItem(enchantable, player, CustomEnchantments.DELICATE,1);
-                    }else if (args[1].equalsIgnoreCase("farmerstep")){
-                        enchantable.addAll(ItemUtils.boots); // BOOTS //
-                        if (args.length == 3){
-                            if (args[2].equalsIgnoreCase("1"))
-                                ItemUtils.enchantItem(enchantable, player, CustomEnchantments.FARMERSTEP,1);
-                            else if (args[2].equalsIgnoreCase("2"))
-                                ItemUtils.enchantItem(enchantable, player, CustomEnchantments.FARMERSTEP,2);
-                            else if (args[2].equalsIgnoreCase("3"))
-                                ItemUtils.enchantItem(enchantable, player, CustomEnchantments.FARMERSTEP,3);
-                        }else
-                            ItemUtils.enchantItem(enchantable, player, CustomEnchantments.FARMERSTEP,1);
-                    }else if (args[1].equalsIgnoreCase("grandtilling")){
-                        enchantable.addAll(ItemUtils.hoes); // HOES //
-                        if (args.length == 3){
-                            if (args[2].equalsIgnoreCase("1"))
-                                ItemUtils.enchantItem(enchantable, player, CustomEnchantments.GRANDTILLING,1);
-                            else if (args[2].equalsIgnoreCase("2"))
-                                ItemUtils.enchantItem(enchantable, player, CustomEnchantments.GRANDTILLING,2);
-                            else if (args[2].equalsIgnoreCase("3"))
-                                ItemUtils.enchantItem(enchantable, player, CustomEnchantments.GRANDTILLING,3);
-                        }else
-                            ItemUtils.enchantItem(enchantable, player, CustomEnchantments.GRANDTILLING,1);
-                    }else if (args[1].equalsIgnoreCase("irrigate")){
-                        enchantable.add(Material.WATER_BUCKET);
-                        ItemUtils.enchantItem(enchantable, player, CustomEnchantments.IRRIGATE,1);
-                    }else {
-                        player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotEnchantment()));
-                    }
-                }else {
-                    for (String line: FarmingPlus.getPlugin().getMainConfigManager().getEnchantsList()){
-                        player.sendMessage(MessageUtils.translateAll(player, line));
-                    }
+                for (String line : FarmingPlus.getPlugin().getMainConfigManager().getEnchantsList()) {
+                    player.sendMessage(MessageUtils.translateAll(player, line));
                 }
 
             }else if (args[0].equalsIgnoreCase("reload")){
                 subCommandReload(player);
-            }else if (args[0].equalsIgnoreCase("gui")){
-                if (player.hasPermission("fp.gui.use")) {
-                    EnchantGui.createGui(player, null);
-                    return true;
-                }
-                else {
+            }else if (args[0].equalsIgnoreCase("help")){
+                if (!player.hasPermission("fp.commands.help") && !player.hasPermission("fp.admin")){
                     player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
                     return true;
                 }
+                help(player);
             }else if (args[0].equalsIgnoreCase("reward")){
                 if (args[1].equalsIgnoreCase("give")) {
                     if (!player.hasPermission("fp.commands.reward.give") && !player.hasPermission("fp.admin")) {
                         player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
                         return true;
                     }
+
+                    if (args.length < 4) {
+                        player.sendMessage(MessageUtils.translateAll(player, "%farmingplus_prefix%&eUsage: /fp reward give <player> <reward>"));
+                        return true;
+                    }
+
                     String target = args[2];
                     boolean isOnline = false;
                     for (String players : Bukkit.getOnlinePlayers().stream().map(Player::getName).toList()) {
@@ -281,7 +252,7 @@ public class MainCommand implements CommandExecutor, TabExecutor {
 
                     return true;
                 } else if (args[1].equalsIgnoreCase("clear")) {
-                    if (player.hasPermission("fp.admin")) {
+                    if (player.hasPermission("fp.admin") || player.hasPermission("fp.commands.reward.clear")) {
                         if (args.length == 3) {
                             OfflinePlayer targetPlayer = Bukkit.getOfflinePlayer(args[2]);
                             boolean done = false;
@@ -289,7 +260,7 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                                 MySQLData.deleteRewardsForUUID(FarmingPlus.getConnectionMySQL(), targetPlayer.getUniqueId());
                                 done = true;
                             }
-                            if (!targetPlayer.hasPlayedBefore()) {
+                            if (!targetPlayer.hasPlayedBefore() && !FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().containsKey(targetPlayer.getUniqueId())) {
                                 player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotPlayer()));
                             } else {
                                 List<Map.Entry<UUID, RewardsCounter>> list = new ArrayList<>(FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().entrySet());
@@ -303,22 +274,24 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                             }
                             if (done)
                                 player.sendMessage(MessageUtils.translateAll(targetPlayer, FarmingPlus.getPlugin().getMainConfigManager().getRewardsCleared()));
+                            else
+                                player.sendMessage(MessageUtils.translateAll(player, "%farmingplus_prefix%&eUsage: /fp reward clear <player>"));
+                        }else{
+                            player.sendMessage(MessageUtils.translateAll(player, "%farmingplus_prefix%&eUsage: /fp reward clear <player>"));
                         }
+
                         return true;
                     } else
                         player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
                 } else {
                     player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotCommand()));
-                    help(player);
+                    player.sendMessage(MessageUtils.translateAll(player, "%farmingplus_prefix%&eUse /fp help for more information."));
                 }
             }else{
-                sender.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotCommand()));
-                help(player);
+                player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotCommand()));
+                player.sendMessage(MessageUtils.translateAll(player, "%farmingplus_prefix%&eUse /fp help for more information."));
             }
 
-        }else{
-            // /farmingplus or /fp //
-            help(player);
         }
 
         return true;
@@ -326,11 +299,10 @@ public class MainCommand implements CommandExecutor, TabExecutor {
 
     // RETURNS ALL THE COMMANDS //
     public void help(Player player) {
-        if (FarmingPlus.getPlugin().getMainConfigManager().getCommandList().isEmpty())
-            player.sendMessage("empty");
-        for (String line: FarmingPlus.getPlugin().getMainConfigManager().getCommandList()){
-            player.sendMessage(MessageUtils.translateAll(player, line));
-        }
+        if (!FarmingPlus.getPlugin().getMainConfigManager().getCommandList().isEmpty())
+            for (String line: FarmingPlus.getPlugin().getMainConfigManager().getCommandList()){
+                player.sendMessage(MessageUtils.translateAll(player, line));
+            }
     }
 
     // Reload config if player has permissions //
@@ -348,39 +320,50 @@ public class MainCommand implements CommandExecutor, TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 
-        if (args.length == 1)
-            return Arrays.asList("enchant", "reload", "gui", "reward");
+        if (args.length == 1) {
+            List<String> list = new ArrayList<>();
+            if (sender.hasPermission("fp.admin"))
+                return Arrays.asList("enchants","reload", "reward", "help");
 
-        if (args[0].equalsIgnoreCase("enchant") && (sender.hasPermission("fp.admin") || sender.hasPermission("fp.commands.enchant"))) {
-            if (args.length == 2)
-                return Arrays.asList("delicate", "farmersgrace", "farmerstep", "grandtilling", "replenish", "irrigate");
-            if (args.length == 3) {
-                if (args[1].equalsIgnoreCase("delicate"))
-                    return List.of("1");
-                if (args[1].equalsIgnoreCase("farmersgrace"))
-                    return List.of("1");
-                if (args[1].equalsIgnoreCase("farmerstep"))
-                    return Arrays.asList("1", "2", "3");
-                if (args[1].equalsIgnoreCase("grandtilling"))
-                    return Arrays.asList("1", "2", "3");
-                if (args[1].equalsIgnoreCase("replenish"))
-                    return List.of("1");
-                if (args[1].equalsIgnoreCase("irrigate"))
-                    return List.of("1");
-            }
+            if (sender.hasPermission("fp.commands.enchants"))
+                list.add("enchants");
+            if (sender.hasPermission("fp.commands.reload"))
+                list.add("reload");
+            if (sender.hasPermission("fp.commands.reward.top") || sender.hasPermission("fp.commands.reward.give") || sender.hasPermission("fp.commands.reward.list") || sender.hasPermission("fp.commands.reward.clear"))
+                list.add("reward");
+            if (sender.hasPermission("fp.commands.help"))
+                list.add("help");
+            return list;
         }
 
-        if (args[0].equalsIgnoreCase("reward") && (sender.hasPermission("fp.admin") || sender.hasPermission("fp.commands.reward"))) {
-            if (args.length == 2)
-                return Arrays.asList("give", "list", "top", "clear");
+        if (args[0].equalsIgnoreCase("reward")) {
+            if (args.length == 2){
+                List<String> list = new ArrayList<>();
+                if (sender.hasPermission("fp.admin"))
+                    return Arrays.asList("give", "list", "top", "clear");
+                if (sender.hasPermission("fp.commands.reward.give"))
+                    list.add("give");
+                if (sender.hasPermission("fp.commands.reward.list"))
+                    list.add("list");
+                if (sender.hasPermission("fp.commands.reward.top"))
+                    list.add("top");
+                if (sender.hasPermission("fp.commands.reward.clear"))
+                    list.add("clear");
+                return list;
+                }
             if (args.length == 3) {
-                if (args[1].equalsIgnoreCase("give"))
+                if (args[1].equalsIgnoreCase("give") && sender.hasPermission("fp.commands.reward.give"))
                     return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
-                else if (args[1].equalsIgnoreCase("top"))
-                    return Arrays.stream(Bukkit.getOfflinePlayers())
-                            .map(OfflinePlayer::getName)
-                            .collect(Collectors.toList());
-                else if (args[1].equalsIgnoreCase("clear")) {
+                else if (args[1].equalsIgnoreCase("top") && sender.hasPermission("fp.commands.reward.top")) {
+                    List<UUID> uuidList = FarmingPlus.getPlugin().getMainConfigManager().getAllRewardsCounterUuids();
+                    List<String> playersNames = new ArrayList<>();
+                    for (UUID uuid : uuidList) {
+                        playersNames.add(Bukkit.getOfflinePlayer(uuid).getName());
+                    }
+
+                    return playersNames;
+                }
+                else if (args[1].equalsIgnoreCase("clear") && sender.hasPermission("fp.commands.reward.clear")) {
                     List<UUID> uuidList = FarmingPlus.getPlugin().getMainConfigManager().getAllRewardsCounterUuids();
                     List<String> playersNames = new ArrayList<>();
                     for (UUID uuid : uuidList) {
@@ -390,13 +373,13 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                 }
             }
             if (args.length == 4) {
-                if (args[1].equalsIgnoreCase("give"))
+                if (args[1].equalsIgnoreCase("give") && sender.hasPermission("fp.commands.reward.give"))
                     return FarmingPlus.getPlugin().getMainConfigManager().getAllRewardNames();
             }
         }
 
 
-        return new ArrayList<>(); // null = all player names
+        return new ArrayList<>();
     }
 }
 

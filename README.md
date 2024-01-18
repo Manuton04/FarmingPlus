@@ -49,14 +49,16 @@ FarmingPlus is a plugin that allows players to experience new mechanics in farmi
         - amount:
         - level:
 # Permissions
-  - fp.commands.reload: Reloading config.yml.
-  - fp.commands.enchant: Let the player enchant with /fp enchant to enchant without costs (ADMIN).
-  - fp.commands.reward.top: Let the player use /fp reward top. (Or Administrative permissions)
-  - fp.commands.reward.list: Let the player use /fp reward list. (Or Administrative permissions)
-  - fp.commands.reward.give: Let the player use /fp reward give. (Or Administrative permissions)
   - fp.gui.use: Let the player use the GUI for enchanting.
+  - fp.commands.reload: Reloading config.yml.
+  - fp.commands.help: Let the player use /fp help.
+  - fp.commands.reward.top: Let the player use /fp reward top.
+  - fp.commands.reward.list: Let the player use /fp reward list. 
+  - fp.commands.reward.give: Let the player use /fp reward give. (ADMIN)
+  - fp.commands.reward.clear: Let the player use /fp reward clear. (ADMIN)
+  - fp.commands.enchants: Let the player use /fp enchants.
   - fp.bypass.costs: Let the player enchant without costs.
-  - fp.bypass.farmerstep: Plants not needed in inventory when using Farmer's Step.
+  - fp.bypass.farmerstep: Crops not needed in inventory when using Farmer's Step.
   - fp.bypass.farmerstep.protection: Let the player use Farmer's step on WorldGuard regions. 
   - fp.bypass.replenish.protection: Let the player use Replenish on WorldGuard regions.
   - fp.bypass.grandtilling.protection: Let the player use Grand Tilling on WorldGuard regions.
@@ -69,7 +71,7 @@ FarmingPlus is a plugin that allows players to experience new mechanics in farmi
   - Setup economic rewards.
 
 - **WorldGuard**:
-  - Region control for Farmer's Step, Replenish, Irrigate and rewards.
+  - Region control for Farmer's Step, Grand Tilling, Replenish, Irrigate and rewards.
 
 - **MythicMobs**:
   - You can summon MythicMobs as rewards.
