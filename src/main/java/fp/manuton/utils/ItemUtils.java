@@ -123,6 +123,84 @@ public class ItemUtils {
         return true;
     }
 
+    public static ItemStack enchantedItem(ItemStack item, Enchantment ench, int level){
+
+        if (item.hasItemMeta())
+            if (item.getItemMeta().hasEnchant(ench) && item.getItemMeta().getEnchantLevel(ench) == level)
+                return item;
+
+        boolean enchanted = false;
+        item.addUnsafeEnchantment(ench, level);
+        ItemMeta meta = item.getItemMeta();
+        List<String> lore = new ArrayList<String>();
+        String loreToAdd = null;
+        boolean existsLore = false;
+        FarmingPlus plugin = FarmingPlus.getPlugin();
+        if (level == 1) {
+            if (ench.equals(CustomEnchantments.REPLENISH))
+                loreToAdd = MessageUtils.getColoredMessage(plugin.getMainConfigManager().getReplenishNameLore());
+            if (ench.equals(CustomEnchantments.DELICATE))
+                loreToAdd = MessageUtils.getColoredMessage(plugin.getMainConfigManager().getDelicateNameLore());
+            if (ench.equals(CustomEnchantments.FARMERSGRACE))
+                loreToAdd = MessageUtils.getColoredMessage(plugin.getMainConfigManager().getFarmersgraceNameLore());
+            if (ench.equals(CustomEnchantments.FARMERSTEP))
+                loreToAdd = MessageUtils.getColoredMessage(plugin.getMainConfigManager().getFarmerstepNameLore1());
+            if (ench.equals(CustomEnchantments.GRANDTILLING))
+                loreToAdd = MessageUtils.getColoredMessage(plugin.getMainConfigManager().getGrandtillingNameLore1());
+            if (ench.equals(CustomEnchantments.IRRIGATE))
+                loreToAdd = MessageUtils.getColoredMessage(plugin.getMainConfigManager().getIrrigateNameLore());
+        } else if (level == 2) {
+            if (ench.equals(CustomEnchantments.FARMERSTEP))
+                loreToAdd = MessageUtils.getColoredMessage(plugin.getMainConfigManager().getFarmerstepNameLore2());
+            if (ench.equals(CustomEnchantments.GRANDTILLING))
+                loreToAdd = MessageUtils.getColoredMessage(plugin.getMainConfigManager().getGrandtillingNameLore2());
+        } else if (level == 3) {
+            if (ench.equals(CustomEnchantments.FARMERSTEP))
+                loreToAdd = MessageUtils.getColoredMessage(plugin.getMainConfigManager().getFarmerstepNameLore3());
+            if (ench.equals(CustomEnchantments.GRANDTILLING))
+                loreToAdd = MessageUtils.getColoredMessage(plugin.getMainConfigManager().getGrandtillingNameLore3());
+        }
+
+        if (meta.hasLore()) {
+            for (String already : meta.getLore()) {
+                if (already.equals(loreToAdd)) {
+                    existsLore = true;
+                    break;
+                }
+            }
+        }
+
+        if (!existsLore) {
+            List<String> updatedLore;
+            if (meta.hasLore())
+                updatedLore = new ArrayList<>(meta.getLore());
+            else
+                updatedLore = new ArrayList<>();
+
+            boolean loreUpdated = false;
+            for (int i = 0; i < updatedLore.size(); i++) {
+                String already = updatedLore.get(i);
+                if (already.contains(loreToAdd) || loreToAdd.contains(already)) {
+                    updatedLore.set(i, loreToAdd);
+                    loreUpdated = true;
+                    break;
+                }
+            }
+            if (!loreUpdated) {
+                updatedLore.add(loreToAdd);
+            }
+            meta.setLore(updatedLore);
+            item.setItemMeta(meta);
+        }
+
+        if (meta.hasLore())
+            lore.addAll(meta.getLore());
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+
+        return item;
+    }
+
     public static void enchantItem(List<Material> enchantable, Player player, Enchantment ench, int level){
         ItemStack item = new ItemStack(player.getItemInHand());
         int slot = player.getInventory().getHeldItemSlot();
@@ -176,7 +254,11 @@ public class ItemUtils {
                 }
 
                 if (!existsLore) {
-                    List<String> updatedLore = new ArrayList<>(meta.getLore());
+                    List<String> updatedLore;
+                    if (meta.hasLore())
+                        updatedLore = new ArrayList<>(meta.getLore());
+                    else
+                        updatedLore = new ArrayList<>();
                     boolean loreUpdated = false;
                     for (int i = 0; i < updatedLore.size(); i++) {
                         String already = updatedLore.get(i);

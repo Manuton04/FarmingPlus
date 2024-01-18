@@ -1,12 +1,16 @@
 package fp.manuton.events;
 
 import fp.manuton.FarmingPlus;
+import fp.manuton.costs.Cost;
+import fp.manuton.enchantments.CustomEnchantments;
 import fp.manuton.guis.EnchantGui;
 import fp.manuton.utils.ItemUtils;
 import fp.manuton.utils.MessageUtils;
 import fp.manuton.utils.SoundUtils;
+import fp.manuton.utils.VaultUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -166,58 +170,192 @@ public class GuiListener implements Listener {
                     }else if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING)){
                         EnchantGui.guiMenu(player, "confirm", player.getOpenInventory().getTopInventory(), clicked, item);
                     }
-                }
+                }else {
+                    if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "menuConfirmItem"), PersistentDataType.STRING)) {
+                        if (clicked.getType() == Material.valueOf(FarmingPlus.getPlugin().getMainConfigManager().getGuiConfirm())) {
+                            ItemStack enchant;
+                            try {
+                                enchant = event.getClickedInventory().getItem(13);
+                            } catch (NullPointerException e) {
+                                enchant = null;
+                            }
 
-                if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "menuConfirmItem"), PersistentDataType.STRING)){
-                    if (clicked.getType() == Material.valueOf(FarmingPlus.getPlugin().getMainConfigManager().getGuiConfirm())){
+                            try {
+                                item = player.getOpenInventory().getTopInventory().getItem(12);
+                            } catch (NullPointerException e) {
+                                item = null;
+                            }
 
-                    }else if (clicked.getType() == Material.valueOf(FarmingPlus.getPlugin().getMainConfigManager().getGuiCancel())){
+                            Material itemType = null;
+                            try {
+                                itemType = player.getOpenInventory().getTopInventory().getItem(12).getType();
+                            } catch (NullPointerException e) {
+                                itemType = null;
+                            }
 
-                        ItemStack enchant;
-                        try {
-                            enchant = event.getClickedInventory().getItem(13);
-                        }catch (NullPointerException e){
-                            enchant = null;
-                        }
+                            if (item == null || enchant == null)
+                                return;
 
-                        Material itemType = null;
-                        try {
-                            itemType = player.getOpenInventory().getTopInventory().getItem(12).getType();
-                        }catch (NullPointerException e){
-                            enchant = null;
-                        }
-
-                        data = enchant.getItemMeta().getPersistentDataContainer();
-                        if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING) || data.has(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING)){
-                            player.getOpenInventory().getTopInventory().setItem(19, player.getOpenInventory().getTopInventory().getItem(12));
-                            player.getOpenInventory().getTopInventory().setItem(12, null);
-                            EnchantGui.guiMenu(player, "empty", player.getOpenInventory().getTopInventory(), null, null);
-                            if (enchant.getItemMeta().getDisplayName().contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()))){
-
-                                EnchantGui.guiMenu(player, "boots", player.getOpenInventory().getTopInventory(), null, null);
-
-                            }else if (enchant.getItemMeta().getDisplayName().contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()))) {
-
-                                EnchantGui.guiMenu(player, "hoe", player.getOpenInventory().getTopInventory(), null, null);
-
-                            }else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName()))) {
-                                EnchantGui.guiMenu(player, "boots", player.getOpenInventory().getTopInventory(), null, null);
-                            }else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getIrrigateName()))) {
-                                EnchantGui.guiMenu(player, "water", player.getOpenInventory().getTopInventory(), null, null);
-                            }else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getDelicateName()))) {
-                                EnchantGui.guiMenu(player, "axe", player.getOpenInventory().getTopInventory(), null, null);
-                            }else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getReplenishName()))) {
-                                for (Material type : ItemUtils.hoes)
-                                    if (itemType == type) {
-                                        EnchantGui.guiMenu(player, "hoe", player.getOpenInventory().getTopInventory(), null, null);
-                                        break;
+                            String name = enchant.getItemMeta().getDisplayName();
+                            Enchantment enchantment = null;
+                            int level = 1;
+                            if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName()))) {
+                                name = "farmers-grace";
+                                enchantment = CustomEnchantments.FARMERSGRACE;
+                            }
+                            else if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getIrrigateName()))) {
+                                name = "irrigate";
+                                enchantment = CustomEnchantments.IRRIGATE;
+                            }
+                            else if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getReplenishName()))) {
+                                name = "replenish";
+                                enchantment = CustomEnchantments.REPLENISH;
+                            }
+                            else if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getDelicateName()))) {
+                                name = "delicate";
+                                enchantment = CustomEnchantments.DELICATE;
+                            }
+                            else if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()))){
+                                enchantment = CustomEnchantments.GRANDTILLING;
+                                if (name.endsWith("III")) {
+                                    name = "grand-tilling3";
+                                    level = 3;
+                                }
+                                else if (name.endsWith("II")){
+                                    name = "grand-tilling2";
+                                    level = 2;
                                     }
+                                else if (name.endsWith("I"))
+                                    name = "grand-tilling1";
+                            }else if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()))){
+                                enchantment = CustomEnchantments.FARMERSTEP;
+                                if (name.endsWith("III")) {
+                                    name = "farmers-step3";
+                                    level = 3;
+                                }
+                                else if (name.endsWith("II")) {
+                                    name = "farmers-step2";
+                                    level = 2;
+                                }
+                                else if (name.endsWith("I"))
+                                    name = "farmers-step1";
+                            }
 
-                                for (Material type : ItemUtils.axes)
-                                    if (itemType == type) {
-                                        EnchantGui.guiMenu(player, "axe", player.getOpenInventory().getTopInventory(), null, null);
-                                        break;
-                                    }
+                            Cost cost = FarmingPlus.getPlugin().getMainConfigManager().getCost(name);
+
+                            if (ItemUtils.canPayEnchantment(player, cost)){
+                                if (!player.hasPermission("fp.bypass.costs")){
+                                    if (cost.getMoney() > 0)
+                                        VaultUtils.extract(player, cost.getMoney());
+
+                                    if (cost.getXpLevels() > 0)
+                                        player.setLevel(player.getLevel() - cost.getXpLevels());
+
+                                    if (!cost.getItems().isEmpty())
+                                        for (String itemP : cost.getItems()){
+                                            String[] itemSplit = itemP.split(" ");
+                                            Material material = Material.getMaterial(itemSplit[0]);
+                                            int amount = Integer.parseInt(itemSplit[1]);
+                                            if (material == null)
+                                                continue;
+                                            if (amount <= 0)
+                                                amount = 1;
+                                            ItemStack itemPay = new ItemStack(material, amount);
+                                            try{
+                                                player.getOpenInventory().getBottomInventory().removeItem(itemPay);
+                                            }catch (NullPointerException e){
+
+                                            }
+
+                                        }
+                                }
+
+                                item = ItemUtils.enchantedItem(item, enchantment, level);
+                                player.getOpenInventory().getTopInventory().setItem(12, item);
+                            }
+
+                            data = enchant.getItemMeta().getPersistentDataContainer();
+                            if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING) || data.has(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING)) {
+                                player.getOpenInventory().getTopInventory().setItem(19, player.getOpenInventory().getTopInventory().getItem(12));
+                                player.getOpenInventory().getTopInventory().setItem(12, null);
+                                EnchantGui.guiMenu(player, "empty", player.getOpenInventory().getTopInventory(), null, null);
+                                if (enchant.getItemMeta().getDisplayName().contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()))) {
+
+                                    EnchantGui.guiMenu(player, "boots", player.getOpenInventory().getTopInventory(), null, null);
+
+                                } else if (enchant.getItemMeta().getDisplayName().contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()))) {
+
+                                    EnchantGui.guiMenu(player, "hoe", player.getOpenInventory().getTopInventory(), null, null);
+
+                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName()))) {
+                                    EnchantGui.guiMenu(player, "boots", player.getOpenInventory().getTopInventory(), null, null);
+                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getIrrigateName()))) {
+                                    EnchantGui.guiMenu(player, "water", player.getOpenInventory().getTopInventory(), null, null);
+                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getDelicateName()))) {
+                                    EnchantGui.guiMenu(player, "axe", player.getOpenInventory().getTopInventory(), null, null);
+                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getReplenishName()))) {
+                                    for (Material type : ItemUtils.hoes)
+                                        if (itemType == type) {
+                                            EnchantGui.guiMenu(player, "hoe", player.getOpenInventory().getTopInventory(), null, null);
+                                            break;
+                                        }
+
+                                    for (Material type : ItemUtils.axes)
+                                        if (itemType == type) {
+                                            EnchantGui.guiMenu(player, "axe", player.getOpenInventory().getTopInventory(), null, null);
+                                            break;
+                                        }
+                                }
+                            }
+
+                        } else if (clicked.getType() == Material.valueOf(FarmingPlus.getPlugin().getMainConfigManager().getGuiCancel())) {
+
+                            ItemStack enchant;
+                            try {
+                                enchant = event.getClickedInventory().getItem(13);
+                            } catch (NullPointerException e) {
+                                enchant = null;
+                            }
+
+                            Material itemType = null;
+                            try {
+                                itemType = player.getOpenInventory().getTopInventory().getItem(12).getType();
+                            } catch (NullPointerException e) {
+                                enchant = null;
+                            }
+
+                            data = enchant.getItemMeta().getPersistentDataContainer();
+                            if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING) || data.has(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING)) {
+                                player.getOpenInventory().getTopInventory().setItem(19, player.getOpenInventory().getTopInventory().getItem(12));
+                                player.getOpenInventory().getTopInventory().setItem(12, null);
+                                EnchantGui.guiMenu(player, "empty", player.getOpenInventory().getTopInventory(), null, null);
+                                if (enchant.getItemMeta().getDisplayName().contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()))) {
+
+                                    EnchantGui.guiMenu(player, "boots", player.getOpenInventory().getTopInventory(), null, null);
+
+                                } else if (enchant.getItemMeta().getDisplayName().contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()))) {
+
+                                    EnchantGui.guiMenu(player, "hoe", player.getOpenInventory().getTopInventory(), null, null);
+
+                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName()))) {
+                                    EnchantGui.guiMenu(player, "boots", player.getOpenInventory().getTopInventory(), null, null);
+                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getIrrigateName()))) {
+                                    EnchantGui.guiMenu(player, "water", player.getOpenInventory().getTopInventory(), null, null);
+                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getDelicateName()))) {
+                                    EnchantGui.guiMenu(player, "axe", player.getOpenInventory().getTopInventory(), null, null);
+                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getReplenishName()))) {
+                                    for (Material type : ItemUtils.hoes)
+                                        if (itemType == type) {
+                                            EnchantGui.guiMenu(player, "hoe", player.getOpenInventory().getTopInventory(), null, null);
+                                            break;
+                                        }
+
+                                    for (Material type : ItemUtils.axes)
+                                        if (itemType == type) {
+                                            EnchantGui.guiMenu(player, "axe", player.getOpenInventory().getTopInventory(), null, null);
+                                            break;
+                                        }
+                                }
                             }
                         }
                     }
