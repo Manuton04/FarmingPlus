@@ -8,6 +8,7 @@ import fp.manuton.utils.ItemUtils;
 import fp.manuton.utils.MessageUtils;
 import fp.manuton.utils.SoundUtils;
 import fp.manuton.utils.VaultUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -244,18 +245,45 @@ public class GuiListener implements Listener {
                             Cost cost = FarmingPlus.getPlugin().getMainConfigManager().getCost(name);
 
                             if (ItemUtils.canPayEnchantment(player, cost)){
-                                if (!player.hasPermission("fp.bypass.costs")){
-                                    if (cost.getMoney() > 0)
-                                        VaultUtils.extract(player, cost.getMoney());
+                                String enchantedItem = FarmingPlus.getPlugin().getMainConfigManager().getEnchantedItem();
+                                String romanLevel = "";
+                                if (level == 1)
+                                    romanLevel = "I";
+                                else if (level == 2)
+                                    romanLevel = "II";
+                                else if (level == 3)
+                                    romanLevel = "III";
+                                enchantedItem = ChatColor.stripColor(enchantedItem.replace("%enchantment%", enchantment.getName()+" "+romanLevel));
+                                if (item.getItemMeta().hasDisplayName())
+                                    enchantedItem = enchantedItem.replace("%item%", item.getItemMeta().getDisplayName());
+                                else
+                                    enchantedItem = enchantedItem.replace("%item%", item.getType().toString());
 
-                                    if (cost.getXpLevels() > 0)
+                                player.sendMessage(MessageUtils.translateAll(player, enchantedItem));
+                                if (!player.hasPermission("fp.bypass.costs")){
+                                    if (cost.getMoney() > 0) {
+                                        VaultUtils.extract(player, cost.getMoney());
+                                        player.sendMessage(MessageUtils.translateAll(player, "&a-&f "+VaultUtils.formatCurrencySymbol(cost.getMoney())));
+                                    }
+
+                                    if (cost.getXpLevels() > 0){
                                         player.setLevel(player.getLevel() - cost.getXpLevels());
+                                        player.sendMessage(MessageUtils.translateAll(player, "&a-&f "+cost.getXpLevels()+" XP Levels"));
+                                    }
 
                                     if (!cost.getItems().isEmpty())
                                         for (String itemP : cost.getItems()){
-                                            String[] itemSplit = itemP.split(" ");
-                                            Material material = Material.getMaterial(itemSplit[0]);
-                                            int amount = Integer.parseInt(itemSplit[1]);
+
+                                            String[] parts = itemP.split("[\\[\\]]");
+
+                                            String[] partsA = itemP.split(" ");
+                                            Material material = Material.valueOf(partsA[0]);
+                                            int amount = Integer.parseInt(partsA[1]);
+                                            if (amount <= 0)
+                                                amount = 1;
+
+                                            String ItemName = parts[1];
+
                                             if (material == null)
                                                 continue;
                                             if (amount <= 0)
@@ -263,6 +291,7 @@ public class GuiListener implements Listener {
                                             ItemStack itemPay = new ItemStack(material, amount);
                                             try{
                                                 player.getOpenInventory().getBottomInventory().removeItem(itemPay);
+                                                player.sendMessage(MessageUtils.translateAll(player, "&a-&f "+amount+" "+ ItemName));
                                             }catch (NullPointerException e){
 
                                             }

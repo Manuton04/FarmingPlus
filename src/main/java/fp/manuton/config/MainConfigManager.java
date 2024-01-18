@@ -94,9 +94,8 @@ public class MainConfigManager {
     private String mySQLPassword;
     private boolean mySQLEnabled;
     private int mySQLDownloadInterval;
-
-
     private long saveInterval;
+    private String enchantedItem;
     private List<String> replenishLore;
     private List<String> farmersgraceLore;
     private List<String> delicateLore;
@@ -461,6 +460,7 @@ public class MainConfigManager {
         rewardsCleared = messages.getString("messages.rewards-cleared");
         errorMySQL = messages.getString("messages.error-mysql");
         connectedMySQL = messages.getString("messages.connected-mysql");
+        enchantedItem = messages.getString("messages.enchanted-item");
 
         saveInterval = config.getLong("config.save-interval");
         if (saveInterval <= 0) {
@@ -796,5 +796,9 @@ public class MainConfigManager {
 
     public List<String> getGrandTillingGeneralLore() {
         return grandTillingGeneralLore;
+    }
+
+    public String getEnchantedItem() {
+        return enchantedItem;
     }
 }

@@ -1,5 +1,7 @@
 package fp.manuton.enchantments;
 
+import fp.manuton.FarmingPlus;
+import fp.manuton.utils.MessageUtils;
 import org.bukkit.enchantments.Enchantment;
 
 import java.lang.reflect.Field;
@@ -8,12 +10,12 @@ import java.util.stream.Collectors;
 
 public class CustomEnchantments {
 
-    public static final Enchantment REPLENISH = new EnchantmentWrapper("replenish", "Replenish", 1);
-    public static final Enchantment DELICATE = new EnchantmentWrapper("delicate", "Delicate", 1);
-    public static final Enchantment GRANDTILLING = new EnchantmentWrapper("grandtilling", "Grand Tilling", 3);
-    public static final Enchantment FARMERSTEP = new EnchantmentWrapper("farmerstep", "Farmer´s Step", 3);
-    public static final Enchantment FARMERSGRACE = new EnchantmentWrapper("farmersgrace", "Farmer´s Grace", 1);
-    public static final Enchantment IRRIGATE = new EnchantmentWrapper("irrigate", "Irrigate", 1);
+    public static final Enchantment REPLENISH = new EnchantmentWrapper("replenish", MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getReplenishName()), 1);
+    public static final Enchantment DELICATE = new EnchantmentWrapper("delicate", MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getDelicateName()), 1);
+    public static final Enchantment GRANDTILLING = new EnchantmentWrapper("grandtilling", MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()), 3);
+    public static final Enchantment FARMERSTEP = new EnchantmentWrapper("farmerstep", MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()), 3);
+    public static final Enchantment FARMERSGRACE = new EnchantmentWrapper("farmersgrace", MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName()), 1);
+    public static final Enchantment IRRIGATE = new EnchantmentWrapper("irrigate", MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getIrrigateName()), 1);
 
     public static void registerAll(){
         register(REPLENISH);

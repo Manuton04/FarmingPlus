@@ -17,6 +17,7 @@ messages:
   top-reward-leaderboard: "&f&l------%farmingplus_prefix%&fTop Rewards&f&l-------"
   top-reward-leaderboard-line: "&f● &e%farmingplus_top_position%. &f%player% &7- &e%farmingplus_total_rewards%"
   rewards-cleared: "%farmingplus_prefix%&aYou cleared the rewards of &e%player%&a!"
+  enchanted-item: "%farmingplus_prefix%&aSuccessfully enchanted &f%item% &awith &f%enchantment%&a!"
   command-list:
     - "&f&l------%farmingplus_prefix%&fCommands&f&l-------"
     - "&7(All the commands can be used with /fp)"
