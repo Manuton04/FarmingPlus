@@ -301,6 +301,9 @@ public class GuiListener implements Listener {
 
                                 item = ItemUtils.enchantedItem(item, enchantment, level);
                                 player.getOpenInventory().getTopInventory().setItem(12, item);
+                            }else {
+                                player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getCannotEnchant()));
+                                return;
                             }
 
                             data = enchant.getItemMeta().getPersistentDataContainer();
