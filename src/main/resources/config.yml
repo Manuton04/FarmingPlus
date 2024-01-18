@@ -36,6 +36,8 @@ config:
     volume-on-open: 0.5
     sound-on-close: "BLOCK_CHEST_CLOSE"
     volume-on-close: 0.5
+    sound-on-enchant: "ENTITY_PLAYER_LEVELUP"
+    volume-on-enchant: 0.5
     confirm: "LIME_WOOL"
     cancel: "RED_WOOL"
 

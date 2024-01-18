@@ -301,6 +301,12 @@ public class GuiListener implements Listener {
 
                                 item = ItemUtils.enchantedItem(item, enchantment, level);
                                 player.getOpenInventory().getTopInventory().setItem(12, item);
+
+                                String sound = FarmingPlus.getPlugin().getMainConfigManager().getSoundOnEnchant();
+                                if (SoundUtils.getSoundFromString(sound) != null) {
+                                    float volume = FarmingPlus.getPlugin().getMainConfigManager().getVolumeSoundOnEnchant();
+                                    player.playSound(player.getLocation(), SoundUtils.getSoundFromString(sound), volume, 1.0f);
+                                }
                             }else {
                                 player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getCannotEnchant()));
                                 return;

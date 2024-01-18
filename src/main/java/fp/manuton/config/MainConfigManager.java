@@ -97,6 +97,8 @@ public class MainConfigManager {
     private long saveInterval;
     private String enchantedItem;
     private String cannotEnchant;
+    private String soundOnEnchant;
+    private float volumeSoundOnEnchant;
 
     private List<String> replenishLore;
     private List<String> farmersgraceLore;
@@ -428,6 +430,8 @@ public class MainConfigManager {
         mySQLDatabase = config.getString("config.mysql.database");
         mySQLUsername = config.getString("config.mysql.username");
         mySQLPassword = config.getString("config.mysql.password");
+        soundOnEnchant = config.getString("config.gui.sound-on-enchant");
+        volumeSoundOnEnchant = (float) config.getDouble("config.gui.volume-on-enchant");
 
         replenishLore = config.getStringList("config.enchantments.replenish.lore");
         farmersgraceLore = config.getStringList("config.enchantments.farmers-grace.lore");
@@ -807,5 +811,13 @@ public class MainConfigManager {
 
     public String getCannotEnchant() {
         return cannotEnchant;
+    }
+
+    public String getSoundOnEnchant() {
+        return soundOnEnchant;
+    }
+
+    public float getVolumeSoundOnEnchant() {
+        return volumeSoundOnEnchant;
     }
 }
