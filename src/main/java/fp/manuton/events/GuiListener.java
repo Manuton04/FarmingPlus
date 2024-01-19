@@ -263,12 +263,12 @@ public class GuiListener implements Listener {
                                 if (!player.hasPermission("fp.bypass.costs")){
                                     if (cost.getMoney() > 0) {
                                         VaultUtils.extract(player, cost.getMoney());
-                                        player.sendMessage(MessageUtils.translateAll(player, "&a-&f "+VaultUtils.formatCurrencySymbol(cost.getMoney())));
+                                        player.sendMessage(MessageUtils.translateAll(player, "  &4-&c "+VaultUtils.formatCurrencySymbol(cost.getMoney())));
                                     }
 
                                     if (cost.getXpLevels() > 0){
                                         player.setLevel(player.getLevel() - cost.getXpLevels());
-                                        player.sendMessage(MessageUtils.translateAll(player, "&a-&f "+cost.getXpLevels()+" XP Levels"));
+                                        player.sendMessage(MessageUtils.translateAll(player, "  &4-&c "+cost.getXpLevels()+" XP Levels"));
                                     }
 
                                     if (!cost.getItems().isEmpty())
@@ -291,7 +291,7 @@ public class GuiListener implements Listener {
                                             ItemStack itemPay = new ItemStack(material, amount);
                                             try{
                                                 player.getOpenInventory().getBottomInventory().removeItem(itemPay);
-                                                player.sendMessage(MessageUtils.translateAll(player, "&a-&f "+amount+" "+ ItemName));
+                                                player.sendMessage(MessageUtils.translateAll(player, "  &4-&c "+amount+" "+ ItemName));
                                             }catch (NullPointerException e){
 
                                             }
