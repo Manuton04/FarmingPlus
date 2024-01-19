@@ -19,6 +19,9 @@ messages:
   rewards-cleared: "%farmingplus_prefix%&aYou cleared the rewards of &e%player%&a!"
   cannot-pay: "%farmingplus_prefix%&cYou can't pay for this enchantment!"
   enchanted-item: "%farmingplus_prefix%&aSuccessfully enchanted &f%item% &awith &f%enchantment%&a!"
+  # %cost% will be replaced with one cost of the enchantment #
+  # This will show when a player successfully enchants an item #
+  payed-style: "&c- &4%cost%"
   command-list:
     - "&f&l------%farmingplus_prefix%&fCommands&f&l-------"
     - "&7(All the commands can be used with /fp)"

@@ -261,14 +261,18 @@ public class GuiListener implements Listener {
 
                                 player.sendMessage(MessageUtils.translateAll(player, enchantedItem));
                                 if (!player.hasPermission("fp.bypass.costs")){
+                                    String message = FarmingPlus.getPlugin().getMainConfigManager().getPayedStyle();
                                     if (cost.getMoney() > 0) {
                                         VaultUtils.extract(player, cost.getMoney());
-                                        player.sendMessage(MessageUtils.translateAll(player, "  &4-&c "+VaultUtils.formatCurrencySymbol(cost.getMoney())));
+                                        message = message.replace("%cost%", VaultUtils.formatCurrencySymbol(cost.getMoney()));
+                                        player.sendMessage(MessageUtils.translateAll(player, "  "+message));
                                     }
 
                                     if (cost.getXpLevels() > 0){
                                         player.setLevel(player.getLevel() - cost.getXpLevels());
-                                        player.sendMessage(MessageUtils.translateAll(player, "  &4-&c "+cost.getXpLevels()+" XP Levels"));
+                                        message = FarmingPlus.getPlugin().getMainConfigManager().getPayedStyle();
+                                        message = message.replace("%cost%", cost.getXpLevels()+" XP Levels");
+                                        player.sendMessage(MessageUtils.translateAll(player, "  "+message));
                                     }
 
                                     if (!cost.getItems().isEmpty())
@@ -282,7 +286,14 @@ public class GuiListener implements Listener {
                                             if (amount <= 0)
                                                 amount = 1;
 
-                                            String ItemName = parts[1];
+                                            String ItemName = null;
+                                            try{
+                                                ItemName = parts[1];
+                                            }catch (Exception e) {
+                                                ItemName = partsA[0];
+                                            }
+                                            if (ItemName == null)
+                                                ItemName = partsA[0];
 
                                             if (material == null)
                                                 continue;
@@ -291,7 +302,9 @@ public class GuiListener implements Listener {
                                             ItemStack itemPay = new ItemStack(material, amount);
                                             try{
                                                 player.getOpenInventory().getBottomInventory().removeItem(itemPay);
-                                                player.sendMessage(MessageUtils.translateAll(player, "  &4-&c "+amount+" "+ ItemName));
+                                                message = FarmingPlus.getPlugin().getMainConfigManager().getPayedStyle();
+                                                message = message.replace("%cost%", amount+" "+ ItemName);
+                                                player.sendMessage(MessageUtils.translateAll(player, "  "+message));
                                             }catch (NullPointerException e){
 
                                             }

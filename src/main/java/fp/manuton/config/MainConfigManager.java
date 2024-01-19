@@ -99,6 +99,7 @@ public class MainConfigManager {
     private String cannotEnchant;
     private String soundOnEnchant;
     private float volumeSoundOnEnchant;
+    private String payedStyle;
 
     private List<String> replenishLore;
     private List<String> farmersgraceLore;
@@ -468,6 +469,7 @@ public class MainConfigManager {
         connectedMySQL = messages.getString("messages.connected-mysql");
         enchantedItem = messages.getString("messages.enchanted-item");
         cannotEnchant = messages.getString("messages.cannot-pay");
+        payedStyle = messages.getString("messages.payed-style");
 
         saveInterval = config.getLong("config.save-interval");
         if (saveInterval <= 0) {
@@ -819,5 +821,9 @@ public class MainConfigManager {
 
     public float getVolumeSoundOnEnchant() {
         return volumeSoundOnEnchant;
+    }
+
+    public String getPayedStyle() {
+        return payedStyle;
     }
 }

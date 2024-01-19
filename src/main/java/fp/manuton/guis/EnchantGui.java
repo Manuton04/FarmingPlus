@@ -480,7 +480,14 @@ public class EnchantGui{
                         if (amount <= 0)
                             amount = 1;
 
-                        String ItemName = parts[1];
+                        String ItemName = null;
+                        try{
+                            ItemName = parts[1];
+                        }catch (Exception e) {
+                            ItemName = partsA[0];
+                        }
+                        if (ItemName == null)
+                            ItemName = partsA[0];
 
                         if (player.hasPermission("fp.bypass.costs") || player.getInventory().containsAtLeast(new ItemStack(Material.valueOf(itemE.toUpperCase())), amount))
                             anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + amount + " " + ItemName));
