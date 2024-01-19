@@ -14,6 +14,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Random;
 
 public class SummonReward extends Reward{
 
@@ -61,7 +62,6 @@ public class SummonReward extends Reward{
             player.sendMessage(MessageUtils.translateAll(player, message));
         }
 
-        Location spawnLocation = player.getLocation();
         int quantity = getAmount();
         int level = getLevel();
         if (quantity < 1)
@@ -69,9 +69,30 @@ public class SummonReward extends Reward{
         if (level < 1)
             level = 1;
 
-        if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
-            MythicMob mob = MythicBukkit.inst().getMobManager().getMythicMob(getEntity()).orElse(null);
-            for (int i = 0; i < quantity; i++) {
+        Location playerLocation = player.getLocation();
+        Random random = new Random();
+
+        for (int i = 0; i < quantity; i++) {
+            // Generate a random offset within a 5 block radius
+            double offsetX = random.nextDouble() * 10 - 5;
+            double offsetZ = random.nextDouble() * 10 - 5;
+
+            // Make sure the offset is not 0
+            if (offsetX == 0) offsetX = 1;
+            if (offsetZ == 0) offsetZ = 1;
+
+            // Create the new spawn location
+            Location spawnLocation = playerLocation.clone().add(offsetX, 0, offsetZ);
+
+            // If the spawn location is in the air, find the nearest solid block below
+            while (spawnLocation.getBlock().getType().isAir()) {
+                spawnLocation.subtract(0, 1, 0);
+            }
+            spawnLocation.add(0,1,0);
+
+            // Spawn the mob
+            if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
+                MythicMob mob = MythicBukkit.inst().getMobManager().getMythicMob(getEntity()).orElse(null);
                 if(mob != null){
                     ActiveMob knight = mob.spawn(BukkitAdapter.adapt(spawnLocation),level);
                     Entity entity = knight.getEntity().getBukkitEntity();
@@ -82,9 +103,7 @@ public class SummonReward extends Reward{
                         break;
                     }
                 }
-            }
-        }else {
-            for (int i = 0; i < quantity; i++) {
+            }else {
                 try{
                     player.getWorld().spawnEntity(spawnLocation, EntityType.valueOf(getEntity()));
                 }catch(IllegalArgumentException exp){
