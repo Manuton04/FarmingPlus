@@ -169,6 +169,27 @@ public class GuiListener implements Listener {
                             EnchantGui.guiMenu(player, "confirm", player.getOpenInventory().getTopInventory(), clicked, item);
                         }
                     }else if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING)){
+                        if (clicked.getItemMeta().hasLore()) {
+                            if (clicked.getItemMeta().getLore().contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getEnchanted())))
+                                return;
+                            int i = 0;
+                            boolean found = false;
+                            ItemMeta clickedMeta = clicked.getItemMeta();
+                            List<String> lore = clickedMeta.getLore();
+                            for (String loreL : lore) {
+                                if (loreL.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getClickToSee()))) {
+                                    found = true;
+                                    break;
+                                }
+                                i++;
+                            }
+                            if (found) {
+                                lore.remove(i);
+                                lore.remove(i-1);
+                                clickedMeta.setLore(lore);
+                                clicked.setItemMeta(clickedMeta);
+                            }
+                        }
                         EnchantGui.guiMenu(player, "confirm", player.getOpenInventory().getTopInventory(), clicked, item);
                     }
                 }else {
