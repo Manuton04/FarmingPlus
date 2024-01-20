@@ -190,6 +190,10 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                 }
                 help(player);
             }else if (args[0].equalsIgnoreCase("reward")){
+                if (args.length == 1){
+                    player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getUseHelp()));
+                    return true;
+                }
                 if (args[1].equalsIgnoreCase("give")) {
                     if (!player.hasPermission("fp.commands.reward.give") && !player.hasPermission("fp.admin")) {
                         player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
@@ -299,9 +303,9 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                         }
                         player.sendMessage(MessageUtils.getColoredMessage("&f&l---------------------------------"));
 
-                        TextComponent previousPage = new TextComponent(MessageUtils.translateAll(player, "&c&l<< Previous"));
+                        TextComponent previousPage = new TextComponent(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getTopPrevious()));
                         previousPage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fp reward top " + (page - 1)));
-                        TextComponent nextPage = new TextComponent(MessageUtils.translateAll(player, "&a&lNext >>"));
+                        TextComponent nextPage = new TextComponent(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getTopNext()));
                         nextPage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fp reward top " + (page + 1)));
 
                         player.spigot().sendMessage(previousPage, new TextComponent(" | "), nextPage);
@@ -336,9 +340,9 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                             }
                             player.sendMessage(MessageUtils.getColoredMessage("&f&l-----------------------------------"));
 
-                            TextComponent previousPage = new TextComponent(MessageUtils.translateAll(player, "&c&l<< Previous"));
+                            TextComponent previousPage = new TextComponent(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getTopPrevious()));
                             previousPage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fp reward top " + (page - 1)));
-                            TextComponent nextPage = new TextComponent(MessageUtils.translateAll(player, "&a&lNext >>"));
+                            TextComponent nextPage = new TextComponent(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getTopNext()));
                             nextPage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fp reward top " + (page + 1)));
 
                             player.spigot().sendMessage(previousPage, new TextComponent(" | "), nextPage);
@@ -397,11 +401,11 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                         player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
                 } else {
                     player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotCommand()));
-                    player.sendMessage(MessageUtils.translateAll(player, "%farmingplus_prefix%&eUse /fp help for more information."));
+                    player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getUseHelp()));
                 }
             }else{
                 player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotCommand()));
-                player.sendMessage(MessageUtils.translateAll(player, "%farmingplus_prefix%&eUse /fp help for more information."));
+                player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getUseHelp()));
             }
 
         }

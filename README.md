@@ -26,7 +26,7 @@ FarmingPlus is a plugin that allows players to experience new mechanics in farmi
       - Level III: 7x7 area.
   - **Enchanting GUI**:
     - Enchant your tools with the enchanting GUI. Configure the costs in config.yml. They can be money, experience and items.
-    - Enchant with /fp gui.
+    - Enchant with /fp.
   - **Rewards**:
     Configure how much rewards you want in rewards.yml. By default, there are examples in the file.
     The leaderboard saves the record of when and what rewards the player has received. It's saved in Json file every few minutes(Configurable in config.yml).

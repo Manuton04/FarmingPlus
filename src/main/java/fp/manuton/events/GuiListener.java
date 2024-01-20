@@ -134,14 +134,14 @@ public class GuiListener implements Listener {
                 if (clicked != null && item != null && !player.hasMetadata("menuConfirm")){
                     if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING)){
                         if (clicked.getItemMeta().hasLore()) {
-                            if (clicked.getItemMeta().getLore().contains(MessageUtils.getColoredMessage("&a&l✔ Enchanted")))
+                            if (clicked.getItemMeta().getLore().contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getEnchanted())))
                                 return;
                             int i = 0;
                             boolean found = false;
                             ItemMeta clickedMeta = clicked.getItemMeta();
                             List<String> lore = clickedMeta.getLore();
                             for (String loreL : lore) {
-                                if (loreL.contains(MessageUtils.getColoredMessage("&eClick to see!"))) {
+                                if (loreL.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getClickToSee()))) {
                                     found = true;
                                     break;
                                 }
@@ -271,7 +271,7 @@ public class GuiListener implements Listener {
                                     if (cost.getXpLevels() > 0){
                                         player.setLevel(player.getLevel() - cost.getXpLevels());
                                         message = FarmingPlus.getPlugin().getMainConfigManager().getPayedStyle();
-                                        message = message.replace("%cost%", cost.getXpLevels()+" XP Levels");
+                                        message = message.replace("%cost%", cost.getXpLevels()+" "+FarmingPlus.getPlugin().getMainConfigManager().getXpLevelsMessage());
                                         player.sendMessage(MessageUtils.translateAll(player, "  "+message));
                                     }
 

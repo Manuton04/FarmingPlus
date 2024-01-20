@@ -35,8 +35,6 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, String identifier) {
-        if (player == null)
-            return "";
         if (identifier.equals("prefix")){ // Usage: %farmingplus_prefix%
             return plugin.getMainConfigManager().getPluginPrefix();
         }

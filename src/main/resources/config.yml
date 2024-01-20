@@ -24,6 +24,9 @@ config:
     username: ""
     password: ""
   not-top-reward: "&cNo one in top %farmingplus_top_number%"
+  top-previous: "&c&l<< Previous"
+  top-next: "&a&lNext >>"
+  use-help: "%farmingplus_prefix%&eUse /fp help for more information."
 
 
 
@@ -40,6 +43,18 @@ config:
     volume-on-enchant: 0.5
     confirm: "LIME_WOOL"
     cancel: "RED_WOOL"
+    enchant-title: "&aEnchant Item"
+    enchant-message1:
+      - "&7Add FarmingPlus´ enchantments from"
+      - "&7the item in the slot above."
+    enchant-message2:
+      - "&7Place an item to enchant"
+      - "&7in the open slot!"
+    enchanted: "&a&l✔ Enchanted"
+    click-to-see: "&eClick to see!"
+    item-cost-title: "&eEnchanting item Cost:"
+    cost-message: "&7Cost: "
+    xp-levels-message: "XP Levels"
 
 
 

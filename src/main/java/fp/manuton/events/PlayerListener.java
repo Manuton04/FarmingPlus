@@ -138,7 +138,7 @@ public class PlayerListener implements Listener {
         //player.sendMessage("6");
 
         if (action == LEFT_CLICK_BLOCK){
-            player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix +"&cLeft click this item while pointing the air!"));
+            player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getLeftClickAir()));
             event.setCancelled(true);
             //player.sendMessage("7");
         }else if(action == LEFT_CLICK_AIR){

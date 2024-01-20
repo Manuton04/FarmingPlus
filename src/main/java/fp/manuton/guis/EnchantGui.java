@@ -43,9 +43,10 @@ public class EnchantGui{
         ItemStack enchantItem = new ItemStack(Material.ENCHANTING_TABLE);
         ItemMeta enchantItemMeta = enchantItem.getItemMeta();
         List<String> enchantItemlore = new ArrayList<String>();
-        enchantItemMeta.setDisplayName(MessageUtils.getColoredMessage("&aEnchant Item"));
-        enchantItemlore.add(MessageUtils.getColoredMessage("&7Add and remove FarmingPlus´ enchantments from"));
-        enchantItemlore.add(MessageUtils.getColoredMessage("&7the item in the slot above."));
+        enchantItemMeta.setDisplayName(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchantTitle()));
+        for (String line : plugin.getMainConfigManager().getEnchantMessage1()) {
+            enchantItemlore.add(MessageUtils.getColoredMessage(line));
+        }
         enchantItemMeta.setLore(enchantItemlore);
         enchantItem.setItemMeta(enchantItemMeta);
 
@@ -57,9 +58,10 @@ public class EnchantGui{
         ItemStack putItem = new ItemStack(Material.PAPER);
         ItemMeta putItemMeta = putItem.getItemMeta();
         List<String> putItemlore = new ArrayList<String>();
-        putItemMeta.setDisplayName(MessageUtils.getColoredMessage("&cEnchant Item"));
-        putItemlore.add(MessageUtils.getColoredMessage("&7Place an item to enchant"));
-        putItemlore.add(MessageUtils.getColoredMessage("&7in the open slot!"));
+        putItemMeta.setDisplayName(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchantTitle()));
+        for (String line : plugin.getMainConfigManager().getEnchantMessage2()) {
+            putItemlore.add(MessageUtils.getColoredMessage(line));
+        }
         putItemMeta.setLore(putItemlore);
         putItem.setItemMeta(putItemMeta);
 
@@ -100,9 +102,10 @@ public class EnchantGui{
         ItemStack enchantItem = new ItemStack(Material.ENCHANTING_TABLE);
         ItemMeta enchantItemMeta = enchantItem.getItemMeta();
         List<String> enchantItemlore = new ArrayList<String>();
-        enchantItemMeta.setDisplayName(MessageUtils.getColoredMessage("&aEnchant Item"));
-        enchantItemlore.add(MessageUtils.getColoredMessage("&7Add FarmingPlus´ enchantments from"));
-        enchantItemlore.add(MessageUtils.getColoredMessage("&7the item in the slot above."));
+        enchantItemMeta.setDisplayName(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchantTitle()));
+        for (String line : plugin.getMainConfigManager().getEnchantMessage1()) {
+            enchantItemlore.add(MessageUtils.getColoredMessage(line));
+        }
         enchantItemMeta.setLore(enchantItemlore);
         enchantItem.setItemMeta(enchantItemMeta);
 
@@ -114,9 +117,10 @@ public class EnchantGui{
         ItemStack putItem = new ItemStack(Material.PAPER);
         ItemMeta putItemMeta = putItem.getItemMeta();
         List<String> putItemlore = new ArrayList<String>();
-        putItemMeta.setDisplayName(MessageUtils.getColoredMessage("&cEnchant Item"));
-        putItemlore.add(MessageUtils.getColoredMessage("&7Place an item to enchant"));
-        putItemlore.add(MessageUtils.getColoredMessage("&7in the open slot!"));
+        putItemMeta.setDisplayName(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchantTitle()));
+        for (String line : plugin.getMainConfigManager().getEnchantMessage2()) {
+            putItemlore.add(MessageUtils.getColoredMessage(line));
+        }
         putItemMeta.setLore(putItemlore);
         putItem.setItemMeta(putItemMeta);
 
@@ -143,7 +147,7 @@ public class EnchantGui{
                 clickFarmerStepLore.add(MessageUtils.getColoredMessage(loreL));
             }
             clickFarmerStepLore.add(null);
-            clickFarmerStepLore.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            clickFarmerStepLore.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
             farmerstepMeta.setLore(clickFarmerStepLore);
             PersistentDataContainer farmersStepContainer = farmerstepMeta.getPersistentDataContainer();
             farmersStepContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
@@ -158,9 +162,9 @@ public class EnchantGui{
             }
             loreFarmersgrace.add(null);
             if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.FARMERSGRACE))
-                loreFarmersgrace.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+                loreFarmersgrace.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
-                loreFarmersgrace.add(MessageUtils.getColoredMessage("&eClick to see!"));
+                loreFarmersgrace.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
             farmersgraceMeta.setLore(loreFarmersgrace);
             PersistentDataContainer farmersGraceContainer = farmersgraceMeta.getPersistentDataContainer();
             farmersGraceContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
@@ -182,9 +186,9 @@ public class EnchantGui{
             }
             loreReplenish.add(null);
             if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.REPLENISH))
-                loreReplenish.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+                loreReplenish.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
-                loreReplenish.add(MessageUtils.getColoredMessage("&eClick to see!"));
+                loreReplenish.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
             replenishMeta.setLore(loreReplenish);
             PersistentDataContainer replenishContainer = replenishMeta.getPersistentDataContainer();
             replenishContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
@@ -198,7 +202,7 @@ public class EnchantGui{
                 clickGrandTillingLore.add(MessageUtils.getColoredMessage(loreL));
             }
             clickGrandTillingLore.add(null);
-            clickGrandTillingLore.add(MessageUtils.getColoredMessage("&eClick to see!"));
+            clickGrandTillingLore.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
             grandTillingMeta.setLore(clickGrandTillingLore);
             PersistentDataContainer grandTillingContainer = grandTillingMeta.getPersistentDataContainer();
             grandTillingContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
@@ -221,9 +225,9 @@ public class EnchantGui{
             }
             loreReplenish.add(null);
             if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.REPLENISH))
-                loreReplenish.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+                loreReplenish.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
-                loreReplenish.add(MessageUtils.getColoredMessage("&eClick to see!"));
+                loreReplenish.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
             replenishMeta.setLore(loreReplenish);
             PersistentDataContainer replenishContainer = replenishMeta.getPersistentDataContainer();
             replenishContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
@@ -238,9 +242,9 @@ public class EnchantGui{
             }
             loreDelicate.add(null);
             if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.DELICATE))
-                loreDelicate.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+                loreDelicate.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
-                loreDelicate.add(MessageUtils.getColoredMessage("&eClick to see!"));
+                loreDelicate.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
             delicateMeta.setLore(loreDelicate);
             PersistentDataContainer delicateContainer = delicateMeta.getPersistentDataContainer();
             delicateContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
@@ -263,9 +267,9 @@ public class EnchantGui{
             }
             loreIrrigate.add(null);
             if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.IRRIGATE))
-                loreIrrigate.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+                loreIrrigate.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
-                loreIrrigate.add(MessageUtils.getColoredMessage("&eClick to see!"));
+                loreIrrigate.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
             irrigateMeta.setLore(loreIrrigate);
             PersistentDataContainer irrigateContainer = irrigateMeta.getPersistentDataContainer();
             irrigateContainer.set(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING, "yes");
@@ -287,9 +291,9 @@ public class EnchantGui{
             }
             clickGrandTillingLore1.add(null);
             if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.GRANDTILLING) && inventory.getItem(19).getItemMeta().getEnchantLevel(CustomEnchantments.GRANDTILLING) == 1)
-                clickGrandTillingLore1.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+                clickGrandTillingLore1.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
-                clickGrandTillingLore1.add(MessageUtils.getColoredMessage("&eClick to see!"));
+                clickGrandTillingLore1.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
             grandTillingMeta1.setLore(clickGrandTillingLore1);
             PersistentDataContainer grandTillingContainer1 = grandTillingMeta1.getPersistentDataContainer();
             grandTillingContainer1.set(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING, "yes");
@@ -304,9 +308,9 @@ public class EnchantGui{
             }
             clickGrandTillingLore2.add(null);
             if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.GRANDTILLING) && inventory.getItem(19).getItemMeta().getEnchantLevel(CustomEnchantments.GRANDTILLING) == 2)
-                clickGrandTillingLore2.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+                clickGrandTillingLore2.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
-                clickGrandTillingLore2.add(MessageUtils.getColoredMessage("&eClick to see!"));
+                clickGrandTillingLore2.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
             grandTillingMeta2.setLore(clickGrandTillingLore2);
             PersistentDataContainer grandTillingContainer2 = grandTillingMeta2.getPersistentDataContainer();
             grandTillingContainer2.set(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING, "yes");
@@ -321,9 +325,9 @@ public class EnchantGui{
             }
             clickGrandTillingLore3.add(null);
             if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.GRANDTILLING) && inventory.getItem(19).getItemMeta().getEnchantLevel(CustomEnchantments.GRANDTILLING) == 3)
-                clickGrandTillingLore3.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+                clickGrandTillingLore3.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
-                clickGrandTillingLore3.add(MessageUtils.getColoredMessage("&eClick to see!"));
+                clickGrandTillingLore3.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
             grandTillingMeta3.setLore(clickGrandTillingLore3);
             PersistentDataContainer grandTillingContainer3 = grandTillingMeta3.getPersistentDataContainer();
             grandTillingContainer3.set(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING, "yes");
@@ -347,9 +351,9 @@ public class EnchantGui{
             }
             clickFarmersStep1.add(null);
             if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.FARMERSTEP) && inventory.getItem(19).getItemMeta().getEnchantLevel(CustomEnchantments.FARMERSTEP) == 1)
-                clickFarmersStep1.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+                clickFarmersStep1.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
-                clickFarmersStep1.add(MessageUtils.getColoredMessage("&eClick to see!"));
+                clickFarmersStep1.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
             farmersStepMeta1.setLore(clickFarmersStep1);
             PersistentDataContainer grandTillingContainer1 = farmersStepMeta1.getPersistentDataContainer();
             grandTillingContainer1.set(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING, "yes");
@@ -364,9 +368,9 @@ public class EnchantGui{
             }
             clickFarmersStepLore2.add(null);
             if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.FARMERSTEP) && inventory.getItem(19).getItemMeta().getEnchantLevel(CustomEnchantments.FARMERSTEP) == 2)
-                clickFarmersStepLore2.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+                clickFarmersStepLore2.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
-                clickFarmersStepLore2.add(MessageUtils.getColoredMessage("&eClick to see!"));
+                clickFarmersStepLore2.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
             farmersStepMeta2.setLore(clickFarmersStepLore2);
             PersistentDataContainer grandTillingContainer2 = farmersStepMeta2.getPersistentDataContainer();
             grandTillingContainer2.set(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING, "yes");
@@ -381,9 +385,9 @@ public class EnchantGui{
             }
             clickFarmersStepLore3.add(null);
             if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.FARMERSTEP) && inventory.getItem(19).getItemMeta().getEnchantLevel(CustomEnchantments.FARMERSTEP) == 3)
-                clickFarmersStepLore3.add(MessageUtils.getColoredMessage("&a&l✔ Enchanted"));
+                clickFarmersStepLore3.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
-                clickFarmersStepLore3.add(MessageUtils.getColoredMessage("&eClick to see!"));
+                clickFarmersStepLore3.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
             farmersStepMeta3.setLore(clickFarmersStepLore3);
             PersistentDataContainer grandTillingContainer3 = farmersStepMeta3.getPersistentDataContainer();
             grandTillingContainer3.set(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING, "yes");
@@ -452,18 +456,18 @@ public class EnchantGui{
 
             ItemStack anvil = new ItemStack(Material.ANVIL);
             ItemMeta anvilMeta = anvil.getItemMeta();
-            anvilMeta.setDisplayName(MessageUtils.getColoredMessage("&eEnchanting item Cost:"));
+            anvilMeta.setDisplayName(MessageUtils.translateAll(player, plugin.getMainConfigManager().getItemCostTitle()));
             List<String> anvilLore = new ArrayList<String>();
-            anvilLore.add(MessageUtils.getColoredMessage("&7Cost: "));
+            anvilLore.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getCostMessage()));
 
             // ✓ - ✔ - ✗ - ✘ //
 
             if (costE != null) {
                 if (costE.getXpLevels() > 0)
                     if (player.hasPermission("fp.bypass.costs") || player.getLevel() >= costE.getXpLevels())
-                        anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + String.valueOf(costE.getXpLevels()) + " XP Levels"));
+                        anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + String.valueOf(costE.getXpLevels()) + " "+plugin.getMainConfigManager().getXpLevelsMessage()));
                     else
-                        anvilLore.add(MessageUtils.getColoredMessage("&c✘ - " + String.valueOf(costE.getXpLevels()) + " XP Levels"));
+                        anvilLore.add(MessageUtils.getColoredMessage("&c✘ - " + String.valueOf(costE.getXpLevels()) + " "+plugin.getMainConfigManager().getXpLevelsMessage()));
                 if (costE.getMoney() > 0)
                     if (player.hasPermission("fp.bypass.costs") || VaultUtils.getMoney(player) >= costE.getMoney())
                         anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + VaultUtils.formatCurrencySymbol(costE.getMoney())));

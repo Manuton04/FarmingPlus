@@ -100,6 +100,18 @@ public class MainConfigManager {
     private String soundOnEnchant;
     private float volumeSoundOnEnchant;
     private String payedStyle;
+    private String topPrevious;
+    private String topNext;
+    private String useHelp;
+    private String leftClickAir;
+    private String enchantTitle;
+    private List<String> enchantMessage1;
+    private List<String> enchantMessage2;
+    private String enchanted;
+    private String clickToSee;
+    private String itemCostTitle;
+    private String costMessage;
+    private String xpLevelsMessage;
 
     private List<String> replenishLore;
     private List<String> farmersgraceLore;
@@ -433,6 +445,17 @@ public class MainConfigManager {
         mySQLPassword = config.getString("config.mysql.password");
         soundOnEnchant = config.getString("config.gui.sound-on-enchant");
         volumeSoundOnEnchant = (float) config.getDouble("config.gui.volume-on-enchant");
+        enchantTitle = config.getString("config.gui.enchant-title");
+        enchantMessage1 = config.getStringList("config.gui.enchant-message1");
+        enchantMessage2 = config.getStringList("config.gui.enchant-message2");
+        enchanted = config.getString("config.gui.enchanted");
+        clickToSee = config.getString("config.gui.click-to-see");
+        itemCostTitle = config.getString("config.gui.item-cost-title");
+        costMessage = config.getString("config.gui.cost-message");
+        xpLevelsMessage = config.getString("config.gui.xp-levels-message");
+        topPrevious = config.getString("config.top-previous");
+        topNext = config.getString("config.top-next");
+        useHelp = config.getString("config.use-help");
 
         replenishLore = config.getStringList("config.enchantments.replenish.lore");
         farmersgraceLore = config.getStringList("config.enchantments.farmers-grace.lore");
@@ -470,6 +493,7 @@ public class MainConfigManager {
         enchantedItem = messages.getString("messages.enchanted-item");
         cannotEnchant = messages.getString("messages.cannot-pay");
         payedStyle = messages.getString("messages.payed-style");
+        leftClickAir = messages.getString("messages.left-click-air");
 
         saveInterval = config.getLong("config.save-interval");
         if (saveInterval <= 0) {
@@ -825,5 +849,54 @@ public class MainConfigManager {
 
     public String getPayedStyle() {
         return payedStyle;
+    }
+
+    public String getTopPrevious() {
+        return topPrevious;
+    }
+
+    public String getTopNext() {
+        return topNext;
+    }
+
+    public String getUseHelp() {
+        return useHelp;
+    }
+
+    public String getLeftClickAir() {
+        return leftClickAir;
+    }
+
+
+    public List<String> getEnchantMessage1() {
+        return enchantMessage1;
+    }
+
+    public String getEnchantTitle() {
+        return enchantTitle;
+    }
+
+    public List<String> getEnchantMessage2() {
+        return enchantMessage2;
+    }
+
+    public String getEnchanted() {
+        return enchanted;
+    }
+
+    public String getClickToSee() {
+        return clickToSee;
+    }
+
+    public String getItemCostTitle() {
+        return itemCostTitle;
+    }
+
+    public String getCostMessage() {
+        return costMessage;
+    }
+
+    public String getXpLevelsMessage() {
+        return xpLevelsMessage;
     }
 }
