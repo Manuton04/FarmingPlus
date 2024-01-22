@@ -4,6 +4,7 @@ import fp.manuton.FarmingPlus;
 import fp.manuton.SQL.MySQLData;
 import fp.manuton.enchantments.CustomEnchantments;
 import fp.manuton.guis.EnchantGui;
+import fp.manuton.rewards.MoneyReward;
 import fp.manuton.rewards.Reward;
 import fp.manuton.rewards.SummonReward;
 import fp.manuton.rewardsCounter.RewardRecord;
@@ -219,7 +220,6 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                     } else {
                         if (FarmingPlus.getPlugin().getMainConfigManager().getAllRewardNames().contains(args[3])) {
                             Reward reward = FarmingPlus.getPlugin().getMainConfigManager().getReward(args[3]);
-                            reward.give(Bukkit.getPlayer(target));
                             boolean done = true;
                             if (reward instanceof SummonReward) {
                                 if (Bukkit.getPluginManager().getPlugin("MythicMobs") == null) {
@@ -242,8 +242,14 @@ public class MainCommand implements CommandExecutor, TabExecutor {
 
                                 }
 
+                            }else if (reward instanceof MoneyReward){
+                                if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
+                                    player.sendMessage(MessageUtils.translateAll(null, FarmingPlus.prefix+" &cYou need Vault to use this reward."));
+                                    done = false;
+                                }
                             }
-                            if (done) {
+                            if (done){
+                                reward.give(Bukkit.getPlayer(target));
 
                                 UUID playerId = Bukkit.getPlayer(target).getUniqueId();
                                 if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL())) {

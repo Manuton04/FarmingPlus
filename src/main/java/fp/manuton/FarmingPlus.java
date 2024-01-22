@@ -24,8 +24,8 @@ public class FarmingPlus extends JavaPlugin {
     private static FarmingPlus plugin;
     private MainConfigManager mainConfigManager;
     private static Connection connectionMySQL;
-    private final String link = ""; // MODRINTH LINK //
-    private final int pluginIdSpigot = 1; // ADD PLUGIN ID SPIGOT //
+    private final String link = "https://modrinth.com/plugin/farmingplus";
+    private final int pluginIdSpigot = 114643; // ADD PLUGIN ID SPIGOT //
 
     public void onEnable(){
         plugin = this;

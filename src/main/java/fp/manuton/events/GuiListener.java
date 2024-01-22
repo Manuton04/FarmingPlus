@@ -8,6 +8,7 @@ import fp.manuton.utils.ItemUtils;
 import fp.manuton.utils.MessageUtils;
 import fp.manuton.utils.SoundUtils;
 import fp.manuton.utils.VaultUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -283,10 +284,12 @@ public class GuiListener implements Listener {
                                 player.sendMessage(MessageUtils.translateAll(player, enchantedItem));
                                 if (!player.hasPermission("fp.bypass.costs")){
                                     String message = FarmingPlus.getPlugin().getMainConfigManager().getPayedStyle();
-                                    if (cost.getMoney() > 0) {
-                                        VaultUtils.extract(player, cost.getMoney());
-                                        message = message.replace("%cost%", VaultUtils.formatCurrencySymbol(cost.getMoney()));
-                                        player.sendMessage(MessageUtils.translateAll(player, "  "+message));
+                                    if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
+                                        if (cost.getMoney() > 0) {
+                                            VaultUtils.extract(player, cost.getMoney());
+                                            message = message.replace("%cost%", VaultUtils.formatCurrencySymbol(cost.getMoney()));
+                                            player.sendMessage(MessageUtils.translateAll(player, "  " + message));
+                                        }
                                     }
 
                                     if (cost.getXpLevels() > 0){

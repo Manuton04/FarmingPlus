@@ -10,10 +10,12 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import fp.manuton.FarmingPlus;
 import fp.manuton.SQL.MySQLData;
+import fp.manuton.rewards.MoneyReward;
 import fp.manuton.rewards.Reward;
 import fp.manuton.rewardsCounter.RewardRecord;
 import fp.manuton.rewardsCounter.RewardsCounter;
 import fp.manuton.utils.ItemUtils;
+import fp.manuton.utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -93,6 +95,13 @@ public class RewardsListener implements Listener {
             for (String crop : reward.getCrops()){
                 if (crop.contains(block.getType().toString()) || crop.equals("ALL")){
                     if (Math.random() <= reward.getChance()){
+
+                        if (reward instanceof MoneyReward){
+                            if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
+                                Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, FarmingPlus.prefix+" &cYou need Vault to use this reward."));
+                                return;
+                            }
+                        }
 
                         reward.give(player);
                         rewardGiven = true;

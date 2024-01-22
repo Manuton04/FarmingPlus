@@ -464,15 +464,18 @@ public class EnchantGui{
 
             if (costE != null) {
                 if (costE.getXpLevels() > 0)
-                    if (player.hasPermission("fp.bypass.costs") || player.getLevel() >= costE.getXpLevels())
-                        anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + String.valueOf(costE.getXpLevels()) + " "+plugin.getMainConfigManager().getXpLevelsMessage()));
-                    else
-                        anvilLore.add(MessageUtils.getColoredMessage("&c✘ - " + String.valueOf(costE.getXpLevels()) + " "+plugin.getMainConfigManager().getXpLevelsMessage()));
-                if (costE.getMoney() > 0)
-                    if (player.hasPermission("fp.bypass.costs") || VaultUtils.getMoney(player) >= costE.getMoney())
-                        anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + VaultUtils.formatCurrencySymbol(costE.getMoney())));
-                    else
-                        anvilLore.add(MessageUtils.getColoredMessage("&c✘ - " + VaultUtils.formatCurrencySymbol(costE.getMoney())));
+                    if (player.hasPermission("fp.bypass.costs") || player.getLevel() >= costE.getXpLevels()) {
+                        anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + String.valueOf(costE.getXpLevels()) + " " + plugin.getMainConfigManager().getXpLevelsMessage()));
+                    }else {
+                        anvilLore.add(MessageUtils.getColoredMessage("&c✘ - " + String.valueOf(costE.getXpLevels()) + " " + plugin.getMainConfigManager().getXpLevelsMessage()));
+                    }
+                if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
+                    if (costE.getMoney() > 0)
+                        if (player.hasPermission("fp.bypass.costs") || VaultUtils.getMoney(player) >= costE.getMoney())
+                            anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + VaultUtils.formatCurrencySymbol(costE.getMoney())));
+                        else
+                            anvilLore.add(MessageUtils.getColoredMessage("&c✘ - " + VaultUtils.formatCurrencySymbol(costE.getMoney())));
+                }
                 if (!costE.getItems().isEmpty()) {
                     anvilLore.add(MessageUtils.getColoredMessage("&e- Items:"));
                     for (String itemE : costE.getItems()) {

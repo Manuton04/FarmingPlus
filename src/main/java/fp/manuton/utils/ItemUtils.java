@@ -3,6 +3,7 @@ package fp.manuton.utils;
 import fp.manuton.FarmingPlus;
 import fp.manuton.costs.Cost;
 import fp.manuton.enchantments.CustomEnchantments;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -95,9 +96,11 @@ public class ItemUtils {
         if (player.hasPermission("fp.bypass.costs"))
             return true;
 
-        if (cost.getMoney() > 0){
-            if (VaultUtils.getMoney(player) <= cost.getMoney())
-                return false;
+        if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
+            if (cost.getMoney() > 0) {
+                if (VaultUtils.getMoney(player) <= cost.getMoney())
+                    return false;
+            }
         }
 
         if (cost.getXpLevels() > 0){
