@@ -20,6 +20,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.Player;
@@ -93,31 +94,43 @@ public class RewardsListener implements Listener {
                 continue;
 
             for (String crop : reward.getCrops()){
-                if (crop.contains(block.getType().toString()) || crop.equals("ALL")){
-                    if (Math.random() <= reward.getChance()){
+                if (rewardGiven) break;
 
-                        if (reward instanceof MoneyReward){
-                            if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
-                                Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, FarmingPlus.prefix+" &cYou need Vault to use this reward."));
-                                return;
+                if (crop.contains(block.getType().toString()) || crop.equals("ALL")) {
+                    int amount = 1;
+                    if (block.getType().equals(Material.SUGAR_CANE) || block.getType().equals(Material.CACTUS))
+                        while (block.getRelative(BlockFace.UP).getType() == block.getType()) {
+                            block = block.getRelative(BlockFace.UP);
+                            amount++;
+                        }
+
+                    for (int i = 0; i < amount; i++) {
+                        if (rewardGiven) break;
+
+                        if (Math.random() <= reward.getChance()) {
+                            if (reward instanceof MoneyReward) {
+                                if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
+                                    Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, FarmingPlus.prefix + " &cYou need Vault to use this reward."));
+                                    return;
+                                }
                             }
-                        }
 
-                        reward.give(player);
-                        rewardGiven = true;
-                        if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL())) {
+                            reward.give(player);
+                            rewardGiven = true;
+                            if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL())) {
+                                UUID playerId = player.getUniqueId();
+                                RewardRecord rewardRecord = new RewardRecord(new Date(), FarmingPlus.getPlugin().getMainConfigManager().getKeyFromReward(reward));
+                                MySQLData.saveRewardCounterToDatabase(FarmingPlus.getConnectionMySQL(), playerId, rewardRecord);
+                            }
+                            Map<UUID, RewardsCounter> rewardsCounterMap = FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap();
                             UUID playerId = player.getUniqueId();
-                            RewardRecord rewardRecord = new RewardRecord(new Date(), FarmingPlus.getPlugin().getMainConfigManager().getKeyFromReward(reward));
-                            MySQLData.saveRewardCounterToDatabase(FarmingPlus.getConnectionMySQL(), playerId, rewardRecord);
+                            RewardsCounter rewardsCounter = new RewardsCounter(new ArrayList<>());
+                            if (!rewardsCounterMap.containsKey(playerId))
+                                rewardsCounterMap.put(playerId, rewardsCounter);
+                            rewardsCounter = rewardsCounterMap.get(playerId);
+                            rewardsCounter.addRecord(FarmingPlus.getPlugin().getMainConfigManager().getKeyFromReward(reward));
+                            break;
                         }
-                        Map<UUID, RewardsCounter> rewardsCounterMap = FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap();
-                        UUID playerId = player.getUniqueId();
-                        RewardsCounter rewardsCounter = new RewardsCounter(new ArrayList<>());
-                        if (!rewardsCounterMap.containsKey(playerId))
-                            rewardsCounterMap.put(playerId, rewardsCounter);
-                        rewardsCounter = rewardsCounterMap.get(playerId);
-                        rewardsCounter.addRecord(FarmingPlus.getPlugin().getMainConfigManager().getKeyFromReward(reward));
-                        break;
                     }
                 }
             }

@@ -14,7 +14,7 @@ FarmingPlus is a plugin that allows players to experience new mechanics in farmi
   - **Enchantments**:
     - Farmer's Grace: Prevent crops from being destroyed when trampled. **(Boots)**
     - Replenish: Allows the player to replant crops automatically. **(Hoe/Axe)**
-    - Delicate: Prevents stems from being destroyed. **(Axe)**
+    - Delicate: Prevents stems from being destroyed. **(Axe)** 
     - Irrigate: Allows the player to irrigate 64 blocks in a row (Configurable in config.yml). **(Water Bucket)**
     - Grand Tilling: Allows the player to till an area. **(Hoe)**
       - Level I: 3x3 area.
@@ -50,6 +50,7 @@ FarmingPlus is a plugin that allows players to experience new mechanics in farmi
         - level:
 # Permissions
   - fp.gui.use: Let the player use the GUI for enchanting.
+  - fp.autopickup: Let the player autopickup the crops they break.
   - fp.commands.reload: Reloading config.yml.
   - fp.commands.help: Let the player use /fp help.
   - fp.commands.reward.top: Let the player use /fp reward top.
@@ -59,7 +60,8 @@ FarmingPlus is a plugin that allows players to experience new mechanics in farmi
   - fp.commands.enchants: Let the player use /fp enchants.
   - fp.bypass.costs: Let the player enchant without costs.
   - fp.bypass.farmerstep: Crops not needed in inventory when using Farmer's Step.
-  - fp.bypass.farmerstep.protection: Let the player use Farmer's step on WorldGuard regions. 
+  - fp.bypass.farmerstep.protection: Let the player use Farmer's step on WorldGuard regions.
+  - fp.bypass.replenish: Crops not needed in inventory when using Replenish.
   - fp.bypass.replenish.protection: Let the player use Replenish on WorldGuard regions.
   - fp.bypass.grandtilling.protection: Let the player use Grand Tilling on WorldGuard regions.
   - fp.bypass.irrigate.protection: Let the player use Irrigate on WorldGuard regions.

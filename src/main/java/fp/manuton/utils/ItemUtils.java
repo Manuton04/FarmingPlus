@@ -92,6 +92,22 @@ public class ItemUtils {
 
     }
 
+    public static Material getCrop(Material material){
+        if (material.equals(Material.WHEAT))
+            return Material.WHEAT_SEEDS;
+        if (material.equals(Material.POTATOES))
+            return Material.POTATO;
+        if (material.equals(Material.CARROTS))
+            return Material.CARROT;
+        if (material.equals(Material.BEETROOTS))
+            return Material.BEETROOT_SEEDS;
+        if (material.equals(Material.NETHER_WART))
+            return Material.NETHER_WART;
+        if (material.equals(Material.COCOA))
+            return Material.COCOA_BEANS;
+        return null;
+    }
+
     public static boolean canPayEnchantment(Player player, Cost cost){
         if (player.hasPermission("fp.bypass.costs"))
             return true;

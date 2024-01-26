@@ -20,7 +20,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.Ageable;
-import org.bukkit.block.data.Openable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -42,6 +41,43 @@ import static org.bukkit.event.block.Action.*;
 //
 public class PlayerListener implements Listener {
 
+    private boolean playerHasItemInInventory(Player player, Material item) {
+        return player.getInventory().contains(item, 1);
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void autoPickup(BlockBreakEvent event){
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
+        if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR)
+            return;
+        if (player.getInventory().getItemInMainHand().getType() != Material.AIR) {
+            if (player.getInventory().getItemInMainHand().hasItemMeta())
+                if (player.getInventory().getItemInMainHand().getItemMeta().hasEnchant(CustomEnchantments.REPLENISH) && ItemUtils.getCrop(block.getType()) != null)
+                    return;
+        }
+        if (ItemUtils.getCrop(block.getType()) == null && block.getType() != Material.PUMPKIN && block.getType() != Material.MELON && block.getType() != Material.PUMPKIN_STEM && block.getType() != Material.MELON_STEM && block.getType() != Material.SUGAR_CANE && block.getType() != Material.CACTUS && block.getType() != Material.KELP && block.getType() != Material.KELP_PLANT && block.getType() != Material.BAMBOO && block.getType() != Material.BAMBOO_SAPLING && block.getType() != Material.SWEET_BERRY_BUSH)
+            return;
+        if (player.hasPermission("fp.autopickup")){
+            Collection<ItemStack> drops = block.getDrops(player.getInventory().getItemInMainHand());
+            if (block.getType() == Material.SUGAR_CANE || block.getType() == Material.CACTUS || block.getType() == Material.KELP || block.getType() == Material.KELP_PLANT || block.getType() == Material.BAMBOO){
+                while (block.getRelative(BlockFace.UP).getType() == block.getType()){
+                    block.setType(Material.AIR);
+                    block = block.getRelative(BlockFace.UP);
+                    drops.addAll(block.getDrops(player.getInventory().getItemInMainHand()));
+                }
+            }
+            for (ItemStack drop : drops) {
+                if (!(player.getInventory().firstEmpty() == -1))
+                    player.getInventory().addItem(drop);
+                else
+                    player.getWorld().dropItemNaturally(player.getLocation(), drop);
+            }
+            block.setType(Material.AIR);
+            event.setCancelled(true);
+        }
+    }
+
     @EventHandler(priority = EventPriority.LOW)
     public void Replenish(BlockBreakEvent event){
         if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR)
@@ -55,7 +91,7 @@ public class PlayerListener implements Listener {
         Block block = event.getBlock();
         if (block.getState() instanceof Container)
             return;
-        if (!(block.getType().equals(Material.CARROTS) || block.getType().equals(Material.WHEAT) || block.getType().equals(Material.POTATOES) || block.getType().equals(Material.BEETROOTS)|| block.getType().equals(Material.NETHER_WART)|| block.getType().equals(Material.COCOA)))
+        if (ItemUtils.getCrop(block.getType()) == null)
             return;
 
         Player player = event.getPlayer();
@@ -86,21 +122,54 @@ public class PlayerListener implements Listener {
         Ageable ageable = (Ageable) block.getState().getBlockData();
         Collection<ItemStack> drops = block.getDrops(player.getInventory().getItemInMainHand());
         ItemStack tool = player.getInventory().getItemInMainHand();
+
+        if (drops.isEmpty())
+            return;
+
         if (ageable.getAge() == ageable.getMaximumAge()){
+            Material cropType = block.getType();
+
             ItemUtils.setDurability(tool, player);
-            for (ItemStack drop: drops){
-                block.getWorld().dropItemNaturally(block.getLocation(), drop);
-            }
             String sound = FarmingPlus.getPlugin().getMainConfigManager().getReplenishSoundBreak();
             if (SoundUtils.getSoundFromString(sound) != null){
                 float volume = FarmingPlus.getPlugin().getMainConfigManager().getVolumeReplenishSoundBreak();
                 player.getLocation().getWorld().playSound(player.getLocation(), SoundUtils.getSoundFromString(sound), volume, 1.0f);
             }
+
+            ItemStack toRemove = new ItemStack(ItemUtils.getCrop(cropType), 1);
+            for (Iterator<ItemStack> iterator = drops.iterator(); iterator.hasNext();) {
+                ItemStack drop = iterator.next();
+                if (drop.isSimilar(toRemove)) {
+                    drop.setAmount(drop.getAmount() - 1);
+                    if (drop.getAmount() <= 0) {
+                        iterator.remove();
+                    }
+                    break;
+                }
+            }
+
+            if (player.hasPermission("fp.autopickup")){
+                for (ItemStack drop : drops) {
+                    if (!(player.getInventory().firstEmpty() == -1))
+                        player.getInventory().addItem(drop);
+                    else
+                        player.getWorld().dropItemNaturally(player.getLocation(), drop);
+                }
+
+            }else {
+                for (ItemStack drop : drops) {
+                    block.getWorld().dropItemNaturally(block.getLocation(), drop);
+                }
+            }
+
+            Location particleLocation = event.getBlock().getLocation();
+            particleLocation.add(0.5, 0, 0.5);
+            event.getBlock().getWorld().spawnParticle(Particle.VILLAGER_HAPPY, particleLocation, 1);
+
         }
         ageable.setAge(0);
         block.setBlockData(ageable);
         event.setCancelled(true);
-
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

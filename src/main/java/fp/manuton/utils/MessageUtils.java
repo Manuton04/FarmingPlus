@@ -52,7 +52,7 @@ public class MessageUtils {
                 if (FarmingPlus.getPlugin().getMainConfigManager().getTopPlayer(position) == null)
                     message = FarmingPlus.getPlugin().getMainConfigManager().getNoTop().replace("%farmingplus_top_number%", String.valueOf(position));
                 else
-                    message =FarmingPlus.getPlugin().getMainConfigManager().getTopPlayer(position);
+                    message = FarmingPlus.getPlugin().getMainConfigManager().getTopPlayer(position);
             }
         }
         message = getColoredMessage(message);
