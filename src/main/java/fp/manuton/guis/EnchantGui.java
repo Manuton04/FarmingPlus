@@ -141,7 +141,7 @@ public class EnchantGui{
 
             ItemStack farmerstep = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta farmerstepMeta = farmerstep.getItemMeta();
-            farmerstepMeta.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()));
+            farmerstepMeta.setDisplayName(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()));
             List<String> clickFarmerStepLore = new ArrayList<String>();
             for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getFarmersStepGeneralLore()) {
                 clickFarmerStepLore.add(MessageUtils.getColoredMessage(loreL));
@@ -155,7 +155,7 @@ public class EnchantGui{
 
             ItemStack farmersgrace = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta farmersgraceMeta = farmersgrace.getItemMeta();
-            farmersgraceMeta.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName()));
+            farmersgraceMeta.setDisplayName(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName()));
             List<String> loreFarmersgrace = new ArrayList<String>();
             for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceLore()) {
                 loreFarmersgrace.add(MessageUtils.getColoredMessage(loreL));
@@ -179,7 +179,7 @@ public class EnchantGui{
 
             ItemStack replenish = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta replenishMeta = replenish.getItemMeta();
-            replenishMeta.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getReplenishName()));
+            replenishMeta.setDisplayName(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getReplenishName()));
             List<String> loreReplenish = new ArrayList<String>();
             for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getReplenishLore()) {
                 loreReplenish.add(MessageUtils.getColoredMessage(loreL));
@@ -196,7 +196,7 @@ public class EnchantGui{
 
             ItemStack grandTilling = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta grandTillingMeta = grandTilling.getItemMeta();
-            grandTillingMeta.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()));
+            grandTillingMeta.setDisplayName(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()));
             List<String> clickGrandTillingLore = new ArrayList<String>();
             for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getGrandTillingGeneralLore()) {
                 clickGrandTillingLore.add(MessageUtils.getColoredMessage(loreL));
@@ -218,7 +218,7 @@ public class EnchantGui{
 
             ItemStack replenish = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta replenishMeta = replenish.getItemMeta();
-            replenishMeta.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getReplenishName()));
+            replenishMeta.setDisplayName(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getReplenishName()));
             List<String> loreReplenish = new ArrayList<String>();
             for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getReplenishLore()) {
                 loreReplenish.add(MessageUtils.getColoredMessage(loreL));
@@ -235,7 +235,7 @@ public class EnchantGui{
 
             ItemStack delicate = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta delicateMeta = delicate.getItemMeta();
-            delicateMeta.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getDelicateName()));
+            delicateMeta.setDisplayName(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getDelicateName()));
             List<String> loreDelicate = new ArrayList<String>();
             for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getDelicateLore()) {
                 loreDelicate.add(MessageUtils.getColoredMessage(loreL));
@@ -260,7 +260,7 @@ public class EnchantGui{
 
             ItemStack irrigate = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta irrigateMeta = irrigate.getItemMeta();
-            irrigateMeta.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getIrrigateName()));
+            irrigateMeta.setDisplayName(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getIrrigateName()));
             List<String> loreIrrigate = new ArrayList<String>();
             for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getIrrigateLore()) {
                 loreIrrigate.add(MessageUtils.getColoredMessage(loreL));
@@ -284,7 +284,7 @@ public class EnchantGui{
 
             ItemStack grandTilling1 = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta grandTillingMeta1 = grandTilling1.getItemMeta();
-            grandTillingMeta1.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()+" I"));
+            grandTillingMeta1.setDisplayName(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()+" I"));
             List<String> clickGrandTillingLore1 = new ArrayList<String>();
             for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingLore1()) {
                 clickGrandTillingLore1.add(MessageUtils.getColoredMessage(loreL));
@@ -301,7 +301,7 @@ public class EnchantGui{
 
             ItemStack grandTilling2 = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta grandTillingMeta2 = grandTilling2.getItemMeta();
-            grandTillingMeta2.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()+" II"));
+            grandTillingMeta2.setDisplayName(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()+" II"));
             List<String> clickGrandTillingLore2 = new ArrayList<String>();
             for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingLore2()) {
                 clickGrandTillingLore2.add(MessageUtils.getColoredMessage(loreL));
@@ -318,7 +318,7 @@ public class EnchantGui{
 
             ItemStack grandTilling3 = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta grandTillingMeta3 = grandTilling3.getItemMeta();
-            grandTillingMeta3.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()+" III"));
+            grandTillingMeta3.setDisplayName(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()+" III"));
             List<String> clickGrandTillingLore3 = new ArrayList<String>();
             for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingLore3()) {
                 clickGrandTillingLore3.add(MessageUtils.getColoredMessage(loreL));
@@ -344,7 +344,7 @@ public class EnchantGui{
 
             ItemStack farmersStep1 = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta farmersStepMeta1 = farmersStep1.getItemMeta();
-            farmersStepMeta1.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()+" I"));
+            farmersStepMeta1.setDisplayName(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()+" I"));
             List<String> clickFarmersStep1 = new ArrayList<String>();
             for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepLore1()) {
                 clickFarmersStep1.add(MessageUtils.getColoredMessage(loreL));
@@ -361,7 +361,7 @@ public class EnchantGui{
 
             ItemStack farmersStep2 = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta farmersStepMeta2 = farmersStep2.getItemMeta();
-            farmersStepMeta2.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()+" II"));
+            farmersStepMeta2.setDisplayName(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()+" II"));
             List<String> clickFarmersStepLore2 = new ArrayList<String>();
             for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepLore2()) {
                 clickFarmersStepLore2.add(MessageUtils.getColoredMessage(loreL));
@@ -378,7 +378,7 @@ public class EnchantGui{
 
             ItemStack farmersStep3 = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta farmersStepMeta3 = farmersStep3.getItemMeta();
-            farmersStepMeta3.setDisplayName(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()+" III"));
+            farmersStepMeta3.setDisplayName(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()+" III"));
             List<String> clickFarmersStepLore3 = new ArrayList<String>();
             for (String loreL : FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepLore3()) {
                 clickFarmersStepLore3.add(MessageUtils.getColoredMessage(loreL));
@@ -421,22 +421,22 @@ public class EnchantGui{
             ItemMeta enchantMeta = enchant.getItemMeta();
             String name = enchantMeta.getDisplayName();
 
-            if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName())))
+            if (name.contains(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName())))
                 name = "farmers-grace"; // farmers-grace
-            else if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getIrrigateName())))
+            else if (name.contains(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getIrrigateName())))
                 name = "irrigate"; //
-            else if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getReplenishName())))
+            else if (name.contains(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getReplenishName())))
                 name = "replenish";
-            else if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getDelicateName())))
+            else if (name.contains(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getDelicateName())))
                 name = "delicate";
-            else if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()))){
+            else if (name.contains(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()))){
                 if (name.endsWith("III"))
                     name = "grand-tilling3";
                 else if (name.endsWith("II"))
                     name = "grand-tilling2";
                 else if (name.endsWith("I"))
                     name = "grand-tilling1";
-            }else if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()))){
+            }else if (name.contains(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()))){
                 if (name.endsWith("III"))
                     name = "farmers-step3";
                 else if (name.endsWith("II"))

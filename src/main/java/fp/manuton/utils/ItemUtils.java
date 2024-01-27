@@ -68,6 +68,25 @@ public class ItemUtils {
         boots.add(Material.NETHERITE_BOOTS);
     }
 
+    public static String getItemType(ItemStack item) {
+        Material type = item.getType();
+        if (hoes.contains(type)) {
+            return "hoe";
+        } else if (axes.contains(type)) {
+            return "axe";
+        } else if (pickaxes.contains(type)) {
+            return "pickaxe";
+        } else if (shovels.contains(type)) {
+            return "shovel";
+        } else if (swords.contains(type)) {
+            return "sword";
+        } else if (boots.contains(type)) {
+            return "boot";
+        } else {
+            return "other";
+        }
+    }
+
     public static void getCropsStep(){
         crops.add(Material.WHEAT_SEEDS);
         crops.add(Material.POTATO);

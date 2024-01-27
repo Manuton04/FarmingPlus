@@ -156,17 +156,17 @@ public class GuiListener implements Listener {
                             }
                         }
 
-                        if (clicked.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()))){
+                        if (clicked.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()))){
                             EnchantGui.guiMenu(player, "farmersStep", player.getOpenInventory().getTopInventory(), null, null);
-                        }else if (clicked.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()))) {
+                        }else if (clicked.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()))) {
                             EnchantGui.guiMenu(player, "grandTilling", player.getOpenInventory().getTopInventory(), null, null);
-                        }else if (clicked.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName()))) {
+                        }else if (clicked.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName()))) {
                             EnchantGui.guiMenu(player, "confirm", player.getOpenInventory().getTopInventory(), clicked, item);
-                        }else if (clicked.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getIrrigateName()))) {
+                        }else if (clicked.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getIrrigateName()))) {
                             EnchantGui.guiMenu(player, "confirm", player.getOpenInventory().getTopInventory(), clicked, item);
-                        }else if (clicked.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getDelicateName()))) {
+                        }else if (clicked.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getDelicateName()))) {
                             EnchantGui.guiMenu(player, "confirm", player.getOpenInventory().getTopInventory(), clicked, item);
-                        }else if (clicked.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getReplenishName()))) {
+                        }else if (clicked.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getReplenishName()))) {
                             EnchantGui.guiMenu(player, "confirm", player.getOpenInventory().getTopInventory(), clicked, item);
                         }
                     }else if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "3levels"), PersistentDataType.STRING)){
@@ -354,21 +354,21 @@ public class GuiListener implements Listener {
                                 player.getOpenInventory().getTopInventory().setItem(19, player.getOpenInventory().getTopInventory().getItem(12));
                                 player.getOpenInventory().getTopInventory().setItem(12, null);
                                 EnchantGui.guiMenu(player, "empty", player.getOpenInventory().getTopInventory(), null, null);
-                                if (enchant.getItemMeta().getDisplayName().contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()))) {
+                                if (enchant.getItemMeta().getDisplayName().contains(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()))) {
 
                                     EnchantGui.guiMenu(player, "boots", player.getOpenInventory().getTopInventory(), null, null);
 
-                                } else if (enchant.getItemMeta().getDisplayName().contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()))) {
+                                } else if (enchant.getItemMeta().getDisplayName().contains(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()))) {
 
                                     EnchantGui.guiMenu(player, "hoe", player.getOpenInventory().getTopInventory(), null, null);
 
-                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName()))) {
+                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName()))) {
                                     EnchantGui.guiMenu(player, "boots", player.getOpenInventory().getTopInventory(), null, null);
-                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getIrrigateName()))) {
+                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getIrrigateName()))) {
                                     EnchantGui.guiMenu(player, "water", player.getOpenInventory().getTopInventory(), null, null);
-                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getDelicateName()))) {
+                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getDelicateName()))) {
                                     EnchantGui.guiMenu(player, "axe", player.getOpenInventory().getTopInventory(), null, null);
-                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getReplenishName()))) {
+                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getReplenishName()))) {
                                     for (Material type : ItemUtils.hoes)
                                         if (itemType == type) {
                                             EnchantGui.guiMenu(player, "hoe", player.getOpenInventory().getTopInventory(), null, null);
@@ -404,21 +404,21 @@ public class GuiListener implements Listener {
                                 player.getOpenInventory().getTopInventory().setItem(19, player.getOpenInventory().getTopInventory().getItem(12));
                                 player.getOpenInventory().getTopInventory().setItem(12, null);
                                 EnchantGui.guiMenu(player, "empty", player.getOpenInventory().getTopInventory(), null, null);
-                                if (enchant.getItemMeta().getDisplayName().contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()))) {
+                                if (enchant.getItemMeta().getDisplayName().contains(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getFarmerstepName()))) {
 
                                     EnchantGui.guiMenu(player, "boots", player.getOpenInventory().getTopInventory(), null, null);
 
-                                } else if (enchant.getItemMeta().getDisplayName().contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()))) {
+                                } else if (enchant.getItemMeta().getDisplayName().contains(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getGrandtillingName()))) {
 
                                     EnchantGui.guiMenu(player, "hoe", player.getOpenInventory().getTopInventory(), null, null);
 
-                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName()))) {
+                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName()))) {
                                     EnchantGui.guiMenu(player, "boots", player.getOpenInventory().getTopInventory(), null, null);
-                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getIrrigateName()))) {
+                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getIrrigateName()))) {
                                     EnchantGui.guiMenu(player, "water", player.getOpenInventory().getTopInventory(), null, null);
-                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getDelicateName()))) {
+                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getDelicateName()))) {
                                     EnchantGui.guiMenu(player, "axe", player.getOpenInventory().getTopInventory(), null, null);
-                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getReplenishName()))) {
+                                } else if (enchant.getItemMeta().getDisplayName().equals(MessageUtils.getColoredMessage("&a"+FarmingPlus.getPlugin().getMainConfigManager().getReplenishName()))) {
                                     for (Material type : ItemUtils.hoes)
                                         if (itemType == type) {
                                             EnchantGui.guiMenu(player, "hoe", player.getOpenInventory().getTopInventory(), null, null);

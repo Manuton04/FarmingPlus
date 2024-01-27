@@ -60,7 +60,7 @@ config:
 
   enchantments:
     replenish:
-      name: "&aReplenish"
+      name: "Replenish"
       lore-name: "&7Replenish I"
       lore:
         - "&7Allows you to replant crops"
@@ -79,7 +79,7 @@ config:
           - "GOLD_INGOT 8 [Gold Ingots]"
 
     farmers-grace:
-      name: "&aFarmer's Grace"
+      name: "Farmer's Grace"
       lore-name: "&7Farmer's Grace I"
       lore:
         - "&7Makes you immune to trampling farmland."
@@ -91,7 +91,7 @@ config:
           - "GOLD_INGOT 8 [Gold Ingots]"
 
     delicate:
-      name: "&aDelicate"
+      name: "Delicate"
       lore-name: "&7Delicate I"
       lore:
         - "&7Denies you from breaking stems."
@@ -103,7 +103,7 @@ config:
           - "GOLD_INGOT 8 [Gold Ingots]"
 
     irrigate:
-      name: "&aIrrigate"
+      name: "Irrigate"
       lore-name: "&7Irrigate I"
       lore:
         - "&7Allows you to fill 64 blocks"
@@ -119,7 +119,7 @@ config:
           - "GOLD_INGOT 8 [Gold Ingots]"
 
     farmers-step:
-      name: "&aFarmer's Step"
+      name: "Farmer's Step"
       lore-name1: "&7Farmer's Step I"
       lore-name2: "&7Farmer's Step II"
       lore-name3: "&7Farmer's Step III"
@@ -159,7 +159,7 @@ config:
         volume-on-set: 0.5
 
     grand-tilling:
-      name: "&aGrand Tilling"
+      name: "Grand Tilling"
       lore-name1: "&7Grand Tilling I"
       lore-name2: "&7Grand Tilling II"
       lore-name3: "&7Grand Tilling III"
