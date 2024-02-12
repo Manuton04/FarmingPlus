@@ -15,6 +15,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -22,7 +23,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -30,7 +30,7 @@ import java.util.List;
 
 public class GuiListener implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onClickEn(InventoryClickEvent event){
         Player player = (Player) event.getWhoClicked();
         if (event.getClickedInventory() == null)
@@ -471,7 +471,7 @@ public class GuiListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onCloseEn(InventoryCloseEvent event){
         Player player = (Player) event.getPlayer();
         if (!player.hasMetadata("OpenedMenu"))
@@ -507,7 +507,7 @@ public class GuiListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onClickBoots(InventoryClickEvent event){
         if (event.getClickedInventory() == null)
             return;
@@ -545,7 +545,7 @@ public class GuiListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onCloseBoots(InventoryCloseEvent event){
         Player player = (Player) event.getPlayer();
         if (!player.hasMetadata("BootsMenu"))
