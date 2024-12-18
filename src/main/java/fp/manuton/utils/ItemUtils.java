@@ -3,13 +3,17 @@ package fp.manuton.utils;
 import fp.manuton.FarmingPlus;
 import fp.manuton.costs.Cost;
 import fp.manuton.enchantments.CustomEnchantments;
+import fp.manuton.enchantments.EnchantFp;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -161,15 +165,33 @@ public class ItemUtils {
         return true;
     }
 
-    public static ItemStack enchantedItem(ItemStack item, Enchantment ench, int level){
+    public static ItemStack enchantedItem(ItemStack item, EnchantFp ench, int level){
 
+        /*
         if (item.hasItemMeta())
             if (item.getItemMeta().hasEnchant(ench) && item.getItemMeta().getEnchantLevel(ench) == level)
                 return item;
 
+         */
+
+        if (item.hasItemMeta()) {
+            PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
+
+            if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING)) {
+                String enchant = data.get(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING);
+                int levelEnch = data.get(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel"), PersistentDataType.INTEGER);
+
+                if (enchant.equals(ench.getName()) && levelEnch == level)
+                    return item;
+            }
+        }
+
         boolean enchanted = false;
-        item.addUnsafeEnchantment(ench, level);
+        //item.addUnsafeEnchantment(ench, level);
         ItemMeta meta = item.getItemMeta();
+        meta.getPersistentDataContainer().set(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING, ench.getName());
+        meta.getPersistentDataContainer().set(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel"), PersistentDataType.INTEGER, level);
+        meta.setEnchantmentGlintOverride(true);
         List<String> lore = new ArrayList<String>();
         String loreToAdd = null;
         boolean existsLore = false;
@@ -239,20 +261,40 @@ public class ItemUtils {
         return item;
     }
 
-    public static void enchantItem(List<Material> enchantable, Player player, Enchantment ench, int level){
+    public static void enchantItem(List<Material> enchantable, Player player, EnchantFp ench, int level){
         ItemStack item = new ItemStack(player.getItemInHand());
         int slot = player.getInventory().getHeldItemSlot();
+        /*
         if (item.hasItemMeta())
             if (item.getItemMeta().hasEnchant(ench) && item.getItemMeta().getEnchantLevel(ench) == level) {
                 player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThis item already has that enchantment!"));
                 return;
             }
+
+         */
+
+        if (item.hasItemMeta()) {
+            PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
+
+            if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING)) {
+                String enchant = data.get(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING);
+                int levelEnch = data.get(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel"), PersistentDataType.INTEGER);
+
+                if (enchant.equals(ench.getName()) && levelEnch == level) {
+                    player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThis item already has that enchantment!"));
+                    return;
+                }
+            }
+        }
         boolean enchanted = false;
         for (Material type : enchantable) {
             if (item.getType().equals(type)) {
                 player.getInventory().setItem(slot, new ItemStack(Material.AIR));
-                item.addUnsafeEnchantment(ench, level);
+                //item.addUnsafeEnchantment(ench, level);
                 ItemMeta meta = item.getItemMeta();
+                meta.getPersistentDataContainer().set(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING, ench.getName());
+                meta.getPersistentDataContainer().set(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel"), PersistentDataType.INTEGER, level);
+                meta.setEnchantmentGlintOverride(true);
                 List<String> lore = new ArrayList<String>();
                 String loreToAdd = null;
                 boolean existsLore = false;
@@ -336,7 +378,7 @@ public class ItemUtils {
         if (tool.getType().getMaxDurability() > 0 && tool.getItemMeta() instanceof Damageable) {
             Damageable damageable = (Damageable) tool.getItemMeta();
 
-            int level = tool.getItemMeta().getEnchantLevel(Enchantment.DURABILITY);
+            int level = tool.getItemMeta().getEnchantLevel(Enchantment.UNBREAKING);
 
             float chance =  100.0f / (level + 1); // Level 0 = 100% / 1 = 50% / 2 = 33%  / 3 = 25% chances of using durability
 
@@ -357,7 +399,7 @@ public class ItemUtils {
         if (boots.getType().getMaxDurability() > 0 && boots.getItemMeta() instanceof Damageable) {
             Damageable damageable = (Damageable) boots.getItemMeta();
 
-            int level = boots.getItemMeta().getEnchantLevel(Enchantment.DURABILITY);
+            int level = boots.getItemMeta().getEnchantLevel(Enchantment.UNBREAKING);
 
             float chance =  100.0f / (level + 1); // Level 0 = 100% / 1 = 50% / 2 = 33%  / 3 = 25% chances of using durability
 
@@ -389,6 +431,35 @@ public class ItemUtils {
         }
 
         return sb.toString().trim();
+    }
+
+    public static boolean hasCustomEnchant(ItemStack item, EnchantFp enchant) {
+        if (item.hasItemMeta()) {
+            PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
+            if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING)) {
+                String enchantName = data.get(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING);
+                return enchantName.equals(enchant.getName());
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasCustomEnchant(ItemStack item) {
+        if (item.hasItemMeta()) {
+            PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
+            return data.has(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING);
+        }
+        return false;
+    }
+
+    public static int getCustomEnchantLevel(ItemStack item) {
+        if (item.hasItemMeta()) {
+            PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
+            if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel"), PersistentDataType.INTEGER)) {
+                return data.get(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel"), PersistentDataType.INTEGER);
+            }
+        }
+        return 0;
     }
 
 

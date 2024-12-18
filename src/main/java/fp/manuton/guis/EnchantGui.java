@@ -161,7 +161,7 @@ public class EnchantGui{
                 loreFarmersgrace.add(MessageUtils.getColoredMessage(loreL));
             }
             loreFarmersgrace.add(null);
-            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.FARMERSGRACE))
+            if (ItemUtils.hasCustomEnchant(inventory.getItem(19), CustomEnchantments.FARMERSGRACE))
                 loreFarmersgrace.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
                 loreFarmersgrace.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
@@ -185,7 +185,7 @@ public class EnchantGui{
                 loreReplenish.add(MessageUtils.getColoredMessage(loreL));
             }
             loreReplenish.add(null);
-            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.REPLENISH))
+            if (ItemUtils.hasCustomEnchant(inventory.getItem(19), CustomEnchantments.REPLENISH))
                 loreReplenish.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
                 loreReplenish.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
@@ -224,7 +224,7 @@ public class EnchantGui{
                 loreReplenish.add(MessageUtils.getColoredMessage(loreL));
             }
             loreReplenish.add(null);
-            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.REPLENISH))
+            if (ItemUtils.hasCustomEnchant(inventory.getItem(19), CustomEnchantments.REPLENISH))
                 loreReplenish.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
                 loreReplenish.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
@@ -241,7 +241,7 @@ public class EnchantGui{
                 loreDelicate.add(MessageUtils.getColoredMessage(loreL));
             }
             loreDelicate.add(null);
-            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.DELICATE))
+            if (ItemUtils.hasCustomEnchant(inventory.getItem(19), CustomEnchantments.DELICATE))
                 loreDelicate.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
                 loreDelicate.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
@@ -266,7 +266,7 @@ public class EnchantGui{
                 loreIrrigate.add(MessageUtils.getColoredMessage(loreL));
             }
             loreIrrigate.add(null);
-            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.IRRIGATE))
+            if (ItemUtils.hasCustomEnchant(inventory.getItem(19), CustomEnchantments.IRRIGATE))
                 loreIrrigate.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
                 loreIrrigate.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
@@ -290,7 +290,7 @@ public class EnchantGui{
                 clickGrandTillingLore1.add(MessageUtils.getColoredMessage(loreL));
             }
             clickGrandTillingLore1.add(null);
-            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.GRANDTILLING) && inventory.getItem(19).getItemMeta().getEnchantLevel(CustomEnchantments.GRANDTILLING) == 1)
+            if (ItemUtils.hasCustomEnchant(inventory.getItem(19), CustomEnchantments.GRANDTILLING) && ItemUtils.getCustomEnchantLevel(inventory.getItem(19)) == 1)
                 clickGrandTillingLore1.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
                 clickGrandTillingLore1.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
@@ -307,7 +307,7 @@ public class EnchantGui{
                 clickGrandTillingLore2.add(MessageUtils.getColoredMessage(loreL));
             }
             clickGrandTillingLore2.add(null);
-            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.GRANDTILLING) && inventory.getItem(19).getItemMeta().getEnchantLevel(CustomEnchantments.GRANDTILLING) == 2)
+            if (ItemUtils.hasCustomEnchant(inventory.getItem(19), CustomEnchantments.GRANDTILLING) && ItemUtils.getCustomEnchantLevel(inventory.getItem(19)) == 2)
                 clickGrandTillingLore2.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
                 clickGrandTillingLore2.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
@@ -324,7 +324,7 @@ public class EnchantGui{
                 clickGrandTillingLore3.add(MessageUtils.getColoredMessage(loreL));
             }
             clickGrandTillingLore3.add(null);
-            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.GRANDTILLING) && inventory.getItem(19).getItemMeta().getEnchantLevel(CustomEnchantments.GRANDTILLING) == 3)
+            if (ItemUtils.hasCustomEnchant(inventory.getItem(19), CustomEnchantments.GRANDTILLING) && ItemUtils.getCustomEnchantLevel(inventory.getItem(19)) == 3)
                 clickGrandTillingLore3.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
                 clickGrandTillingLore3.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
@@ -350,7 +350,7 @@ public class EnchantGui{
                 clickFarmersStep1.add(MessageUtils.getColoredMessage(loreL));
             }
             clickFarmersStep1.add(null);
-            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.FARMERSTEP) && inventory.getItem(19).getItemMeta().getEnchantLevel(CustomEnchantments.FARMERSTEP) == 1)
+            if (ItemUtils.hasCustomEnchant(inventory.getItem(19), CustomEnchantments.FARMERSTEP) && ItemUtils.getCustomEnchantLevel(inventory.getItem(19)) == 1)
                 clickFarmersStep1.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
                 clickFarmersStep1.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
@@ -367,7 +367,7 @@ public class EnchantGui{
                 clickFarmersStepLore2.add(MessageUtils.getColoredMessage(loreL));
             }
             clickFarmersStepLore2.add(null);
-            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.FARMERSTEP) && inventory.getItem(19).getItemMeta().getEnchantLevel(CustomEnchantments.FARMERSTEP) == 2)
+            if (ItemUtils.hasCustomEnchant(inventory.getItem(19), CustomEnchantments.FARMERSTEP) && ItemUtils.getCustomEnchantLevel(inventory.getItem(19)) == 2)
                 clickFarmersStepLore2.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
                 clickFarmersStepLore2.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));
@@ -384,7 +384,7 @@ public class EnchantGui{
                 clickFarmersStepLore3.add(MessageUtils.getColoredMessage(loreL));
             }
             clickFarmersStepLore3.add(null);
-            if (inventory.getItem(19).getItemMeta().hasEnchant(CustomEnchantments.FARMERSTEP) && inventory.getItem(19).getItemMeta().getEnchantLevel(CustomEnchantments.FARMERSTEP) == 3)
+            if (ItemUtils.hasCustomEnchant(inventory.getItem(19), CustomEnchantments.FARMERSTEP) && ItemUtils.getCustomEnchantLevel(inventory.getItem(19)) == 3)
                 clickFarmersStepLore3.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getEnchanted()));
             else
                 clickFarmersStepLore3.add(MessageUtils.translateAll(player, plugin.getMainConfigManager().getClickToSee()));

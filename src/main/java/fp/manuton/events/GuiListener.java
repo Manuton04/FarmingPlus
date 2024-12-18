@@ -3,6 +3,7 @@ package fp.manuton.events;
 import fp.manuton.FarmingPlus;
 import fp.manuton.costs.Cost;
 import fp.manuton.enchantments.CustomEnchantments;
+import fp.manuton.enchantments.EnchantFp;
 import fp.manuton.guis.EnchantGui;
 import fp.manuton.utils.ItemUtils;
 import fp.manuton.utils.MessageUtils;
@@ -220,7 +221,7 @@ public class GuiListener implements Listener {
                                 return;
 
                             String name = enchant.getItemMeta().getDisplayName();
-                            Enchantment enchantment = null;
+                            EnchantFp enchantment = null;
                             int level = 1;
                             if (name.contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getFarmersgraceName()))) {
                                 name = "farmers-grace";

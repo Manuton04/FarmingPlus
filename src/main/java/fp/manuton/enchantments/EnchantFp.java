@@ -1,59 +1,51 @@
 package fp.manuton.enchantments;
 
-import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
 
-//With this we can create enchantments that are official to minecraft //
-public class EnchantmentWrapper extends Enchantment {
+public class EnchantFp {
+    private String namespace;
+    private String name;
+    private int maxLvl;
 
-    private final String name;
-    private final int MaxLvl;
-
-    public EnchantmentWrapper(String namespace, String name, int lvl) {
-        super(NamespacedKey.minecraft(namespace));
+    public EnchantFp (String namespace, String name, int maxLvl) {
+        this.namespace = namespace;
         this.name = name;
-        this.MaxLvl = lvl;
+        this.maxLvl = maxLvl;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public int getMaxLevel() {
-        return MaxLvl;
+        return maxLvl;
     }
 
-    @Override
     public int getStartLevel() {
         return 0;
     }
 
-    @Override
     public EnchantmentTarget getItemTarget() {
         return null;
     }
 
-    @Override
     public boolean isTreasure() {
         return false;
     }
 
-    @Override
     public boolean isCursed() {
         return false;
     }
 
-    @Override
     public boolean conflictsWith(Enchantment enchantment) {
         return false;
     }
 
-    @Override
     public boolean canEnchantItem(ItemStack itemStack) {
         return false;
     }
+
 }

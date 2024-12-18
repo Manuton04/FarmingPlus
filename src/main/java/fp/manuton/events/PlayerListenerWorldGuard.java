@@ -1,6 +1,13 @@
 package fp.manuton.events;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.LocalPlayer;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
+import com.sk89q.worldguard.protection.regions.RegionQuery;
 import fp.manuton.FarmingPlus;
 import fp.manuton.enchantments.CustomEnchantments;
 import fp.manuton.guis.FarmersStepGui;
@@ -13,6 +20,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.Ageable;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -20,22 +28,30 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import static org.bukkit.event.block.Action.*;
 
 //
-public class PlayerListener implements Listener {
+public class PlayerListenerWorldGuard implements Listener {
 
     private boolean playerHasItemInInventory(Player player, Material item) {
         return player.getInventory().contains(item, 1);
+    }
+
+    private boolean isWorldguardEnabled() {
+        //Bukkit.getConsoleSender().sendMessage("Checking if WorldGuard is enabled...");
+        Plugin worldGuardPlugin = Bukkit.getPluginManager().getPlugin("WorldGuard");
+        return worldGuardPlugin != null && worldGuardPlugin.isEnabled();
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -88,6 +104,28 @@ public class PlayerListener implements Listener {
 
         Player player = event.getPlayer();
 
+        if (isWorldguardEnabled()) {
+            // Get the WorldGuard instance
+            WorldGuard worldGuard = WorldGuard.getInstance();
+            // Get the region container
+            RegionContainer regionContainer = worldGuard.getPlatform().getRegionContainer();
+            // Create a query from the region container
+            RegionQuery query = regionContainer.createQuery();
+            // Get the WorldGuardPlugin instance for the player
+            WorldGuardPlugin pluginW = WorldGuardPlugin.inst();
+            // Get the LocalPlayer instance for the player
+            LocalPlayer localPlayer = pluginW.wrapPlayer(player);
+
+            // Get all regions at the block's location
+            ApplicableRegionSet regions = query.getApplicableRegions(BukkitAdapter.adapt(block.getLocation()));
+            // Check if the player has permission to place blocks in these regions
+            boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
+
+            // If the player does not have permission to place blocks, skip this iteration
+            if (!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) {
+                return;
+            }
+        }
 
         Ageable ageable = (Ageable) block.getState().getBlockData();
         Collection<ItemStack> drops = block.getDrops(player.getInventory().getItemInMainHand());
@@ -236,6 +274,29 @@ public class PlayerListener implements Listener {
             }
             for (Location block: blocks){
 
+                if (isWorldguardEnabled()) {
+                    // Get the WorldGuard instance
+                    WorldGuard worldGuard = WorldGuard.getInstance();
+                    // Get the region container
+                    RegionContainer regionContainer = worldGuard.getPlatform().getRegionContainer();
+                    // Create a query from the region container
+                    RegionQuery query = regionContainer.createQuery();
+                    // Get the WorldGuardPlugin instance for the player
+                    WorldGuardPlugin pluginW = WorldGuardPlugin.inst();
+                    // Get the LocalPlayer instance for the player
+                    LocalPlayer localPlayer = pluginW.wrapPlayer(player);
+
+                    // Get all regions at the block's location
+                    ApplicableRegionSet regions = query.getApplicableRegions(BukkitAdapter.adapt(block));
+                    // Check if the player has permission to place blocks in these regions
+                    boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
+
+                    // If the player does not have permission to place blocks, skip this iteration
+                    if (!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) {
+                        continue;
+                    }
+                }
+
                 if (block.getBlock().getType() == Material.FARMLAND && !crop.equals(Material.NETHER_WART)){
                     block.setY(block.getY() + 1);
                     if (block.getBlock().getType() == Material.AIR){
@@ -279,6 +340,30 @@ public class PlayerListener implements Listener {
                 cropT = Material.PUMPKIN_STEM;
             }
             for (Location block: blocks){
+
+
+                if (isWorldguardEnabled()) {
+                    // Get the WorldGuard instance
+                    WorldGuard worldGuard = WorldGuard.getInstance();
+                    // Get the region container
+                    RegionContainer regionContainer = worldGuard.getPlatform().getRegionContainer();
+                    // Create a query from the region container
+                    RegionQuery query = regionContainer.createQuery();
+                    // Get the WorldGuardPlugin instance for the player
+                    WorldGuardPlugin pluginW = WorldGuardPlugin.inst();
+                    // Get the LocalPlayer instance for the player
+                    LocalPlayer localPlayer = pluginW.wrapPlayer(player);
+
+                    // Get all regions at the block's location
+                    ApplicableRegionSet regions = query.getApplicableRegions(BukkitAdapter.adapt(block));
+                    // Check if the player has permission to place blocks in these regions
+                    boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
+
+                    // If the player does not have permission to place blocks, skip this iteration
+                    if (!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) {
+                        continue;
+                    }
+                }
 
                 if (block.getBlock().getType() == Material.FARMLAND && !cropT.equals(Material.NETHER_WART)){
                     if (player.getInventory().contains(crop)) {
@@ -349,6 +434,29 @@ public class PlayerListener implements Listener {
                 List<Location> blocksR = LocationUtils.getRadiusBlocks(event.getClickedBlock().getLocation(), level, 0);
                 for (Location block: blocksR){
 
+                    if (isWorldguardEnabled()) {
+                        // Get the WorldGuard instance
+                        WorldGuard worldGuard = WorldGuard.getInstance();
+                        // Get the region container
+                        RegionContainer regionContainer = worldGuard.getPlatform().getRegionContainer();
+                        // Create a query from the region container
+                        RegionQuery query = regionContainer.createQuery();
+                        // Get the WorldGuardPlugin instance for the player
+                        WorldGuardPlugin pluginW = WorldGuardPlugin.inst();
+                        // Get the LocalPlayer instance for the player
+                        LocalPlayer localPlayer = pluginW.wrapPlayer(player);
+
+                        // Get all regions at the block's location
+                        ApplicableRegionSet regions = query.getApplicableRegions(BukkitAdapter.adapt(block));
+                        // Check if the player has permission to place blocks in these regions
+                        boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
+
+                        // If the player does not have permission to place blocks, skip this iteration
+                        if (!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) {
+                            continue;
+                        }
+                    }
+
                     if (block.getBlock().getType() == Material.GRASS_BLOCK || block.getBlock().getType() == Material.DIRT || block.getBlock().getType() == Material.DIRT_PATH || block.getBlock().getType() == Material.FARMLAND){
                         block.getBlock().setType(Material.FARMLAND);
                     }
@@ -358,6 +466,29 @@ public class PlayerListener implements Listener {
             case 3:
                 List<Location> blocksL = LocationUtils.getRowBlocks(event.getClickedBlock().getLocation(), FarmingPlus.getPlugin().getMainConfigManager().getGrandTilling3Blocks(), LocationUtils.getCardinalDirection(player), 0);
                 for (Location block: blocksL){
+
+                    if (isWorldguardEnabled()) {
+                        // Get the WorldGuard instance
+                        WorldGuard worldGuard = WorldGuard.getInstance();
+                        // Get the region container
+                        RegionContainer regionContainer = worldGuard.getPlatform().getRegionContainer();
+                        // Create a query from the region container
+                        RegionQuery query = regionContainer.createQuery();
+                        // Get the WorldGuardPlugin instance for the player
+                        WorldGuardPlugin pluginW = WorldGuardPlugin.inst();
+                        // Get the LocalPlayer instance for the player
+                        LocalPlayer localPlayer = pluginW.wrapPlayer(player);
+
+                        // Get all regions at the block's location
+                        ApplicableRegionSet regions = query.getApplicableRegions(BukkitAdapter.adapt(block));
+                        // Check if the player has permission to place blocks in these regions
+                        boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
+
+                        // If the player does not have permission to place blocks, skip this iteration
+                        if (!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) {
+                            break;
+                        }
+                    }
 
                     if (block.getBlock().getType() == Material.GRASS_BLOCK || block.getBlock().getType() == Material.DIRT || block.getBlock().getType() == Material.DIRT_PATH){
                         block.getBlock().setType(Material.FARMLAND);
@@ -437,6 +568,28 @@ public class PlayerListener implements Listener {
 
         List<Location> blocks = LocationUtils.getRowBlocks(event.getClickedBlock().getRelative(blockFace).getLocation(), FarmingPlus.getPlugin().getMainConfigManager().getIrrigateMaxBlocks(), LocationUtils.getCardinalDirection(player), 0);
         for (Location block : blocks){
+            if (isWorldguardEnabled()) {
+                // Get the WorldGuard instance
+                WorldGuard worldGuard = WorldGuard.getInstance();
+                // Get the region container
+                RegionContainer regionContainer = worldGuard.getPlatform().getRegionContainer();
+                // Create a query from the region container
+                RegionQuery query = regionContainer.createQuery();
+                // Get the WorldGuardPlugin instance for the player
+                WorldGuardPlugin pluginW = WorldGuardPlugin.inst();
+                // Get the LocalPlayer instance for the player
+                LocalPlayer localPlayer = pluginW.wrapPlayer(player);
+
+                // Get all regions at the block's location
+                ApplicableRegionSet regions = query.getApplicableRegions(BukkitAdapter.adapt(block));
+                // Check if the player has permission to place blocks in these regions
+                boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
+
+                // If the player does not have permission to place blocks, skip this iteration
+                if (!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) {
+                    break;
+                }
+            }
             if (block.getBlock().getType() == Material.AIR || block.getBlock().getType() == Material.WATER)
                 block.getBlock().setType(Material.WATER);
             else

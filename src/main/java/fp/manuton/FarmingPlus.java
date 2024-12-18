@@ -6,14 +6,13 @@ import fp.manuton.commands.MainCommand;
 import fp.manuton.config.CustomConfig;
 import fp.manuton.config.MainConfigManager;
 import fp.manuton.enchantments.CustomEnchantments;
-import fp.manuton.events.GuiListener;
-import fp.manuton.events.PlayerListener;
-import fp.manuton.events.RewardsListener;
+import fp.manuton.events.*;
 import fp.manuton.guis.EnchantGui;
 import fp.manuton.guis.FarmersStepGui;
 import fp.manuton.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
@@ -61,7 +60,7 @@ public class FarmingPlus extends JavaPlugin {
             Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&aMetrics are enabled."));
         }else
             Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&cMetrics are not enabled :c."));
-        CustomEnchantments.registerAll();
+        //CustomEnchantments.registerAll();
         registerEvents();
         registerCommands();
         registerItemUtils();
@@ -105,9 +104,15 @@ public class FarmingPlus extends JavaPlugin {
     }
 
     public void registerEvents(){
-        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        if (isWorldguardEnabled()) {
+            getServer().getPluginManager().registerEvents(new PlayerListenerWorldGuard(), this);
+            getServer().getPluginManager().registerEvents(new RewardsListenerWorldGuard(), this);
+        }else {
+            getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+            getServer().getPluginManager().registerEvents(new RewardsListener(), this);
+        }
         getServer().getPluginManager().registerEvents(new GuiListener(), this);
-        getServer().getPluginManager().registerEvents(new RewardsListener(), this);
+
     }
 
     public void registerItemUtils(){
@@ -129,6 +134,12 @@ public class FarmingPlus extends JavaPlugin {
 
     public static Connection getConnectionMySQL(){
         return connectionMySQL;
+    }
+
+    private boolean isWorldguardEnabled() {
+        //Bukkit.getConsoleSender().sendMessage("Checking if WorldGuard is enabled...");
+        Plugin worldGuardPlugin = Bukkit.getPluginManager().getPlugin("WorldGuard");
+        return worldGuardPlugin != null && worldGuardPlugin.isEnabled();
     }
 
 }
