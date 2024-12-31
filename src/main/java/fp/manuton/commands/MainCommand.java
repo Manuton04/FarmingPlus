@@ -42,6 +42,10 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                 if (args[0].equalsIgnoreCase("reload")) {
                     subCommandReload(sender);
                 }else if (args[0].equalsIgnoreCase("reward")){
+                    if (args.length == 1){
+                        sender.sendMessage(MessageUtils.translateAll(null, "%farmingplus_prefix%&eAvailable subcommands: give, list, clear"));
+                        return true;
+                    }
                     if (args[1].equalsIgnoreCase("give")) {
 
                         if (args.length < 4) {
