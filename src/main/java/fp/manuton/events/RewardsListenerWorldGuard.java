@@ -36,12 +36,14 @@ import java.util.UUID;
 
 public class RewardsListenerWorldGuard implements Listener {
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void Rewards(BlockBreakEvent event){
         Player player = event.getPlayer();
         if (player.getGameMode() != GameMode.SURVIVAL)
             return;
         Block block = event.getBlock();
+        if (block.getLocation().equals(block))
+            return;
         if (block.getState() instanceof Container)
             return;
         boolean isType = false;

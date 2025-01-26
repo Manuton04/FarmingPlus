@@ -77,6 +77,12 @@ config:
         items:
           - "DIAMOND 1 [Diamond]"
           - "GOLD_INGOT 8 [Gold Ingots]"
+        # The required level to of the job to use this enchantment #
+        # Only works if using the Plugin [JobsReborn], even then its optional#
+        # Format: "JOB LEVEL" #
+        lvlJobs:
+          - "FARMER 20"
+
 
     farmers-grace:
       name: "Farmer's Grace"
@@ -89,6 +95,10 @@ config:
         items:
           - "DIAMOND 1 [Diamond]"
           - "GOLD_INGOT 8 [Gold Ingots]"
+        # [JobsReborn] Only#
+        lvlJobs:
+            - "FARMER 10"
+            - "EXPLORER 20"
 
     delicate:
       name: "Delicate"

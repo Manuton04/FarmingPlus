@@ -291,7 +291,8 @@ public class MainConfigManager {
                     double money = enchant.getDouble("cost"+i+".money");
                     List<String> items = enchant.getStringList("cost"+i+".items");
                     int xpLevels = enchant.getInt("cost"+i+".exp");
-                    cost = new Cost(xpLevels, money, items);
+                    List<String> jobsLevels = enchant.getStringList("cost"+i+".lvlJobs");
+                    cost = new Cost(xpLevels, money, items, jobsLevels);
 
                     if (cost != null) {
                         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+"&fLoaded cost: " + key+i));
@@ -302,7 +303,8 @@ public class MainConfigManager {
                 double money = enchant.getDouble("cost.money");
                 List<String> items = enchant.getStringList("cost.items");
                 int xpLevels = enchant.getInt("cost.exp");
-                cost = new Cost(xpLevels, money, items);
+                List<String> jobsLevels = enchant.getStringList("cost.lvlJobs");
+                cost = new Cost(xpLevels, money, items, jobsLevels);
 
                 if (cost != null) {
                     Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+"&fLoaded cost: " + key));

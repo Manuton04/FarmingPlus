@@ -14,11 +14,13 @@ public class Cost {
     private double money;
     private List<String> items;
 
-    public Cost(int xpLevels, double money, List<String> items) {
+    private List<String> jobsLevels;
+
+    public Cost(int xpLevels, double money, List<String> items, List<String> jobsLevels) {
         this.xpLevels = xpLevels;
         this.money = money;
         this.items = items;
-
+        this.jobsLevels = jobsLevels;
     }
 
     public int getXpLevels() {
@@ -31,6 +33,14 @@ public class Cost {
 
     public List<String> getItems() {
         return items;
+    }
+
+    public List<String> getJobsLevels() {
+        return jobsLevels;
+    }
+
+    public boolean PlayerHasEnough(Player player){
+        if 
     }
 
     public void execute(Player player){

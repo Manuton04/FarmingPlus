@@ -9,6 +9,7 @@ softdepend:
   - [WorldGuard]
   - [MythicMobs]
   - [PlaceholderAPI]
+  - [Jobs]
 
 commands:
   farmingplus:
