@@ -26,7 +26,7 @@ import java.util.*;
 
 public class RewardsListener implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void Rewards(BlockBreakEvent event){
         Player player = event.getPlayer();
         if (player.getGameMode() == GameMode.CREATIVE)

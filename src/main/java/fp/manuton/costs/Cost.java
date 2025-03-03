@@ -1,5 +1,7 @@
 package fp.manuton.costs;
 
+import com.gamingmesh.jobs.Jobs;
+import com.gamingmesh.jobs.container.JobProgression;
 import fp.manuton.utils.VaultUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,13 +16,16 @@ public class Cost {
     private double money;
     private List<String> items;
 
+    /*
     private List<String> jobsLevels;
+     */
 
-    public Cost(int xpLevels, double money, List<String> items, List<String> jobsLevels) {
+    public Cost(int xpLevels, double money, List<String> items) {
         this.xpLevels = xpLevels;
         this.money = money;
         this.items = items;
-        this.jobsLevels = jobsLevels;
+        /*this.jobsLevels = jobsLevels;
+         */
     }
 
     public int getXpLevels() {
@@ -35,13 +40,19 @@ public class Cost {
         return items;
     }
 
-    public List<String> getJobsLevels() {
+    /*public List<String> getJobsLevels() {
         return jobsLevels;
     }
+     */
 
-    public boolean PlayerHasEnough(Player player){
-        if 
+    /*public boolean PlayerHasEnough(Player player){
+        List jobs = Jobs.getPlayerManager().getJobsPlayer(player).getJobProgression();
+
+
+        return false;
     }
+
+     */
 
     public void execute(Player player){
         player.setLevel(player.getLevel() - getXpLevels());

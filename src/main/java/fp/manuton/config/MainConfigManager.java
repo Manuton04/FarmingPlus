@@ -218,8 +218,13 @@ public class MainConfigManager {
     
             List<String> crops = rewardSection.getStringList("crops");
             String type = rewardSection.getString("type");
-            double chance = rewardSection.getDouble("chance");
-    
+            double chance = 0;
+            try {
+                chance = rewardSection.getDouble("chance");
+            } catch (Exception e) {
+            }
+
+
             Reward reward = null;
             if (type.equals("Command")) {
                 List<String> commands = rewardSection.getStringList("commands");
@@ -291,8 +296,8 @@ public class MainConfigManager {
                     double money = enchant.getDouble("cost"+i+".money");
                     List<String> items = enchant.getStringList("cost"+i+".items");
                     int xpLevels = enchant.getInt("cost"+i+".exp");
-                    List<String> jobsLevels = enchant.getStringList("cost"+i+".lvlJobs");
-                    cost = new Cost(xpLevels, money, items, jobsLevels);
+                    /*List<String> jobsLevels = enchant.getStringList("cost"+i+".lvlJobs");*/
+                    cost = new Cost(xpLevels, money, items/*, jobsLevels*/);
 
                     if (cost != null) {
                         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+"&fLoaded cost: " + key+i));
@@ -303,8 +308,8 @@ public class MainConfigManager {
                 double money = enchant.getDouble("cost.money");
                 List<String> items = enchant.getStringList("cost.items");
                 int xpLevels = enchant.getInt("cost.exp");
-                List<String> jobsLevels = enchant.getStringList("cost.lvlJobs");
-                cost = new Cost(xpLevels, money, items, jobsLevels);
+                /*List<String> jobsLevels = enchant.getStringList("cost.lvlJobs");*/
+                cost = new Cost(xpLevels, money, items/*, jobsLevels*/);
 
                 if (cost != null) {
                     Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+"&fLoaded cost: " + key));
