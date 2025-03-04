@@ -21,6 +21,7 @@ FarmingPlus is a plugin that allows players to experience new mechanics in farmi
       - Level II: 5x5 area.
       - Level III: 64 blocks in a row (Configurable in config.yml).
     - Farmer's Step: Allow the player to plant crops automatically from their inventories in the area where they move. **(Boots)**
+      - The player can select the crops that they want doing click in the air with the boots on the main hand.
       - Level I: 3x3 area.
       - Level II: 5x5 area.
       - Level III: 7x7 area.
