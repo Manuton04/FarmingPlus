@@ -26,9 +26,10 @@ import java.util.*;
 
 public class RewardsListener implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void Rewards(BlockBreakEvent event){
         Player player = event.getPlayer();
+        player.sendMessage("Se ejecuto 0");
         if (player.getGameMode() == GameMode.CREATIVE)
             return;
         Block block = event.getBlock();
@@ -51,6 +52,8 @@ public class RewardsListener implements Listener {
                 if (ageable.getAge() != ageable.getMaximumAge())
                     return;
             }
+
+        player.sendMessage("Se ejecuto");
 
         boolean rewardGiven = false;
 

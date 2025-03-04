@@ -36,9 +36,10 @@ import java.util.UUID;
 
 public class RewardsListenerWorldGuard implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void Rewards(BlockBreakEvent event){
         Player player = event.getPlayer();
+        player.sendMessage("Se ejecuto 0");
         if (player.getGameMode() != GameMode.SURVIVAL)
             return;
         Block block = event.getBlock();
@@ -62,6 +63,7 @@ public class RewardsListenerWorldGuard implements Listener {
                     return;
             }
 
+        player.sendMessage("Se ejecuto 1");
 
         boolean canPlace = true;
         if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null){

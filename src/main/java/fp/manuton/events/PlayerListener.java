@@ -38,7 +38,7 @@ public class PlayerListener implements Listener {
         return player.getInventory().contains(item, 1);
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.HIGH)
     public void autoPickup(BlockBreakEvent event){
         Player player = event.getPlayer();
         Block block = event.getBlock();
@@ -70,7 +70,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void Replenish(BlockBreakEvent event){
         if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR)
             return;
@@ -134,7 +134,10 @@ public class PlayerListener implements Listener {
 
             Location particleLocation = event.getBlock().getLocation();
             particleLocation.add(0.5, 0, 0.5);
-            event.getBlock().getWorld().spawnParticle(Particle.HAPPY_VILLAGER, particleLocation, 1);
+            try {
+                player.getWorld().spawnParticle(Particle.valueOf("HAPPY_VILLAGER"), particleLocation, 1);
+            } catch (Exception e) {
+            }
 
         }
         ageable.setAge(0);

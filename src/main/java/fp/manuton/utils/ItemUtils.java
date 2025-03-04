@@ -191,7 +191,6 @@ public class ItemUtils {
         ItemMeta meta = item.getItemMeta();
         meta.getPersistentDataContainer().set(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING, ench.getName());
         meta.getPersistentDataContainer().set(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel"), PersistentDataType.INTEGER, level);
-        meta.setEnchantmentGlintOverride(true);
         List<String> lore = new ArrayList<String>();
         String loreToAdd = null;
         boolean existsLore = false;
@@ -258,7 +257,7 @@ public class ItemUtils {
         meta.setLore(lore);
         item.setItemMeta(meta);
 
-        return item;
+        return createGlowingItem(item);
     }
 
     public static void enchantItem(List<Material> enchantable, Player player, EnchantFp ench, int level){
@@ -360,7 +359,7 @@ public class ItemUtils {
                 meta.setLore(lore);
                 item.setItemMeta(meta);
 
-                player.getInventory().setItem(slot, item);
+                player.getInventory().setItem(slot, createGlowingItem(item));
                 player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&aItem enchanted with "+loreToAdd+"."));
                 enchanted = true;
                 return;
@@ -462,5 +461,30 @@ public class ItemUtils {
         return 0;
     }
 
+    public static ItemStack createGlowingItem(ItemStack item) {
+        if (item == null) return item; // Safety check
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            // Apply a harmless enchantment to make the item glow
+            Enchantment luckEnchantment = Enchantment.getByName("LUCK");
+            if (luckEnchantment == null) {
+                luckEnchantment = Enchantment.LUCK_OF_THE_SEA;
+            }
+            meta.addEnchant(luckEnchantment, 1, true);
+
+            // Store custom data to indicate that this enchantment is just for glowing
+            PersistentDataContainer data = meta.getPersistentDataContainer();
+            NamespacedKey key = new NamespacedKey(FarmingPlus.getPlugin(), "glowing_item");
+            data.set(key, PersistentDataType.BYTE, (byte) 1);
+
+            // Hide only the fake enchantment from the tooltip
+            meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS);
+
+            item.setItemMeta(meta);
+        }
+
+        return item;
+    }
 
 }
