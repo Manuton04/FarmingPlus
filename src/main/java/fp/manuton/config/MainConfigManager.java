@@ -112,6 +112,8 @@ public class MainConfigManager {
     private String itemCostTitle;
     private String costMessage;
     private String xpLevelsMessage;
+    private String notplayedbefore;
+    private String enchantedsuccesfully;
 
     private List<String> replenishLore;
     private List<String> farmersgraceLore;
@@ -129,6 +131,7 @@ public class MainConfigManager {
     private Map<String, Reward> rewards;
     private Map<String, Cost> costs;
     private Map<UUID, RewardsCounter> rewardsCounter;
+    private String enchantNotAllowed;
 
     public MainConfigManager(){
         configFile = new CustomConfig("config.yml", null, FarmingPlus.getPlugin());
@@ -501,6 +504,9 @@ public class MainConfigManager {
         cannotEnchant = messages.getString("messages.cannot-pay");
         payedStyle = messages.getString("messages.payed-style");
         leftClickAir = messages.getString("messages.left-click-air");
+        notplayedbefore = messages.getString("messages.not-played-before");
+        enchantedsuccesfully = messages.getString("messages.enchanted-succesfully");
+        enchantNotAllowed = messages.getString("messages.enchant-not-allowed");
 
         saveInterval = config.getLong("config.save-interval");
         if (saveInterval <= 0) {
@@ -905,5 +911,16 @@ public class MainConfigManager {
 
     public String getXpLevelsMessage() {
         return xpLevelsMessage;
+    }
+    public String getNotplayedbefore() {
+        return notplayedbefore;
+    }
+
+    public String getEnchantedsuccesfully() {
+        return enchantedsuccesfully;
+    }
+
+    public String getEnchantNotAllowed() {
+        return enchantNotAllowed;
     }
 }

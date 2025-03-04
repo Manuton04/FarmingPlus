@@ -50,6 +50,25 @@ public class CustomEnchantments {
         }
     };
 
+    public EnchantFp getEnchant(String name){
+        switch (name){
+            case "replenish":
+                return REPLENISH;
+            case "delicate":
+                return DELICATE;
+            case "grandtilling":
+                return GRANDTILLING;
+            case "farmerstep":
+                return FARMERSTEP;
+            case "farmersgrace":
+                return FARMERSGRACE;
+            case "irrigate":
+                return IRRIGATE;
+            default:
+                return null;
+        }
+    }
+
 
     /*
     public static void registerAll(){

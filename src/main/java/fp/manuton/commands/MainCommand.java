@@ -3,6 +3,7 @@ package fp.manuton.commands;
 import fp.manuton.FarmingPlus;
 import fp.manuton.SQL.MySQLData;
 import fp.manuton.enchantments.CustomEnchantments;
+import fp.manuton.enchantments.EnchantFp;
 import fp.manuton.guis.EnchantGui;
 import fp.manuton.rewards.MoneyReward;
 import fp.manuton.rewards.Reward;
@@ -11,6 +12,7 @@ import fp.manuton.rewardsCounter.RewardRecord;
 import fp.manuton.rewardsCounter.RewardsCounter;
 import fp.manuton.utils.ItemUtils;
 import fp.manuton.utils.MessageUtils;
+import fp.manuton.utils.PlayerUtils;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -23,6 +25,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.awt.*;
 import java.sql.Connection;
@@ -41,7 +44,132 @@ public class MainCommand implements CommandExecutor, TabExecutor {
             if (args.length >= 1){
                 if (args[0].equalsIgnoreCase("reload")) {
                     subCommandReload(sender);
-                }else if (args[0].equalsIgnoreCase("reward")){
+                }else if (args[0].equalsIgnoreCase("enchant") || args[0].equalsIgnoreCase("en")){ // /fp enchants /fp en //
+                    if (args.length >= 1) {
+                        if (args.length == 1) {
+                            for (String line : FarmingPlus.getPlugin().getMainConfigManager().getEnchantsList()) {
+                                Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, line));
+                            }
+                            return true;
+                        }
+                        if (args.length >= 2) {
+                            if (PlayerUtils.doesPlayerExist(args[1])) {
+                                OfflinePlayer target = Bukkit.getPlayer(args[1]);
+
+                                if (target == null || !target.isOnline()) {
+                                    Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, FarmingPlus.getPlugin().getMainConfigManager().getPlayerOffline()));
+                                    return true;
+
+                                } else {
+                                    if (args.length >= 3) {
+                                        if (args.length == 3) {
+                                            Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, enchantCommandUsage()));
+                                            return true;
+                                        }
+                                        List<String> enchantList = new ArrayList<>();
+                                        enchantList.addAll(Arrays.asList("farmersgrace", "replenish", "delicate", "irrigate", "grandtilling", "farmerstep"));
+                                        if (!enchantList.contains(args[2].toLowerCase())) {
+                                            for (String line : FarmingPlus.getPlugin().getMainConfigManager().getEnchantsList()) {
+                                                Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, line));
+                                            }
+                                            return true;
+                                        } else {
+                                            if (args.length >= 4) {
+                                                int level = 1;
+                                                try {
+                                                    level = Integer.parseInt(args[3]);
+                                                } catch (NumberFormatException exp) {
+                                                    Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, enchantCommandUsage()));
+                                                    return true;
+                                                }
+
+                                                EnchantFp enchant = null;
+                                                switch (args[2].toLowerCase()) {
+                                                    case "farmersgrace":
+                                                        enchant = CustomEnchantments.FARMERSGRACE;
+                                                        if (level != 1)
+                                                            level = 1;
+                                                        break;
+                                                    case "replenish":
+                                                        enchant = CustomEnchantments.REPLENISH;
+                                                        if (level != 1)
+                                                            level = 1;
+                                                        break;
+                                                    case "delicate":
+                                                        enchant = CustomEnchantments.DELICATE;
+                                                        if (level != 1)
+                                                            level = 1;
+                                                        break;
+                                                    case "irrigate":
+                                                        enchant = CustomEnchantments.IRRIGATE;
+                                                        if (level != 1)
+                                                            level = 1;
+                                                        break;
+                                                    case "grandtilling":
+                                                        enchant = CustomEnchantments.GRANDTILLING;
+                                                        if (level < 1)
+                                                            level = 1;
+                                                        if (level > 3)
+                                                            level = 3;
+                                                        break;
+                                                    case "farmerstep":
+                                                        enchant = CustomEnchantments.FARMERSTEP;
+                                                        if (level < 1)
+                                                            level = 1;
+                                                        if (level > 3)
+                                                            level = 3;
+                                                        break;
+                                                    default:
+                                                        break;
+                                                }
+
+                                                if (enchant != null) {
+                                                    if (args.length == 5) {
+                                                        ItemStack item = null;
+                                                        try {
+                                                            item = new ItemStack(Material.valueOf(args[4].toUpperCase()));
+                                                        } catch (IllegalArgumentException exp) {
+                                                            Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, enchantCommandUsage()));
+                                                            return true;
+                                                        }
+                                                        if (item != null) {
+                                                            if (enchant.canEnchantItem(item)) {
+                                                                item = ItemUtils.enchantedItem(item, enchant, level);
+                                                                Player targetOnline = (Player) target;
+                                                                int emptySlot = targetOnline.getInventory().firstEmpty();
+                                                                if (emptySlot != -1)
+                                                                    targetOnline.getInventory().setItem(emptySlot, item);
+                                                                else
+                                                                    targetOnline.getWorld().dropItem(targetOnline.getLocation(), item);
+
+                                                                Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(targetOnline, FarmingPlus.getPlugin().getMainConfigManager().getEnchantedsuccesfully()));
+                                                            } else {
+                                                                Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, FarmingPlus.getPlugin().getMainConfigManager().getEnchantNotAllowed()));
+                                                            }
+                                                            return true;
+                                                        }
+                                                    }
+                                                }
+                                                Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, enchantCommandUsage()));
+                                                return true;
+                                            }
+                                        }
+                                    }
+                                }
+                                if (args.length == 2) {
+                                    Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, enchantCommandUsage()));
+                                    return true;
+                                }
+                            } else {
+                                Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, FarmingPlus.getPlugin().getMainConfigManager().getNotplayedbefore()));
+                                if (args.length == 2) {
+                                    Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, enchantCommandUsage()));
+                                }
+                                return true;
+                            }
+                        }
+                    }
+                        }else if (args[0].equalsIgnoreCase("reward")){
                     if (args.length == 1){
                         sender.sendMessage(MessageUtils.translateAll(null, "%farmingplus_prefix%&eAvailable subcommands: give, list, clear"));
                         return true;
@@ -177,13 +305,134 @@ public class MainCommand implements CommandExecutor, TabExecutor {
         }
 
         if (args.length >= 1){
-            if (args[0].equalsIgnoreCase("enchants") || args[0].equalsIgnoreCase("en")){ // /fp enchants /fp en //
-                if (!player.hasPermission("fp.commands.enchants")) {
-                    player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
-                    return true;
-                }
-                for (String line : FarmingPlus.getPlugin().getMainConfigManager().getEnchantsList()) {
-                    player.sendMessage(MessageUtils.translateAll(player, line));
+            if (args[0].equalsIgnoreCase("enchant") || args[0].equalsIgnoreCase("en")){ // /fp enchants /fp en //
+                if (args.length >= 1) {
+                    if (!player.hasPermission("fp.commands.enchant")) {
+                        player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNoPermissionCommand()));
+                        return true;
+                    }
+                    if (args.length == 1){
+                        for (String line : FarmingPlus.getPlugin().getMainConfigManager().getEnchantsList()) {
+                            player.sendMessage(MessageUtils.translateAll(player, line));
+                        }
+                        return true;
+                    }
+                    if (args.length >=2){
+                        if (PlayerUtils.doesPlayerExist(args[1])){
+                            OfflinePlayer target = Bukkit.getPlayer(args[1]);
+
+                            if (target == null || !target.isOnline()){
+                                player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getPlayerOffline()));
+                                return true;
+
+                            }else{
+                                if (args.length >=3){
+                                    if (args.length == 3){
+                                        player.sendMessage(MessageUtils.translateAll(player, enchantCommandUsage()));
+                                        return true;
+                                    }
+                                    List<String> enchantList = new ArrayList<>();
+                                    enchantList.addAll(Arrays.asList("farmersgrace", "replenish", "delicate", "irrigate", "grandtilling", "farmerstep"));
+                                    if (!enchantList.contains(args[2].toLowerCase())){
+                                        for (String line : FarmingPlus.getPlugin().getMainConfigManager().getEnchantsList()) {
+                                            player.sendMessage(MessageUtils.translateAll(player, line));
+                                        }
+                                        return true;
+                                    }else{
+                                        if (args.length >=4){
+                                            int level = 1;
+                                            try {
+                                                level = Integer.parseInt(args[3]);
+                                            }catch (NumberFormatException exp){
+                                                player.sendMessage(MessageUtils.translateAll(player, enchantCommandUsage()));
+                                                return true;
+                                            }
+
+                                            EnchantFp enchant = null;
+                                            switch (args[2].toLowerCase()){
+                                                case "farmersgrace":
+                                                    enchant = CustomEnchantments.FARMERSGRACE;
+                                                    if (level != 1)
+                                                        level = 1;
+                                                    break;
+                                                case "replenish":
+                                                    enchant = CustomEnchantments.REPLENISH;
+                                                    if (level != 1)
+                                                        level = 1;
+                                                    break;
+                                                case "delicate":
+                                                    enchant = CustomEnchantments.DELICATE;
+                                                    if (level != 1)
+                                                        level = 1;
+                                                    break;
+                                                case "irrigate":
+                                                    enchant = CustomEnchantments.IRRIGATE;
+                                                    if (level != 1)
+                                                        level = 1;
+                                                    break;
+                                                case "grandtilling":
+                                                    enchant = CustomEnchantments.GRANDTILLING;
+                                                    if (level < 1)
+                                                        level = 1;
+                                                    if (level > 3)
+                                                        level = 3;
+                                                    break;
+                                                case "farmerstep":
+                                                    enchant = CustomEnchantments.FARMERSTEP;
+                                                    if (level < 1)
+                                                        level = 1;
+                                                    if (level > 3)
+                                                        level = 3;
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+
+                                            if (enchant !=null){
+                                                if (args.length == 5){
+                                                    ItemStack item = null;
+                                                    try{
+                                                        item = new ItemStack(Material.valueOf(args[4].toUpperCase()));
+                                                    }catch (IllegalArgumentException exp){
+                                                        player.sendMessage(MessageUtils.translateAll(player, enchantCommandUsage()));
+                                                        return true;
+                                                    }
+                                                    if (item != null){
+                                                        if (enchant.canEnchantItem(item)) {
+                                                            item = ItemUtils.enchantedItem(item, enchant, level);
+                                                            Player targetOnline = (Player) target;
+                                                            int emptySlot = targetOnline.getInventory().firstEmpty();
+                                                            if (emptySlot != -1)
+                                                                targetOnline.getInventory().setItem(emptySlot, item);
+                                                            else
+                                                                targetOnline.getWorld().dropItem(targetOnline.getLocation(), item);
+
+                                                            player.sendMessage(MessageUtils.translateAll(target, FarmingPlus.getPlugin().getMainConfigManager().getEnchantedsuccesfully()));
+                                                        }else{
+                                                            player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getEnchantNotAllowed()));
+                                                        }
+                                                        return true;
+                                                    }
+                                                }
+                                            }
+                                            player.sendMessage(MessageUtils.translateAll(player, enchantCommandUsage()));
+                                            return true;
+                                        }
+                                    }
+                                }
+                            }
+                            if (args.length == 2){
+                                player.sendMessage(MessageUtils.translateAll(player, enchantCommandUsage()));
+                                return true;
+                            }
+                        }else{
+                            player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotplayedbefore()));
+                            if (args.length == 2){
+                                player.sendMessage(MessageUtils.translateAll(player, enchantCommandUsage()));
+                            }
+                            return true;
+                        }
+                    }
                 }
 
             }else if (args[0].equalsIgnoreCase("reload")){
@@ -449,10 +698,10 @@ public class MainCommand implements CommandExecutor, TabExecutor {
         if (args.length == 1) {
             List<String> list = new ArrayList<>();
             if (sender.hasPermission("fp.admin"))
-                return Arrays.asList("enchants","reload", "reward", "help");
+                return Arrays.asList("enchant","reload", "reward", "help");
 
-            if (sender.hasPermission("fp.commands.enchants"))
-                list.add("enchants");
+            if (sender.hasPermission("fp.commands.enchant"))
+                list.add("enchant");
             if (sender.hasPermission("fp.commands.reload"))
                 list.add("reload");
             if (sender.hasPermission("fp.commands.reward.top") || sender.hasPermission("fp.commands.reward.give") || sender.hasPermission("fp.commands.reward.list") || sender.hasPermission("fp.commands.reward.clear"))
@@ -502,10 +751,71 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                 if (args[1].equalsIgnoreCase("give") && sender.hasPermission("fp.commands.reward.give"))
                     return FarmingPlus.getPlugin().getMainConfigManager().getAllRewardNames();
             }
+        } else if (args[0].equalsIgnoreCase("enchant") || args[0].equalsIgnoreCase("en")) {
+            if (args.length == 2) {
+                List<String> list = new ArrayList<>();
+                if (sender.hasPermission("fp.commands.enchant"))
+                    return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+            }
+            if (args.length == 3) {
+                if (sender.hasPermission("fp.commands.enchant")) {
+                    List<String> list = new ArrayList<>();
+                    list.addAll(Arrays.asList("farmersgrace", "replenish", "delicate", "irrigate", "grandtilling", "farmerstep"));
+                    return list;
+                }
+            }
+            if (args.length == 4) {
+                if (sender.hasPermission("fp.commands.enchant")) {
+                    if (args[2].equalsIgnoreCase("grandtilling") || args[2].equalsIgnoreCase("farmerstep")) {
+                        List<String> list = new ArrayList<>();
+                        list.add("1");
+                        list.add("2");
+                        list.add("3");
+                        return list;
+                    } else {
+                        List<String> list = new ArrayList<>();
+                        list.add("1");
+                        return list;
+                    }
+                }
+            }
+            if (args.length == 5) {
+                if (sender.hasPermission("fp.commands.enchant")) {
+                    List<String> list = new ArrayList<>();
+                    switch (args[2].toLowerCase()) {
+                        case "farmersgrace", "farmerstep":
+                            for (Material line : ItemUtils.boots)
+                                list.add(line.toString());
+                            return list;
+                        case "replenish":
+                            for (Material line : ItemUtils.hoes)
+                                list.add(line.toString());
+                            for (Material line : ItemUtils.axes)
+                                list.add(line.toString());
+                            return list;
+                        case "delicate":
+                            for (Material line : ItemUtils.axes)
+                                list.add(line.toString());
+                            return list;
+                        case "irrigate":
+                            list.add("WATER_BUCKET");
+                            return list;
+                        case "grandtilling":
+                            for (Material line : ItemUtils.hoes)
+                                list.add(line.toString());
+                            return list;
+                    }
+                }
+
+            }
         }
 
 
         return new ArrayList<>();
+    }
+
+    public String enchantCommandUsage(){
+        return "&cUsage: /fp enchant <player> <enchant> <level> <itemId>";
     }
 }
 

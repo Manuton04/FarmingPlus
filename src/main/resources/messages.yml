@@ -10,6 +10,7 @@ messages:
   not-reward: "%farmingplus_prefix%&cThat reward does not exist!"
   player-offline: "%farmingplus_prefix%&cThat player is not online!"
   not-player: "%farmingplus_prefix%&cThat player has not obtained a reward before!"
+  not-played-before: "%farmingplus_prefix%&cThat player has not played before!"
   entity-invalid: "%farmingplus_prefix%&cThat entity is  invalid!"
   entity-invalid-mythic: "%farmingplus_prefix%&cThat entity is invalid or you don't have MythicMobs installed!"
   reward-give-command: "%farmingplus_prefix%&aYou gave &e%player% &athe %reward% reward!"
@@ -20,6 +21,8 @@ messages:
   cannot-pay: "%farmingplus_prefix%&cYou can't pay for this enchantment!"
   enchanted-item: "%farmingplus_prefix%&aSuccessfully enchanted &f%item% &awith &f%enchantment%&a!"
   left-click-air: "%farmingplus_prefix%&cLeft click this item while pointing the air!"
+  enchanted-succesfully: "%farmingplus_prefix%&aYou enchanted the item successfully! Given to %player%!"
+  enchant-not-allowed: "%farmingplus_prefix%&cYou can't enchant this item with this enchantment!"
   # %cost% will be replaced with one cost of the enchantment #
   # This will show when a player successfully enchants an item #
   payed-style: "&c- &4%cost%"
@@ -27,7 +30,7 @@ messages:
     - "&f&l------%farmingplus_prefix%&fCommands&f&l-------"
     - "&7(All the commands can be used with /fp)"
     - "&e /fp: &7Enchant an item."
-    - "&e /fp enchants: &7Shows the list of enchants."
+    - "&e /fp enchant <player> <enchant> <level> <item>: &7Enchant items, for yourself or others."
     - "&e /fp help: &7Shows this page."
     - "&e /fp reward top <page number/player>: &7Shows the top of rewards."
     - "&e /fp reward give <player>: &7Gives a reward to a player."

@@ -392,7 +392,7 @@ public class PlayerListener implements Listener {
             event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void Delicate(BlockBreakEvent event){
         if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR)
             return;
@@ -410,7 +410,7 @@ public class PlayerListener implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void Irrigate(PlayerInteractEvent event){
         Player player = event.getPlayer();
         if (!(event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.WATER_BUCKET)))
