@@ -5,10 +5,12 @@ import com.google.gson.GsonBuilder;
 import fp.manuton.FarmingPlus;
 import fp.manuton.SQL.MySQLData;
 import fp.manuton.costs.Cost;
+import fp.manuton.planterbot.PlanterBot;
 import fp.manuton.rewards.*;
 import fp.manuton.rewardsCounter.RewardsCounter;
 import fp.manuton.utils.MessageUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -32,6 +34,7 @@ public class MainConfigManager {
     private final CustomConfig configFile;
     private final CustomConfig messagesFile;
     private final CustomConfig rewardsFile;
+    private final CustomConfig planterBotsFile;
     private boolean enabledMetrics;
     private String noPermissionCommand;
     private String noPermissionAction;
@@ -130,6 +133,7 @@ public class MainConfigManager {
 
     private Map<String, Reward> rewards;
     private Map<String, Cost> costs;
+    private Map<String, PlanterBot> planterBotsMap;
     private Map<UUID, RewardsCounter> rewardsCounter;
     private String enchantNotAllowed;
 
@@ -140,6 +144,8 @@ public class MainConfigManager {
         messagesFile.registerConfig();
         rewardsFile = new CustomConfig("rewards.yml", null, FarmingPlus.getPlugin());
         rewardsFile.registerConfig();
+        planterBotsFile = new CustomConfig("planterBots.yml", "Data", FarmingPlus.getPlugin());
+        planterBotsFile.registerConfig();
         loadConfig();
         loadRewards();
         loadCosts();
@@ -157,6 +163,50 @@ public class MainConfigManager {
             Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+" &fDownloading rewards from database..."));
             rewardsCounter = loadRewardsFromDatabase(FarmingPlus.getConnectionMySQL());
         }, 0, getMySQLDownloadInterval(), TimeUnit.MINUTES);
+    }
+
+    public void createPlanterBotInFile(PlanterBot planterBot){
+        ConfigurationSection botsSection = planterBotsFile.getConfig().getConfigurationSection("PlanterBots");
+        int i = 1;
+        for(String key : botsSection.getKeys(false)){
+            i++;
+        }
+        String path = String.valueOf(i);
+        planterBotsFile.getConfig().set(path+".Radius", planterBot.getRadius());
+        planterBotsFile.getConfig().set(path+".Cooldown", planterBot.getCooldown());
+        planterBotsFile.getConfig().set(path+".Crop", planterBot.getCrop());
+        planterBotsFile.getConfig().set(path+".HeadTexture", planterBot.getHeadTexture());
+        planterBotsFile.getConfig().set(path+".Location.World", planterBot.getLocation().getWorld());
+        planterBotsFile.getConfig().set(path+".Location.x", planterBot.getLocation().getX());
+        planterBotsFile.getConfig().set(path+".Location.y", planterBot.getLocation().getY());
+        planterBotsFile.getConfig().set(path+".Location.z", planterBot.getLocation().getZ());
+        planterBotsFile.getConfig().set(path+".GrowBlock", planterBot.getGrowBlock());
+
+    }
+
+    public void loadPlanterBots(){
+        ConfigurationSection botsSection = planterBotsFile.getConfig().getConfigurationSection("PlanterBots");
+        planterBotsMap = new HashMap<>();
+        for(String key : botsSection.getKeys(false)){
+            ConfigurationSection botSection = botsSection.getConfigurationSection(key);
+            int radius = botSection.getInt("Radius");
+            int cooldown = botSection.getInt("Cooldown");
+            String crop = botSection.getString("Crop");
+            String headTexture = botSection.getString("HeadTexture");
+            String world = botSection.getString("Location.World");
+            double x = botSection.getDouble("Location.x");
+            double y = botSection.getDouble("Location.y");
+            double z = botSection.getDouble("Location.z");
+            Location location = new Location(Bukkit.getWorld(world), x, y, z);
+            String growBlock = botSection.getString("GrowBlock");
+            PlanterBot newPlanterBot = new PlanterBot(radius, cooldown, crop, location, headTexture, growBlock);
+            planterBotsMap.put(key, newPlanterBot);
+            spawnPlanterBot(newPlanterBot);
+        }
+    }
+
+    public void spawnPlanterBot(PlanterBot p){
+
     }
 
     public void initializeRewardsCounter() {
@@ -521,9 +571,11 @@ public class MainConfigManager {
         configFile.registerConfig();
         messagesFile.registerConfig();
         rewardsFile.registerConfig();
+        planterBotsFile.registerConfig();
         configFile.reloadConfig();
         loadConfig();
         rewardsFile.reloadConfig();
+        planterBotsFile.reloadConfig();
         loadRewards();
         loadCosts();
         if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL())) {
@@ -922,5 +974,9 @@ public class MainConfigManager {
 
     public String getEnchantNotAllowed() {
         return enchantNotAllowed;
+    }
+
+    public Map<PlanterBot> getPlanterBotMap() {
+        return planterBotMap;
     }
 }

@@ -1,0 +1,14 @@
+# This file is used to store the data of the Planter Bots
+# The Planter Bots are the bots that will plant the crops for you
+# The radius is the radius in which the PlanterBot will plant the crops
+# The cooldown is the time in seconds that the PlanterBot will wait before planting the crops again
+# The crop is the crop that the PlanterBot will plant
+# The headTexture is the texture of the PlanterBot
+# The location is the location where the PlanterBot will be spawned
+# The growthBlock is the block that the PlanterBot will plant on
+#   - Crops that are planted on farmland can only grow on FARMLAND
+#   - Melons and Pumpkins Blocks can grow in any selected block(Ex: OAK_PLANKS, STONE, etc)
+#   - Cacao can can grow in any selected block, but it needs to have at least an open space next to it
+#   - Cactus can only grow on SAND, RED_SAND
+#   - Sugar Cane can only grow on SAND, RED_SAND, DIRT, GRASS_BLOCK
+PlanterBots:
