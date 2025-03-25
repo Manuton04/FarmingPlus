@@ -1,6 +1,7 @@
 package fp.manuton.utils;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -39,6 +40,28 @@ public class LocationUtils {
 
         }
         return blocks;
+    }
+
+    public static List<Location> getRadiusBlocksSurface(Location location, int radius){
+        List<Location> blocks = new ArrayList<>();
+        int x = location.getBlockX();
+        int y = location.getBlockY();
+        int z = location.getBlockZ();
+        for (int i = x - radius; i <= x + radius; i++){
+            for (int k = z - radius; k <= z + radius; k++){
+                blocks.add(getBlockBelowLoc(new Location(location.getWorld(), i, y, k).add(0, 1, 0)));
+            }
+
+        }
+        return blocks;
+    }
+
+    public static Location getBlockBelowLoc(Location loc) {
+        Location locBelow = loc.subtract(0, 1, 0);
+        if(locBelow.getBlock().getType() == Material.AIR) {
+            locBelow = getBlockBelowLoc(locBelow);
+        }
+        return locBelow;
     }
 
     public static List<Location> getRowBlocks(Location location, int distance, String direction, int yDifference){

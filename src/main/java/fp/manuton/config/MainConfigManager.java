@@ -976,7 +976,7 @@ public class MainConfigManager {
         return enchantNotAllowed;
     }
 
-    public Map<PlanterBot> getPlanterBotMap() {
-        return planterBotMap;
+    public Map<String, PlanterBot> getPlanterBotMap() {
+        return planterBotsMap;
     }
 }
