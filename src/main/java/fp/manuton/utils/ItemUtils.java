@@ -177,9 +177,9 @@ public class ItemUtils {
         if (item.hasItemMeta()) {
             PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
 
-            if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING)) {
-                String enchant = data.get(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING);
-                int levelEnch = data.get(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel"), PersistentDataType.INTEGER);
+            if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant."+ench.getName().replace(" ", "").replace("'", "")), PersistentDataType.STRING)) {
+                String enchant = data.get(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant."+ench.getName().replace(" ", "").replace("'", "")), PersistentDataType.STRING);
+                int levelEnch = data.get(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel."+ench.getName().replace(" ", "").replace("'", "")), PersistentDataType.INTEGER);
 
                 if (enchant.equals(ench.getName()) && levelEnch == level)
                     return item;
@@ -189,8 +189,8 @@ public class ItemUtils {
         boolean enchanted = false;
         //item.addUnsafeEnchantment(ench, level);
         ItemMeta meta = item.getItemMeta();
-        meta.getPersistentDataContainer().set(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING, ench.getName());
-        meta.getPersistentDataContainer().set(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel"), PersistentDataType.INTEGER, level);
+        meta.getPersistentDataContainer().set(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant."+ench.getName().replace(" ", "").replace("'", "")), PersistentDataType.STRING, ench.getName());
+        meta.getPersistentDataContainer().set(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel."+ench.getName().replace(" ", "").replace("'", "")), PersistentDataType.INTEGER, level);
         List<String> lore = new ArrayList<String>();
         String loreToAdd = null;
         boolean existsLore = false;
@@ -276,9 +276,9 @@ public class ItemUtils {
         if (item.hasItemMeta()) {
             PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
 
-            if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING)) {
-                String enchant = data.get(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING);
-                int levelEnch = data.get(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel"), PersistentDataType.INTEGER);
+            if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant."+ench.getName().replace(" ", "").replace("'", "")), PersistentDataType.STRING)) {
+                String enchant = data.get(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant."+ench.getName().replace(" ", "").replace("'", "")), PersistentDataType.STRING);
+                int levelEnch = data.get(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel."+ench.getName().replace(" ", "").replace("'", "")), PersistentDataType.INTEGER);
 
                 if (enchant.equals(ench.getName()) && levelEnch == level) {
                     player.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"&cThis item already has that enchantment!"));
@@ -292,8 +292,8 @@ public class ItemUtils {
                 player.getInventory().setItem(slot, new ItemStack(Material.AIR));
                 //item.addUnsafeEnchantment(ench, level);
                 ItemMeta meta = item.getItemMeta();
-                meta.getPersistentDataContainer().set(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING, ench.getName());
-                meta.getPersistentDataContainer().set(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel"), PersistentDataType.INTEGER, level);
+                meta.getPersistentDataContainer().set(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant."+ench.getName().replace(" ", "").replace("'", "")), PersistentDataType.STRING, ench.getName());
+                meta.getPersistentDataContainer().set(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel."+ench.getName().replace(" ", "").replace("'", "")), PersistentDataType.INTEGER, level);
                 meta.setEnchantmentGlintOverride(true);
                 List<String> lore = new ArrayList<String>();
                 String loreToAdd = null;
@@ -437,27 +437,19 @@ public class ItemUtils {
     public static boolean hasCustomEnchant(ItemStack item, EnchantFp enchant) {
         if (item.hasItemMeta()) {
             PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
-            if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING)) {
-                String enchantName = data.get(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING);
+            if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant."+enchant.getName().replace(" ", "").replace("'", "")), PersistentDataType.STRING)) {
+                String enchantName = data.get(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant."+enchant.getName().replace(" ", "").replace("'", "")), PersistentDataType.STRING);
                 return enchantName.equals(enchant.getName());
             }
         }
         return false;
     }
 
-    public static boolean hasCustomEnchant(ItemStack item) {
+    public static int getCustomEnchantLevel(ItemStack item,EnchantFp enchant) {
         if (item.hasItemMeta()) {
             PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
-            return data.has(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchant"), PersistentDataType.STRING);
-        }
-        return false;
-    }
-
-    public static int getCustomEnchantLevel(ItemStack item) {
-        if (item.hasItemMeta()) {
-            PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
-            if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel"), PersistentDataType.INTEGER)) {
-                return data.get(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel"), PersistentDataType.INTEGER);
+            if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel."+enchant.getName().replace(" ", "").replace("'", "")), PersistentDataType.INTEGER)) {
+                return data.get(new NamespacedKey(FarmingPlus.getPlugin(), "fpEnchantLevel."+enchant.getName().replace(" ", "").replace("'", "")), PersistentDataType.INTEGER);
             }
         }
         return 0;

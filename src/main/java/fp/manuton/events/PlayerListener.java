@@ -211,7 +211,7 @@ public class PlayerListener implements Listener {
         Location location = player.getLocation();
 
         List<Location> blocks = new ArrayList<>();
-        int level = ItemUtils.getCustomEnchantLevel(player.getInventory().getBoots());
+        int level = ItemUtils.getCustomEnchantLevel(player.getInventory().getBoots(), CustomEnchantments.FARMERSTEP);
         if (level > 3)
             level = 3;
         int yDifference = -1;
@@ -343,7 +343,7 @@ public class PlayerListener implements Listener {
             return;
         if (!(event.getClickedBlock().getType() == Material.GRASS_BLOCK || event.getClickedBlock().getType() == Material.DIRT || event.getClickedBlock().getType() == Material.DIRT_PATH))
             return;
-        int level = ItemUtils.getCustomEnchantLevel(player.getInventory().getItemInMainHand());
+        int level = ItemUtils.getCustomEnchantLevel(player.getInventory().getItemInMainHand(), CustomEnchantments.GRANDTILLING);
         if (level > 3)
             level = 3;
 
