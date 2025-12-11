@@ -464,14 +464,14 @@ public class EnchantGui{
 
             if (costE != null) {
                 if (costE.getXpLevels() > 0)
-                    if (player.hasPermission("fp.bypass.costs") || player.getLevel() >= costE.getXpLevels()) {
+                    if ((player.hasPermission("fp.bypass.costs") || player.getLevel() >= costE.getXpLevels()) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
                         anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + String.valueOf(costE.getXpLevels()) + " " + plugin.getMainConfigManager().getXpLevelsMessage()));
                     }else {
                         anvilLore.add(MessageUtils.getColoredMessage("&c✘ - " + String.valueOf(costE.getXpLevels()) + " " + plugin.getMainConfigManager().getXpLevelsMessage()));
                     }
                 if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
                     if (costE.getMoney() > 0)
-                        if (player.hasPermission("fp.bypass.costs") || VaultUtils.getMoney(player) >= costE.getMoney())
+                        if ((player.hasPermission("fp.bypass.costs") || VaultUtils.getMoney(player) >= costE.getMoney()) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms()))
                             anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + VaultUtils.formatCurrencySymbol(costE.getMoney())));
                         else
                             anvilLore.add(MessageUtils.getColoredMessage("&c✘ - " + VaultUtils.formatCurrencySymbol(costE.getMoney())));
@@ -496,7 +496,7 @@ public class EnchantGui{
                         if (ItemName == null)
                             ItemName = partsA[0];
 
-                        if (player.hasPermission("fp.bypass.costs") || player.getInventory().containsAtLeast(new ItemStack(Material.valueOf(itemE.toUpperCase())), amount))
+                        if ((player.hasPermission("fp.bypass.costs") || player.getInventory().containsAtLeast(new ItemStack(Material.valueOf(itemE.toUpperCase())), amount)) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms()))
                             anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + amount + " " + ItemName));
                         else
                             anvilLore.add(MessageUtils.getColoredMessage("&c✘ - " + amount + " " + ItemName));

@@ -1,4 +1,5 @@
 # Configuration of rewards, here you can configure rewards for certain crops. #
+# Rewards can be disabled in config.yml.
 # You can use the following types of rewards:
   # - Command
   # - Money

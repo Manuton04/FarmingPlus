@@ -38,6 +38,8 @@ public class RewardsListenerWorldGuard implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void Rewards(BlockBreakEvent event){
+        if (!FarmingPlus.getPlugin().getMainConfigManager().getEnabledRewards())
+            return;
         Player player = event.getPlayer();
         if (player.getGameMode() != GameMode.SURVIVAL)
             return;

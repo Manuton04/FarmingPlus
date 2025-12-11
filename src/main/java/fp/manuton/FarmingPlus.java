@@ -79,20 +79,22 @@ public class FarmingPlus extends JavaPlugin {
         });
     }
 
-    public void onDisable(){
+    public void onDisable() {
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
-        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&fHas been disabled. &cVersion: "+version));
+        Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + "&fHas been disabled. &cVersion: " + version));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
         boolean saved = true;
-        try {
-            getMainConfigManager().saveRecordToJson();
-            Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&aThe rewards records are being saved in a JSON."));
-        }catch (Exception e) {
-            Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + "&cThe rewards records could not be saved."));
-            saved = false;
+        if (FarmingPlus.getPlugin().getMainConfigManager().getEnabledRewards()) {
+            try {
+                getMainConfigManager().saveRecordToJson();
+                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + "&aThe rewards records are being saved in a JSON."));
+            } catch (Exception e) {
+                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + "&cThe rewards records could not be saved."));
+                saved = false;
+            }
+            if (saved)
+                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + "&aThe rewards records have been saved."));
         }
-        if (saved)
-            Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&aThe rewards records have been saved."));
     }
 
     public static FarmingPlus getPlugin(){

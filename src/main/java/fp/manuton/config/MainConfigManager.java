@@ -153,6 +153,8 @@ public class MainConfigManager {
     }
 
     public void databaseDownloadTask(){
+        if (!enabledRewards)
+            return;
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
         executorService.scheduleAtFixedRate(() -> {
@@ -162,6 +164,8 @@ public class MainConfigManager {
     }
 
     public void initializeRewardsCounter() {
+        if (!enabledRewards)
+            return;
         File file = new File(FarmingPlus.getPlugin().getDataFolder() + File.separator + "Data", "rewardsRecords.json");
         if (!file.exists()) {
             rewardsCounter = new HashMap<>();
@@ -171,6 +175,8 @@ public class MainConfigManager {
     }
 
     public void saveRecordToJson() {
+        if (!enabledRewards)
+            return;
         if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL()))
             databaseDownloadTask();
 
@@ -195,6 +201,8 @@ public class MainConfigManager {
     }
 
     public void loadRecordFromJson() {
+        if (!enabledRewards)
+            return;
         if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL()))
             return;
         Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, getPluginPrefix()+"&fLoading rewards records from JSON..."));
@@ -214,6 +222,10 @@ public class MainConfigManager {
     }
 
     private void loadRewards() {
+        if (!enabledRewards) {
+            Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+"&cRewards disabled in config.yml."));
+            return;
+        }
         rewards = new HashMap<>();
     
         ConfigurationSection rewardsSection = rewardsFile.getConfig().getConfigurationSection("Rewards");
@@ -538,6 +550,8 @@ public class MainConfigManager {
     }
 
     public void startSaveTask() {
+        if (!enabledRewards)
+            return;
         Bukkit.getScheduler().runTaskTimerAsynchronously(FarmingPlus.getPlugin(), this::saveRecordToJson, 0L, getSaveInterval());
     }
 

@@ -122,7 +122,7 @@ public class PlayerListenerWorldGuard implements Listener {
             boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
 
             // If the player does not have permission to place blocks, skip this iteration
-            if ((!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
+            if ((!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) && !(player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
                 return;
             }
         }
@@ -296,7 +296,7 @@ public class PlayerListenerWorldGuard implements Listener {
                     boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
 
                     // If the player does not have permission to place blocks, skip this iteration
-                    if ((!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
+                    if ((!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) && !(player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
                         continue;
                     }
                 }
@@ -364,7 +364,7 @@ public class PlayerListenerWorldGuard implements Listener {
                     boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
 
                     // If the player does not have permission to place blocks, skip this iteration
-                    if ((!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
+                    if ((!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) && !(player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
                         continue;
                     }
                 }
@@ -456,7 +456,7 @@ public class PlayerListenerWorldGuard implements Listener {
                         boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
 
                         // If the player does not have permission to place blocks, skip this iteration
-                        if ((!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
+                        if ((!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) && !(player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
                             continue;
                         }
                     }
@@ -489,7 +489,7 @@ public class PlayerListenerWorldGuard implements Listener {
                         boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
 
                         // If the player does not have permission to place blocks, skip this iteration
-                        if ((!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
+                        if ((!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) && !(player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
                             break;
                         }
                     }
@@ -590,7 +590,7 @@ public class PlayerListenerWorldGuard implements Listener {
                 boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
 
                 // If the player does not have permission to place blocks, skip this iteration
-                if ((!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
+                if ((!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) && !(player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
                     break;
                 }
             }

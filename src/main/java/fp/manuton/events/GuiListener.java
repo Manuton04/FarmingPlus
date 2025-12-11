@@ -280,7 +280,7 @@ public class GuiListener implements Listener {
                                     enchantedItem = enchantedItem.replace("%item%", item.getType().toString());
 
                                 player.sendMessage(MessageUtils.translateAll(player, enchantedItem));
-                                if (!player.hasPermission("fp.bypass.costs")){
+                                if (!player.hasPermission("fp.bypass.costs") && !(player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())){
                                     String message = FarmingPlus.getPlugin().getMainConfigManager().getPayedStyle();
                                     if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
                                         if (cost.getMoney() > 0) {
