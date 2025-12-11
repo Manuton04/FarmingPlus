@@ -16,3 +16,73 @@ commands:
     description: Principal command of the plugin FarmingPlus
     aliases:
       - fp
+
+permissions:
+  fp.*:
+    description: Gives access to all commands and features of FarmingPlus
+    children:
+        fp.commands.reload: true
+        fp.commands.help: true
+        fp.commands.reward.top: true
+        fp.commands.reward.list: true
+        fp.commands.reward.give: true
+        fp.commands.reward.clear: true
+        fp.commands.enchant: true
+        fp.gui.use: true
+        fp.autopickup: false
+        fp.bypass.costs: false
+        fp.bypass.farmerstep: false
+        fp.bypass.farmerstep.protection: false
+        fp.bypass.replenish.protection: false
+        fp.bypass.grandtilling.protection: false
+        fp.bypass.irrigate.protection: false
+        fp.bypass.durability-damage: false
+    default: false
+  fp.gui.use:
+    description: Let the player use the GUI for enchanting.
+    default: true
+  fp.autopickup:
+    description: Let the player autopickup the crops they break.
+    default: false
+  fp.commands.reload:
+    description: Reloading config.yml.
+    default: op
+  fp.commands.help:
+    description: Let the player use /fp help.
+    default: true
+  fp.commands.reward.top:
+    description: Let the player use /fp reward top.
+    default: true
+  fp.commands.reward.list:
+    description: Let the player use /fp reward list.
+    default: true
+  fp.commands.reward.give:
+    description: Let the player use /fp reward give.
+    default: op
+  fp.commands.reward.clear:
+    description: Let the player use /fp reward clear.
+    default: op
+  fp.commands.enchant:
+    description: Let the player use /fp enchant.
+    default: op
+  fp.bypass.costs:
+    description: Let the player enchant without costs.
+    default: false
+  fp.bypass.farmerstep:
+    description: Crops not needed in inventory when using Farmer's Step.
+    default: false
+  fp.bypass.farmerstep.protection:
+    description: Let the player use Farmer's step on WorldGuard regions.
+    default: false
+  fp.bypass.replenish.protection:
+    description: Let the player use Replenish on WorldGuard regions.
+    default: false
+  fp.bypass.grandtilling.protection:
+    description: Let the player use Grand Tilling on WorldGuard regions.
+    default: false
+  fp.bypass.irrigate.protection:
+    description: Let the player use Irrigate on WorldGuard regions.
+    default: false
+  fp.bypass.durability-damage:
+    description: Tools or boots don't take durability damage when used by that player.
+    default: false

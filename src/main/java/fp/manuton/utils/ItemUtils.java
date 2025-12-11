@@ -132,18 +132,18 @@ public class ItemUtils {
     }
 
     public static boolean canPayEnchantment(Player player, Cost cost){
-        if (player.hasPermission("fp.bypass.costs"))
+        if (player.hasPermission("fp.bypass.costs") || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms()))
             return true;
 
         if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
             if (cost.getMoney() > 0) {
-                if (VaultUtils.getMoney(player) <= cost.getMoney())
+                if (VaultUtils.getMoney(player) < cost.getMoney())
                     return false;
             }
         }
 
         if (cost.getXpLevels() > 0){
-            if (player.getLevel() <= cost.getXpLevels())
+            if (player.getLevel() < cost.getXpLevels())
                 return false;
         }
 
@@ -374,7 +374,7 @@ public class ItemUtils {
 
     // ItemUtils.setDurability //
     public static void setDurability(ItemStack tool, Player player){
-        if (player.hasPermission("fp.bypass.durability-damage"))
+        if (player.hasPermission("fp.bypass.durability-damage") || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms()))
             return;
         if (tool.getType().getMaxDurability() > 0 && tool.getItemMeta() instanceof Damageable) {
             Damageable damageable = (Damageable) tool.getItemMeta();
@@ -395,7 +395,7 @@ public class ItemUtils {
 
     // Set durability of boots//
     public static void setDurabilityBoots(ItemStack boots, Player player){
-        if (player.hasPermission("fp.bypass.durability-damage"))
+        if (player.hasPermission("fp.bypass.durability-damage") || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms()))
             return;
         if (boots.getType().getMaxDurability() > 0 && boots.getItemMeta() instanceof Damageable) {
             Damageable damageable = (Damageable) boots.getItemMeta();

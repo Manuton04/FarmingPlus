@@ -50,7 +50,7 @@ public class PlayerListener implements Listener {
         }
         if (ItemUtils.getCrop(block.getType()) == null && block.getType() != Material.PUMPKIN && block.getType() != Material.MELON && block.getType() != Material.PUMPKIN_STEM && block.getType() != Material.MELON_STEM && block.getType() != Material.SUGAR_CANE && block.getType() != Material.CACTUS && block.getType() != Material.KELP && block.getType() != Material.KELP_PLANT && block.getType() != Material.BAMBOO && block.getType() != Material.BAMBOO_SAPLING && block.getType() != Material.SWEET_BERRY_BUSH)
             return;
-        if (player.hasPermission("fp.autopickup")){
+        if (player.hasPermission("fp.autopickup") || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())){
             Collection<ItemStack> drops = block.getDrops(player.getInventory().getItemInMainHand());
             if (block.getType() == Material.SUGAR_CANE || block.getType() == Material.CACTUS || block.getType() == Material.KELP || block.getType() == Material.KELP_PLANT || block.getType() == Material.BAMBOO){
                 while (block.getRelative(BlockFace.UP).getType() == block.getType()){
@@ -118,7 +118,7 @@ public class PlayerListener implements Listener {
                 }
             }
 
-            if (player.hasPermission("fp.autopickup")){
+            if (player.hasPermission("fp.autopickup") || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())){
                 for (ItemStack drop : drops) {
                     if (!(player.getInventory().firstEmpty() == -1))
                         player.getInventory().addItem(drop);
@@ -222,7 +222,9 @@ public class PlayerListener implements Listener {
 
 
         // If player in CREATIVE, don't check if they have crops in inventory //
-        if (player.getGameMode() == GameMode.CREATIVE || player.hasPermission("fp.bypass.farmerstep")){
+        // If player has permission fp.bypass.farmerstep, don't check if they have crops in inventory //
+        // If player is OP and default OP perms are enabled, don't check if they have crops in inventory //
+        if ((player.getGameMode() == GameMode.CREATIVE || player.hasPermission("fp.bypass.farmerstep")) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())){
             Material crop = Material.valueOf(data.get(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING));
             if (crop.equals(Material.POTATO)){
                 crop = Material.POTATOES;

@@ -114,6 +114,8 @@ public class MainConfigManager {
     private String xpLevelsMessage;
     private String notplayedbefore;
     private String enchantedsuccesfully;
+    private Boolean enabledDefaultOpPerms;
+    private Boolean enabledRewards;
 
     private List<String> replenishLore;
     private List<String> farmersgraceLore;
@@ -466,6 +468,8 @@ public class MainConfigManager {
         topPrevious = config.getString("config.top-previous");
         topNext = config.getString("config.top-next");
         useHelp = config.getString("config.use-help");
+        enabledDefaultOpPerms = config.getBoolean("config.enabled-default-op-permissions");
+        enabledRewards = config.getBoolean("config.enabled-rewards");
 
         replenishLore = config.getStringList("config.enchantments.replenish.lore");
         farmersgraceLore = config.getStringList("config.enchantments.farmers-grace.lore");
@@ -922,5 +926,13 @@ public class MainConfigManager {
 
     public String getEnchantNotAllowed() {
         return enchantNotAllowed;
+    }
+
+    public Boolean getEnabledDefaultOpPerms() {
+        return enabledDefaultOpPerms;
+    }
+
+    public Boolean getEnabledRewards() {
+        return enabledRewards;
     }
 }

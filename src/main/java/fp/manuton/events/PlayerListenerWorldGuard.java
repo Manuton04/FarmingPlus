@@ -66,7 +66,7 @@ public class PlayerListenerWorldGuard implements Listener {
         }
         if (ItemUtils.getCrop(block.getType()) == null && block.getType() != Material.PUMPKIN && block.getType() != Material.MELON && block.getType() != Material.PUMPKIN_STEM && block.getType() != Material.MELON_STEM && block.getType() != Material.SUGAR_CANE && block.getType() != Material.CACTUS && block.getType() != Material.KELP && block.getType() != Material.KELP_PLANT && block.getType() != Material.BAMBOO && block.getType() != Material.BAMBOO_SAPLING && block.getType() != Material.SWEET_BERRY_BUSH)
             return;
-        if (player.hasPermission("fp.autopickup")){
+        if (player.hasPermission("fp.autopickup") || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())){
             Collection<ItemStack> drops = block.getDrops(player.getInventory().getItemInMainHand());
             if (block.getType() == Material.SUGAR_CANE || block.getType() == Material.CACTUS || block.getType() == Material.KELP || block.getType() == Material.KELP_PLANT || block.getType() == Material.BAMBOO){
                 while (block.getRelative(BlockFace.UP).getType() == block.getType()){
@@ -122,7 +122,7 @@ public class PlayerListenerWorldGuard implements Listener {
             boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
 
             // If the player does not have permission to place blocks, skip this iteration
-            if (!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) {
+            if ((!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
                 return;
             }
         }
@@ -156,7 +156,7 @@ public class PlayerListenerWorldGuard implements Listener {
                 }
             }
 
-            if (player.hasPermission("fp.autopickup")){
+            if (player.hasPermission("fp.autopickup") || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())){
                 for (ItemStack drop : drops) {
                     if (!(player.getInventory().firstEmpty() == -1))
                         player.getInventory().addItem(drop);
@@ -261,7 +261,7 @@ public class PlayerListenerWorldGuard implements Listener {
 
 
         // If player in CREATIVE, don't check if they have crops in inventory //
-        if (player.getGameMode() == GameMode.CREATIVE || player.hasPermission("fp.bypass.farmerstep")){
+        if ((player.getGameMode() == GameMode.CREATIVE || player.hasPermission("fp.bypass.farmerstep")) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())){
             Material crop = Material.valueOf(data.get(new NamespacedKey(FarmingPlus.getPlugin(), "crop"), PersistentDataType.STRING));
             if (crop.equals(Material.POTATO)){
                 crop = Material.POTATOES;
@@ -296,7 +296,7 @@ public class PlayerListenerWorldGuard implements Listener {
                     boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
 
                     // If the player does not have permission to place blocks, skip this iteration
-                    if (!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) {
+                    if ((!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
                         continue;
                     }
                 }
@@ -364,7 +364,7 @@ public class PlayerListenerWorldGuard implements Listener {
                     boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
 
                     // If the player does not have permission to place blocks, skip this iteration
-                    if (!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) {
+                    if ((!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
                         continue;
                     }
                 }
@@ -456,7 +456,7 @@ public class PlayerListenerWorldGuard implements Listener {
                         boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
 
                         // If the player does not have permission to place blocks, skip this iteration
-                        if (!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) {
+                        if ((!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
                             continue;
                         }
                     }
@@ -489,7 +489,7 @@ public class PlayerListenerWorldGuard implements Listener {
                         boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
 
                         // If the player does not have permission to place blocks, skip this iteration
-                        if (!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) {
+                        if ((!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
                             break;
                         }
                     }
@@ -590,7 +590,7 @@ public class PlayerListenerWorldGuard implements Listener {
                 boolean canPlace = regions.testState(localPlayer, Flags.BUILD);
 
                 // If the player does not have permission to place blocks, skip this iteration
-                if (!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) {
+                if ((!canPlace && !player.hasPermission("fp.bypass.farmerstep.protection")) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
                     break;
                 }
             }

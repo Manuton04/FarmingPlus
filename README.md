@@ -49,7 +49,8 @@ FarmingPlus is a plugin that allows players to experience new mechanics in farmi
         - mob:
         - amount:
         - level:
-# Permissions
+# Permissions:
+# By default, Ops don't have fp.autopickup and all the bypass permissions. Can be changed in config.yml.
   - fp.gui.use: Let the player use the GUI for enchanting.
   - fp.autopickup: Let the player autopickup the crops they break.
   - fp.commands.reload: Reloading config.yml.
@@ -62,12 +63,10 @@ FarmingPlus is a plugin that allows players to experience new mechanics in farmi
   - fp.bypass.costs: Let the player enchant without costs.
   - fp.bypass.farmerstep: Crops not needed in inventory when using Farmer's Step.
   - fp.bypass.farmerstep.protection: Let the player use Farmer's step on WorldGuard regions.
-  - fp.bypass.replenish: Crops not needed in inventory when using Replenish.
   - fp.bypass.replenish.protection: Let the player use Replenish on WorldGuard regions.
   - fp.bypass.grandtilling.protection: Let the player use Grand Tilling on WorldGuard regions.
   - fp.bypass.irrigate.protection: Let the player use Irrigate on WorldGuard regions.
   - fp.bypass.durability-damage: Tools or boots don't take durability damage when used by that player.
-  - fp.admin: Administrative permissions.
 # Compatibilities
 - **Vault**:
   - Setup economic costs when enchanting items.

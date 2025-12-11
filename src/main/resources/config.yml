@@ -27,6 +27,10 @@ config:
   top-previous: "&c&l<< Previous"
   top-next: "&a&lNext >>"
   use-help: "%farmingplus_prefix%&eUse /fp help for more information."
+  # If true OPs will have all permissions by default #
+  # By default, Ops don't have fp.autopickup and all the bypass permissions.
+  enabled-default-op-permissions: false
+  enabled-rewards: true
 
 
 
