@@ -104,6 +104,9 @@ public class MySQLData {
     }
 
     public static Map<UUID, RewardsCounter> loadRewardsFromDatabase(Connection connection) {
+        // IMPORTANT: Create table first if it doesn't exist
+        createTableIfNotExists(connection);
+
         String query = "SELECT uuid, Date, rewardName FROM " + REWARDS_TABLE + " ORDER BY Date DESC";
         Map<UUID, RewardsCounter> rewardsMap = new HashMap<>();
 
@@ -146,11 +149,10 @@ public class MySQLData {
     public static void createTableIfNotExists(Connection connection) {
         String query = "CREATE TABLE IF NOT EXISTS " + REWARDS_TABLE + " (" +
                        "uuid VARCHAR(36), " +
-                       "Date TIMESTAMP, " +
+                       "`Date` TIMESTAMP, " +  // Backticks needed, 'Date' is a reserved keyword in MySQL
                        "rewardName VARCHAR(255))";
 
-        try {
-            Statement statement = connection.createStatement();
+        try (Statement statement = connection.createStatement()) {
             statement.execute(query);
 
             // Crear índice en UUID para búsquedas ultra-rápidas

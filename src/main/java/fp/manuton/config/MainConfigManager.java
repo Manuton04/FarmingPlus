@@ -133,6 +133,7 @@ public class MainConfigManager {
     private Map<String, Reward> rewards;
     private Map<String, Cost> costs;
     private Map<UUID, RewardsCounter> rewardsCounter;
+    private ScheduledExecutorService databaseExecutorService; // MySQL download task executor
     private String enchantNotAllowed;
 
     public MainConfigManager(){
@@ -155,9 +156,24 @@ public class MainConfigManager {
     public void databaseDownloadTask(){
         if (!enabledRewards)
             return;
-        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
-        executorService.scheduleAtFixedRate(() -> {
+        // Shutdown existing executor if it's already running
+        if (databaseExecutorService != null && !databaseExecutorService.isShutdown()) {
+            databaseExecutorService.shutdown();
+            try {
+                if (!databaseExecutorService.awaitTermination(5, TimeUnit.SECONDS)) {
+                    databaseExecutorService.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                databaseExecutorService.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        // Create new executor
+        databaseExecutorService = Executors.newSingleThreadScheduledExecutor();
+
+        databaseExecutorService.scheduleAtFixedRate(() -> {
             Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+" &fDownloading rewards from database..."));
             rewardsCounter = loadRewardsFromDatabase(FarmingPlus.getConnectionMySQL());
         }, 0, getMySQLDownloadInterval(), TimeUnit.MINUTES);
@@ -948,5 +964,25 @@ public class MainConfigManager {
 
     public Boolean getEnabledRewards() {
         return enabledRewards;
+    }
+
+    /**
+     * Cleanup method to shutdown database executor service
+     * Should be called when plugin is disabled
+     */
+    public void shutdown() {
+        if (databaseExecutorService != null && !databaseExecutorService.isShutdown()) {
+            databaseExecutorService.shutdown();
+            try {
+                if (!databaseExecutorService.awaitTermination(5, TimeUnit.SECONDS)) {
+                    databaseExecutorService.shutdownNow();
+                }
+                Bukkit.getLogger().info("[FarmingPlus] Database download task executor shutdown successfully.");
+            } catch (InterruptedException e) {
+                databaseExecutorService.shutdownNow();
+                Thread.currentThread().interrupt();
+                Bukkit.getLogger().warning("[FarmingPlus] Database download task executor interrupted during shutdown.");
+            }
+        }
     }
 }

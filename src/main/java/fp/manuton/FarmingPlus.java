@@ -88,6 +88,9 @@ public class FarmingPlus extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + "&fHas been disabled. &cVersion: " + version));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
 
+        // Shutdown database executor service to prevent memory leaks
+        mainConfigManager.shutdown();
+
         // Close MySQL connection if enabled
         if (connectionMySQLInstance != null) {
             try {
