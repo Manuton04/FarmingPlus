@@ -7,12 +7,16 @@ import org.bukkit.Bukkit;
 
 import java.sql.*;
 import java.sql.Date;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class MySQLData {
 
     private static final String REWARDS_TABLE = "farmingplus_rewards_table";
+    // Thread-safe DateTimeFormatter (Java 8+) replaces non-thread-safe SimpleDateFormat
+    private static final DateTimeFormatter ISO_FORMATTER =
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static boolean isDatabaseConnected(Connection connection) {
         if (connection == null)
@@ -47,7 +51,6 @@ public class MySQLData {
 
         createTableIfNotExists(connection);
         String query = "INSERT INTO " + REWARDS_TABLE + " (uuid, Date, rewardName) VALUES (?, ?, ?)";
-        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         try {
             // Deshabilitar auto-commit para usar transacción
@@ -55,7 +58,11 @@ public class MySQLData {
 
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 for (Map.Entry<UUID, RewardRecord> entry : rewardsMap.entrySet()) {
-                    String isoDate = isoFormat.format(entry.getValue().getDate());
+                    // Use thread-safe DateTimeFormatter to convert Date to ISO format
+                    String isoDate = entry.getValue().getDate()
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .format(ISO_FORMATTER);
                     statement.setString(1, entry.getKey().toString());
                     statement.setString(2, isoDate);
                     statement.setString(3, entry.getValue().getRewardName());
@@ -90,8 +97,11 @@ public class MySQLData {
     public static void saveRewardCounterToDatabase(Connection connection, UUID uuid, RewardRecord rewardRecord) {
         createTableIfNotExists(connection);
         String query = "INSERT INTO " + REWARDS_TABLE + " (uuid, Date, rewardName) VALUES (?, ?, ?)";
-        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String isoDate = isoFormat.format(rewardRecord.getDate());
+        // Use thread-safe DateTimeFormatter to convert Date to ISO format
+        String isoDate = rewardRecord.getDate()
+            .toInstant()
+            .atZone(ZoneId.systemDefault())
+            .format(ISO_FORMATTER);
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, uuid.toString());

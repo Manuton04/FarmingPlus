@@ -13,14 +13,15 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 import com.google.gson.reflect.TypeToken;
-
-import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -175,7 +176,11 @@ public class MainConfigManager {
 
         databaseExecutorService.scheduleAtFixedRate(() -> {
             Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+" &fDownloading rewards from database..."));
-            rewardsCounter = loadRewardsFromDatabase(FarmingPlus.getConnectionMySQL());
+            try {
+                rewardsCounter = loadRewardsFromDatabase(FarmingPlus.getConnectionMySQL());
+            } catch (SQLException e) {
+                Bukkit.getLogger().severe("[FarmingPlus] Failed to load rewards from database: " + e.getMessage());
+            }
         }, 0, getMySQLDownloadInterval(), TimeUnit.MINUTES);
     }
 

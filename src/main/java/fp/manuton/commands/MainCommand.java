@@ -29,6 +29,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.awt.*;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -196,13 +197,14 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                             if (FarmingPlus.getPlugin().getMainConfigManager().getAllRewardNames().contains(args[3])) {
                                 Reward reward = FarmingPlus.getPlugin().getMainConfigManager().getReward(args[3]);
                                 reward.give(Bukkit.getPlayer(target));
-                                boolean done = true;
+                                boolean[] done = new boolean[1];  // Make effectively final for lambda
+                                done[0] = true;
                                 if (reward instanceof SummonReward) {
                                     if (Bukkit.getPluginManager().getPlugin("MythicMobs") == null) {
                                         try {
                                             EntityType.valueOf(((SummonReward) reward).getEntity());
                                         } catch (IllegalArgumentException exp) {
-                                            done = false;
+                                            done[0] = false;
                                             sender.sendMessage(MessageUtils.translateAll(null, FarmingPlus.getPlugin().getMainConfigManager().getEntityInvalidMythic()));
                                         }
                                     } else {
@@ -211,7 +213,7 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                                             try {
                                                 EntityType.valueOf(((SummonReward) reward).getEntity());
                                             } catch (IllegalArgumentException exp) {
-                                                done = false;
+                                                done[0] = false;
                                                 sender.sendMessage(MessageUtils.translateAll(null, FarmingPlus.getPlugin().getMainConfigManager().getEntityInvalid()));
                                             }
                                         }
@@ -219,13 +221,22 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                                     }
 
                                 }
-                                if (done) {
+                                if (done[0]) {
 
-                                    UUID playerId = Bukkit.getPlayer(target).getUniqueId();
-                                    if (FarmingPlus.isMySQLConnected()) {
+                                UUID playerId = Bukkit.getPlayer(target).getUniqueId();
+                                if (FarmingPlus.isMySQLConnected()) {
                                         RewardRecord rewardRecord = new RewardRecord(new Date(), args[3]);
-                                        MySQLData.saveRewardCounterToDatabase(FarmingPlus.getConnectionMySQL(), playerId, rewardRecord);
-                                    }
+                                        // CRITICAL: Run database operation asynchronously to prevent server lag
+                                        Bukkit.getScheduler().runTaskAsynchronously(FarmingPlus.getPlugin(), () -> {
+                                            try (Connection conn = FarmingPlus.getConnectionMySQL()) {
+                                                if (conn != null) {
+                                                    MySQLData.saveRewardCounterToDatabase(conn, playerId, rewardRecord);
+                                                }
+                                            } catch (SQLException e) {
+                                                Bukkit.getLogger().warning("[FarmingPlus] Failed to save reward asynchronously: " + e.getMessage());
+                                            }
+                                        });
+                                }
                                     Map<UUID, RewardsCounter> rewardsCounterMap = FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap();
                                     RewardsCounter rewardsCounter = new RewardsCounter(new ArrayList<>());
                                     if (!rewardsCounterMap.containsKey(playerId))
@@ -257,11 +268,30 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                     }else if (args[1].equalsIgnoreCase("clear")) {
                         if (args.length == 3) {
                             OfflinePlayer targetPlayer = Bukkit.getOfflinePlayer(args[2]);
-                            boolean done = false;
-                            if (FarmingPlus.isMySQLConnected() && MySQLData.existsUUID(FarmingPlus.getConnectionMySQL(), targetPlayer.getUniqueId().toString())) {
-                                MySQLData.deleteRewardsForUUID(FarmingPlus.getConnectionMySQL(), targetPlayer.getUniqueId());
-                                done = true;
+                            boolean[] done = new boolean[1];  // Use array to make it effectively final for lambda
+                            done[0] = false;
+
+                            // Check if MySQL is enabled, then use it
+                            if (FarmingPlus.isMySQLConnected()) {
+                                try (Connection conn = FarmingPlus.getConnectionMySQL()) {
+                                    if (conn != null && MySQLData.existsUUID(conn, targetPlayer.getUniqueId().toString())) {
+                                        // CRITICAL: Run database operation asynchronously to prevent server lag
+                                        Bukkit.getScheduler().runTaskAsynchronously(FarmingPlus.getPlugin(), () -> {
+                                            try (Connection conn2 = FarmingPlus.getConnectionMySQL()) {
+                                                if (conn2 != null) {
+                                                    MySQLData.deleteRewardsForUUID(conn2, targetPlayer.getUniqueId());
+                                                    done[0] = true;
+                                                }
+                                            } catch (SQLException e) {
+                                                Bukkit.getLogger().warning("[FarmingPlus] Failed to delete rewards asynchronously: " + e.getMessage());
+                                            }
+                                        });
+                                    }
+                                } catch (SQLException e) {
+                                    Bukkit.getLogger().warning("[FarmingPlus] Failed to check UUID existence: " + e.getMessage());
+                                }
                             }
+
                             if (!targetPlayer.hasPlayedBefore() && !FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().containsKey(targetPlayer.getUniqueId())) {
                                 sender.sendMessage(MessageUtils.translateAll(null, FarmingPlus.getPlugin().getMainConfigManager().getNotPlayer()));
                             } else {
@@ -269,12 +299,12 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                                 for (Map.Entry<UUID, RewardsCounter> entry : list) {
                                     if (entry.getKey().equals(targetPlayer.getUniqueId())) {
                                         FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().remove(entry.getKey());
-                                        done = true;
+                                        done[0] = true;
                                         break;
                                     }
                                 }
                             }
-                            if (done)
+                            if (done[0])
                                 sender.sendMessage(MessageUtils.translateAll(targetPlayer, FarmingPlus.getPlugin().getMainConfigManager().getRewardsCleared()));
                             else
                                 sender.sendMessage(MessageUtils.translateAll(null, "%farmingplus_prefix%&eUsage: /fp reward clear <player>"));
@@ -473,13 +503,14 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                     } else {
                         if (FarmingPlus.getPlugin().getMainConfigManager().getAllRewardNames().contains(args[3])) {
                             Reward reward = FarmingPlus.getPlugin().getMainConfigManager().getReward(args[3]);
-                            boolean done = true;
+                            boolean[] done = new boolean[1];
+                            done[0] = true;
                             if (reward instanceof SummonReward) {
                                 if (Bukkit.getPluginManager().getPlugin("MythicMobs") == null) {
                                     try {
                                         EntityType.valueOf(((SummonReward) reward).getEntity());
                                     } catch (IllegalArgumentException exp) {
-                                        done = false;
+                                        done[0] = false;
                                         player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getEntityInvalidMythic()));
                                     }
                                 } else {
@@ -487,10 +518,10 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                                     if (!isMythic) {
                                         try {
                                             EntityType.valueOf(((SummonReward) reward).getEntity());
-                                        } catch (IllegalArgumentException exp) {
-                                            done = false;
-                                            player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getEntityInvalid()));
-                                        }
+                                    } catch (IllegalArgumentException exp) {
+                                        done[0] = false;
+                                        player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getEntityInvalid()));
+                                    }
                                     }
 
                                 }
@@ -498,16 +529,25 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                             }else if (reward instanceof MoneyReward){
                                 if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
                                     player.sendMessage(MessageUtils.translateAll(null, FarmingPlus.prefix+" &cYou need Vault to use this reward."));
-                                    done = false;
+                                    done[0] = false;
                                 }
-                            }
-                            if (done){
+                                }
+                            if (done[0]){
                                 reward.give(Bukkit.getPlayer(target));
 
                                 UUID playerId = Bukkit.getPlayer(target).getUniqueId();
                                 if (FarmingPlus.isMySQLConnected()) {
                                     RewardRecord rewardRecord = new RewardRecord(new Date(), args[3]);
-                                    MySQLData.saveRewardCounterToDatabase(FarmingPlus.getConnectionMySQL(), playerId, rewardRecord);
+                                    // CRITICAL: Run database operation asynchronously to prevent server lag
+                                    Bukkit.getScheduler().runTaskAsynchronously(FarmingPlus.getPlugin(), () -> {
+                                        try (Connection conn = FarmingPlus.getConnectionMySQL()) {
+                                            if (conn != null) {
+                                                MySQLData.saveRewardCounterToDatabase(conn, playerId, rewardRecord);
+                                            }
+                                        } catch (SQLException e) {
+                                            Bukkit.getLogger().warning("[FarmingPlus] Failed to save reward asynchronously: " + e.getMessage());
+                                        }
+                                    });
                                 }
                                 Map<UUID, RewardsCounter> rewardsCounterMap = FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap();
                                 RewardsCounter rewardsCounter = new RewardsCounter(new ArrayList<>());
@@ -630,10 +670,28 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                     if (player.hasPermission("fp.admin") || player.hasPermission("fp.commands.reward.clear")) {
                         if (args.length == 3) {
                             OfflinePlayer targetPlayer = Bukkit.getOfflinePlayer(args[2]);
-                            boolean done = false;
-                            if (FarmingPlus.isMySQLConnected() && MySQLData.existsUUID(FarmingPlus.getConnectionMySQL(), targetPlayer.getUniqueId().toString())) {
-                                MySQLData.deleteRewardsForUUID(FarmingPlus.getConnectionMySQL(), targetPlayer.getUniqueId());
-                                done = true;
+                            boolean[] done = new boolean[1];
+                            done[0] = false;
+
+                            // Check if MySQL is enabled, then use it
+                            if (FarmingPlus.isMySQLConnected()) {
+                                try (Connection conn = FarmingPlus.getConnectionMySQL()) {
+                                    if (conn != null && MySQLData.existsUUID(conn, targetPlayer.getUniqueId().toString())) {
+                                        // CRITICAL: Run database operation asynchronously to prevent server lag
+                                        Bukkit.getScheduler().runTaskAsynchronously(FarmingPlus.getPlugin(), () -> {
+                                            try (Connection conn2 = FarmingPlus.getConnectionMySQL()) {
+                                                if (conn2 != null) {
+                                                    MySQLData.deleteRewardsForUUID(conn2, targetPlayer.getUniqueId());
+                                                    done[0] = true;
+                                                }
+                                            } catch (SQLException e) {
+                                                Bukkit.getLogger().warning("[FarmingPlus] Failed to delete rewards asynchronously: " + e.getMessage());
+                                            }
+                                        });
+                                    }
+                                } catch (SQLException e) {
+                                    Bukkit.getLogger().warning("[FarmingPlus] Failed to check UUID existence: " + e.getMessage());
+                                }
                             }
                             if (!targetPlayer.hasPlayedBefore() && !FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().containsKey(targetPlayer.getUniqueId())) {
                                 player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotPlayer()));
@@ -642,12 +700,12 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                                 for (Map.Entry<UUID, RewardsCounter> entry : list) {
                                     if (entry.getKey().equals(targetPlayer.getUniqueId())) {
                                         FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().remove(entry.getKey());
-                                        done = true;
+                                        done[0] = true;
                                         break;
                                     }
                                 }
                             }
-                            if (done)
+                            if (done[0])
                                 player.sendMessage(MessageUtils.translateAll(targetPlayer, FarmingPlus.getPlugin().getMainConfigManager().getRewardsCleared()));
                             else
                                 player.sendMessage(MessageUtils.translateAll(player, "%farmingplus_prefix%&eUsage: /fp reward clear <player>"));

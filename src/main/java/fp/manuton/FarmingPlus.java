@@ -1,6 +1,6 @@
 package fp.manuton;
 
-import fp.manuton.SQL.ConnectionMySQL;
+import fp.manuton.SQL.ConnectionPool;
 import fp.manuton.SQL.MySQLData;
 import fp.manuton.commands.MainCommand;
 import fp.manuton.config.CustomConfig;
@@ -16,14 +16,14 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class FarmingPlus extends JavaPlugin {
     public static String prefix = null;
     private final String version = getDescription().getVersion();
     private static FarmingPlus plugin;
     private MainConfigManager mainConfigManager;
-    private static Connection connectionMySQL;
-    private static ConnectionMySQL connectionMySQLInstance;
+    private static ConnectionPool connectionPool;  // HikariCP connection pool
     private final String link = "https://modrinth.com/plugin/farmingplus";
     private final int pluginIdSpigot = 114643; // ADD PLUGIN ID SPIGOT //
 
@@ -40,11 +40,20 @@ public class FarmingPlus extends JavaPlugin {
         String mySQLUsername = config.getString("config.mysql.username");
         String mySQLPassword = config.getString("config.mysql.password");
 
-        connectionMySQL = null;
-        connectionMySQLInstance = null;
+        connectionPool = null;
         if (mySQLEnabled) {
-            connectionMySQLInstance = new ConnectionMySQL(mySQLHost, mySQLPort, mySQLDatabase, mySQLUsername, mySQLPassword);
-            connectionMySQL = connectionMySQLInstance.getConnection();
+            connectionPool = new ConnectionPool(mySQLHost, mySQLPort, mySQLDatabase, mySQLUsername, mySQLPassword);
+            Bukkit.getLogger().info("[FarmingPlus] Database connection pool initialized.");
+
+            // Start periodic connection health check (every 3 minutes)
+            Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+                if (connectionPool != null) {
+                    boolean isHealthy = connectionPool.validateConnection();
+                    if (!isHealthy) {
+                        Bukkit.getLogger().warning("[FarmingPlus] Database connection validation failed. Attempting reconnection...");
+                    }
+                }
+            }, 60L, 60L * 3); // 3 minutes
         }
         mainConfigManager = new MainConfigManager();
         prefix = getPlugin().getMainConfigManager().getPluginPrefix();
@@ -91,13 +100,13 @@ public class FarmingPlus extends JavaPlugin {
         // Shutdown database executor service to prevent memory leaks
         mainConfigManager.shutdown();
 
-        // Close MySQL connection if enabled
-        if (connectionMySQLInstance != null) {
+        // Close MySQL connection pool if enabled
+        if (connectionPool != null) {
             try {
-                connectionMySQLInstance.close();
-                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + "&aMySQL connection closed successfully."));
+                connectionPool.close();
+                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + "&aMySQL connection pool closed successfully."));
             } catch (Exception e) {
-                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + "&cError closing MySQL connection: " + e.getMessage()));
+                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + "&cError closing MySQL connection pool: " + e.getMessage()));
             }
         }
 
@@ -152,12 +161,21 @@ public class FarmingPlus extends JavaPlugin {
         new FarmersStepGui();
     }
 
-    public static Connection getConnectionMySQL(){
-        return connectionMySQL;
+    /**
+     * Get a connection from the pool.
+     * IMPORTANT: This throws SQLException, caller must handle it.
+     *
+     * @return Connection from HikariCP pool
+     */
+    public static Connection getConnectionMySQL() throws SQLException {
+        if (connectionPool == null || !connectionPool.isInitialized()) {
+            return null;
+        }
+        return connectionPool.getConnection();
     }
 
     public static boolean isMySQLConnected() {
-        return connectionMySQLInstance != null && connectionMySQLInstance.isConnected();
+        return connectionPool != null && connectionPool.isInitialized();
     }
 
     private boolean isWorldguardEnabled() {
