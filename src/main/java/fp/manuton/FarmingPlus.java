@@ -23,6 +23,7 @@ public class FarmingPlus extends JavaPlugin {
     private static FarmingPlus plugin;
     private MainConfigManager mainConfigManager;
     private static Connection connectionMySQL;
+    private static ConnectionMySQL connectionMySQLInstance;
     private final String link = "https://modrinth.com/plugin/farmingplus";
     private final int pluginIdSpigot = 114643; // ADD PLUGIN ID SPIGOT //
 
@@ -40,8 +41,11 @@ public class FarmingPlus extends JavaPlugin {
         String mySQLPassword = config.getString("config.mysql.password");
 
         connectionMySQL = null;
-        if (mySQLEnabled)
-            connectionMySQL = new ConnectionMySQL(mySQLHost, mySQLPort, mySQLDatabase, mySQLUsername, mySQLPassword).getConnection();
+        connectionMySQLInstance = null;
+        if (mySQLEnabled) {
+            connectionMySQLInstance = new ConnectionMySQL(mySQLHost, mySQLPort, mySQLDatabase, mySQLUsername, mySQLPassword);
+            connectionMySQL = connectionMySQLInstance.getConnection();
+        }
         mainConfigManager = new MainConfigManager();
         prefix = getPlugin().getMainConfigManager().getPluginPrefix();
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
@@ -50,7 +54,7 @@ public class FarmingPlus extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&fHas been enabled. &cVersion: "+version));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
-        if (connectionMySQL != null && MySQLData.isDatabaseConnected(getConnectionMySQL()))
+        if (isMySQLConnected())
             Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, getMainConfigManager().getConnectedMySQL()));
         else
             Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, getMainConfigManager().getErrorMySQL()));
@@ -83,6 +87,17 @@ public class FarmingPlus extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + "&fHas been disabled. &cVersion: " + version));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
+
+        // Close MySQL connection if enabled
+        if (connectionMySQLInstance != null) {
+            try {
+                connectionMySQLInstance.close();
+                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + "&aMySQL connection closed successfully."));
+            } catch (Exception e) {
+                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + "&cError closing MySQL connection: " + e.getMessage()));
+            }
+        }
+
         boolean saved = true;
         if (FarmingPlus.getPlugin().getMainConfigManager().getEnabledRewards()) {
             try {
@@ -136,6 +151,10 @@ public class FarmingPlus extends JavaPlugin {
 
     public static Connection getConnectionMySQL(){
         return connectionMySQL;
+    }
+
+    public static boolean isMySQLConnected() {
+        return connectionMySQLInstance != null && connectionMySQLInstance.isConnected();
     }
 
     private boolean isWorldguardEnabled() {

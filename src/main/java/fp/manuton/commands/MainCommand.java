@@ -222,7 +222,7 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                                 if (done) {
 
                                     UUID playerId = Bukkit.getPlayer(target).getUniqueId();
-                                    if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL())) {
+                                    if (FarmingPlus.isMySQLConnected()) {
                                         RewardRecord rewardRecord = new RewardRecord(new Date(), args[3]);
                                         MySQLData.saveRewardCounterToDatabase(FarmingPlus.getConnectionMySQL(), playerId, rewardRecord);
                                     }
@@ -258,7 +258,7 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                         if (args.length == 3) {
                             OfflinePlayer targetPlayer = Bukkit.getOfflinePlayer(args[2]);
                             boolean done = false;
-                            if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL()) && MySQLData.existsUUID(FarmingPlus.getConnectionMySQL(), targetPlayer.getUniqueId().toString())) {
+                            if (FarmingPlus.isMySQLConnected() && MySQLData.existsUUID(FarmingPlus.getConnectionMySQL(), targetPlayer.getUniqueId().toString())) {
                                 MySQLData.deleteRewardsForUUID(FarmingPlus.getConnectionMySQL(), targetPlayer.getUniqueId());
                                 done = true;
                             }
@@ -505,7 +505,7 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                                 reward.give(Bukkit.getPlayer(target));
 
                                 UUID playerId = Bukkit.getPlayer(target).getUniqueId();
-                                if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL())) {
+                                if (FarmingPlus.isMySQLConnected()) {
                                     RewardRecord rewardRecord = new RewardRecord(new Date(), args[3]);
                                     MySQLData.saveRewardCounterToDatabase(FarmingPlus.getConnectionMySQL(), playerId, rewardRecord);
                                 }
@@ -631,7 +631,7 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                         if (args.length == 3) {
                             OfflinePlayer targetPlayer = Bukkit.getOfflinePlayer(args[2]);
                             boolean done = false;
-                            if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL()) && MySQLData.existsUUID(FarmingPlus.getConnectionMySQL(), targetPlayer.getUniqueId().toString())) {
+                            if (FarmingPlus.isMySQLConnected() && MySQLData.existsUUID(FarmingPlus.getConnectionMySQL(), targetPlayer.getUniqueId().toString())) {
                                 MySQLData.deleteRewardsForUUID(FarmingPlus.getConnectionMySQL(), targetPlayer.getUniqueId());
                                 done = true;
                             }

@@ -145,7 +145,7 @@ public class MainConfigManager {
         loadConfig();
         loadRewards();
         loadCosts();
-        if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL())) {
+        if (FarmingPlus.isMySQLConnected()) {
             databaseDownloadTask();
         }
         initializeRewardsCounter();
@@ -177,7 +177,7 @@ public class MainConfigManager {
     public void saveRecordToJson() {
         if (!enabledRewards)
             return;
-        if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL()))
+        if (FarmingPlus.isMySQLConnected())
             databaseDownloadTask();
 
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+"&fSaving rewards records in a JSON..."));
@@ -203,7 +203,7 @@ public class MainConfigManager {
     public void loadRecordFromJson() {
         if (!enabledRewards)
             return;
-        if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL()))
+        if (FarmingPlus.isMySQLConnected())
             return;
         Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, getPluginPrefix()+"&fLoading rewards records from JSON..."));
         Gson gson = new Gson();
@@ -542,7 +542,7 @@ public class MainConfigManager {
         rewardsFile.reloadConfig();
         loadRewards();
         loadCosts();
-        if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL())) {
+        if (FarmingPlus.isMySQLConnected()) {
             databaseDownloadTask();
         }
         initializeRewardsCounter();

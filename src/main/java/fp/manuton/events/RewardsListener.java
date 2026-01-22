@@ -88,7 +88,7 @@ public class RewardsListener implements Listener {
 
                             reward.give(player);
                             rewardGiven = true;
-                            if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL())) {
+                            if (FarmingPlus.isMySQLConnected()) {
                                 UUID playerId = player.getUniqueId();
                                 RewardRecord rewardRecord = new RewardRecord(new Date(), FarmingPlus.getPlugin().getMainConfigManager().getKeyFromReward(reward));
                                 MySQLData.saveRewardCounterToDatabase(FarmingPlus.getConnectionMySQL(), playerId, rewardRecord);
