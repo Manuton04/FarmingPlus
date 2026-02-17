@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Aggregates all registered protection checks and provides a single entry point
@@ -22,7 +23,11 @@ public class ProtectionManager {
     public void register(ProtectionCheck check) {
         checks.add(check);
         if (check.isEnabled()) {
-            Bukkit.getConsoleSender().sendMessage("[FarmingPlus] Hooked into " + check.getName() + "!");
+            try {
+                Bukkit.getLogger().info("[FarmingPlus] Hooked into " + check.getName() + "!");
+            } catch (Exception ignored) {
+                // Bukkit not available (unit tests)
+            }
         }
     }
 

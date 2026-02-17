@@ -24,7 +24,11 @@ public class BlockLoggerManager {
     public void register(BlockLogger logger) {
         loggers.add(logger);
         if (logger.isEnabled()) {
-            Bukkit.getConsoleSender().sendMessage("[FarmingPlus] Hooked into " + logger.getName() + " for block logging!");
+            try {
+                Bukkit.getLogger().info("[FarmingPlus] Hooked into " + logger.getName() + " for block logging!");
+            } catch (Exception ignored) {
+                // Bukkit not available (unit tests)
+            }
         }
     }
 
