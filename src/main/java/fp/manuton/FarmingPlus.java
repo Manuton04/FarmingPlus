@@ -152,14 +152,21 @@ public class FarmingPlus extends JavaPlugin {
     }
 
     public void registerEvents(){
-        // Initialize protection system (WorldGuard, Towny, etc.)
+        // Initialize protection system — only load classes if the plugin is present
+        // to avoid NoClassDefFoundError when the dependency is not installed
         protectionManager = new ProtectionManager();
-        protectionManager.register(new WorldGuardProtection());
-        protectionManager.register(new TownyProtection());
+        if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
+            protectionManager.register(new WorldGuardProtection());
+        }
+        if (Bukkit.getPluginManager().getPlugin("Towny") != null) {
+            protectionManager.register(new TownyProtection());
+        }
 
-        // Initialize block logging system (CoreProtect, etc.)
+        // Initialize block logging system — same pattern
         blockLoggerManager = new BlockLoggerManager();
-        blockLoggerManager.register(new CoreProtectLogger());
+        if (Bukkit.getPluginManager().getPlugin("CoreProtect") != null) {
+            blockLoggerManager.register(new CoreProtectLogger());
+        }
 
         getServer().getPluginManager().registerEvents(new PlayerListener(protectionManager, blockLoggerManager), this);
         getServer().getPluginManager().registerEvents(new RewardsListener(protectionManager), this);
