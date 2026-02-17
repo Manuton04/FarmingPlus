@@ -268,39 +268,28 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                     }else if (args[1].equalsIgnoreCase("clear")) {
                         if (args.length == 3) {
                             OfflinePlayer targetPlayer = Bukkit.getOfflinePlayer(args[2]);
-                            boolean[] done = new boolean[1];  // Use array to make it effectively final for lambda
-                            done[0] = false;
-
-                            // CRITICAL: Run ALL database operations asynchronously to prevent server lag
-                            if (FarmingPlus.isMySQLConnected()) {
-                                Bukkit.getScheduler().runTaskAsynchronously(FarmingPlus.getPlugin(), () -> {
-                                    try (Connection conn = FarmingPlus.getConnectionMySQL()) {
-                                        if (conn != null && MySQLData.existsUUID(conn, targetPlayer.getUniqueId().toString())) {
-                                            MySQLData.deleteRewardsForUUID(conn, targetPlayer.getUniqueId());
-                                            done[0] = true;
-                                        }
-                                    } catch (SQLException e) {
-                                        Bukkit.getLogger().warning("[FarmingPlus] Failed to delete rewards asynchronously: " + e.getMessage());
-                                    }
-                                });
-                            }
 
                             if (!targetPlayer.hasPlayedBefore() && !FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().containsKey(targetPlayer.getUniqueId())) {
                                 sender.sendMessage(MessageUtils.translateAll(null, FarmingPlus.getPlugin().getMainConfigManager().getNotPlayer()));
                             } else {
-                                List<Map.Entry<UUID, RewardsCounter>> list = new ArrayList<>(FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().entrySet());
-                                for (Map.Entry<UUID, RewardsCounter> entry : list) {
-                                    if (entry.getKey().equals(targetPlayer.getUniqueId())) {
-                                        FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().remove(entry.getKey());
-                                        done[0] = true;
-                                        break;
-                                    }
+                                // Clear from in-memory map first (main thread, immediate)
+                                FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().remove(targetPlayer.getUniqueId());
+
+                                // Then clear from DB asynchronously (fire-and-forget)
+                                if (FarmingPlus.isMySQLConnected()) {
+                                    Bukkit.getScheduler().runTaskAsynchronously(FarmingPlus.getPlugin(), () -> {
+                                        try (Connection conn = FarmingPlus.getConnectionMySQL()) {
+                                            if (conn != null) {
+                                                MySQLData.deleteRewardsForUUID(conn, targetPlayer.getUniqueId());
+                                            }
+                                        } catch (SQLException e) {
+                                            Bukkit.getLogger().warning("[FarmingPlus] Failed to delete rewards asynchronously: " + e.getMessage());
+                                        }
+                                    });
                                 }
-                            }
-                            if (done[0])
+
                                 sender.sendMessage(MessageUtils.translateAll(targetPlayer, FarmingPlus.getPlugin().getMainConfigManager().getRewardsCleared()));
-                            else
-                                sender.sendMessage(MessageUtils.translateAll(null, "%farmingplus_prefix%&eUsage: /fp reward clear <player>"));
+                            }
                         } else {
                             sender.sendMessage(MessageUtils.translateAll(null, "%farmingplus_prefix%&eUsage: /fp reward clear <player>"));
                         }
@@ -663,38 +652,28 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                     if (player.hasPermission("fp.admin") || player.hasPermission("fp.commands.reward.clear")) {
                         if (args.length == 3) {
                             OfflinePlayer targetPlayer = Bukkit.getOfflinePlayer(args[2]);
-                            boolean[] done = new boolean[1];
-                            done[0] = false;
 
-                            // CRITICAL: Run ALL database operations asynchronously to prevent server lag
-                            if (FarmingPlus.isMySQLConnected()) {
-                                Bukkit.getScheduler().runTaskAsynchronously(FarmingPlus.getPlugin(), () -> {
-                                    try (Connection conn = FarmingPlus.getConnectionMySQL()) {
-                                        if (conn != null && MySQLData.existsUUID(conn, targetPlayer.getUniqueId().toString())) {
-                                            MySQLData.deleteRewardsForUUID(conn, targetPlayer.getUniqueId());
-                                            done[0] = true;
-                                        }
-                                    } catch (SQLException e) {
-                                        Bukkit.getLogger().warning("[FarmingPlus] Failed to delete rewards asynchronously: " + e.getMessage());
-                                    }
-                                });
-                            }
                             if (!targetPlayer.hasPlayedBefore() && !FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().containsKey(targetPlayer.getUniqueId())) {
                                 player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotPlayer()));
                             } else {
-                                List<Map.Entry<UUID, RewardsCounter>> list = new ArrayList<>(FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().entrySet());
-                                for (Map.Entry<UUID, RewardsCounter> entry : list) {
-                                    if (entry.getKey().equals(targetPlayer.getUniqueId())) {
-                                        FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().remove(entry.getKey());
-                                        done[0] = true;
-                                        break;
-                                    }
+                                // Clear from in-memory map first (main thread, immediate)
+                                FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().remove(targetPlayer.getUniqueId());
+
+                                // Then clear from DB asynchronously (fire-and-forget)
+                                if (FarmingPlus.isMySQLConnected()) {
+                                    Bukkit.getScheduler().runTaskAsynchronously(FarmingPlus.getPlugin(), () -> {
+                                        try (Connection conn = FarmingPlus.getConnectionMySQL()) {
+                                            if (conn != null) {
+                                                MySQLData.deleteRewardsForUUID(conn, targetPlayer.getUniqueId());
+                                            }
+                                        } catch (SQLException e) {
+                                            Bukkit.getLogger().warning("[FarmingPlus] Failed to delete rewards asynchronously: " + e.getMessage());
+                                        }
+                                    });
                                 }
-                            }
-                            if (done[0])
+
                                 player.sendMessage(MessageUtils.translateAll(targetPlayer, FarmingPlus.getPlugin().getMainConfigManager().getRewardsCleared()));
-                            else
-                                player.sendMessage(MessageUtils.translateAll(player, "%farmingplus_prefix%&eUsage: /fp reward clear <player>"));
+                            }
                         }else{
                             player.sendMessage(MessageUtils.translateAll(player, "%farmingplus_prefix%&eUsage: /fp reward clear <player>"));
                         }

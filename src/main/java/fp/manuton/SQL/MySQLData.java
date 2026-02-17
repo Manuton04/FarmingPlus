@@ -43,58 +43,7 @@ public class MySQLData {
         return false;
     }
 
-    public static void saveRewardsCounterToDatabase(Connection connection, Map<UUID, RewardRecord> rewardsMap) {
-        if (rewardsMap == null || rewardsMap.isEmpty()) {
-            return;
-        }
-
-        createTableIfNotExists(connection);
-        String query = "INSERT INTO " + REWARDS_TABLE + " (uuid, Date, rewardName) VALUES (?, ?, ?)";
-
-        try {
-            // Deshabilitar auto-commit para usar transacción
-            connection.setAutoCommit(false);
-
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
-                for (Map.Entry<UUID, RewardRecord> entry : rewardsMap.entrySet()) {
-                    // Use thread-safe DateTimeFormatter to convert Date to ISO format
-                    String isoDate = entry.getValue().getDate()
-                        .toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .format(ISO_FORMATTER);
-                    statement.setString(1, entry.getKey().toString());
-                    statement.setString(2, isoDate);
-                    statement.setString(3, entry.getValue().getRewardName());
-                    statement.addBatch(); // Agregar al batch en lugar de ejecutar uno por uno
-                }
-
-                // Ejecutar todos los inserts en una sola operación (MUCHO más eficiente)
-                int[] results = statement.executeBatch();
-
-                // Commit de la transacción
-                connection.commit();
-                Bukkit.getLogger().info("[FarmingPlus] Successfully saved " + results.length + " reward records to database.");
-            }
-        } catch (SQLException e) {
-            try {
-                // Rollback en caso de error
-                connection.rollback();
-                Bukkit.getLogger().severe("[FarmingPlus] Error saving rewards counter to database: " + e.getMessage());
-            } catch (SQLException rollbackException) {
-                Bukkit.getLogger().severe("[FarmingPlus] Error rolling back transaction: " + rollbackException.getMessage());
-            }
-        } finally {
-            try {
-                // Restaurar auto-commit
-                connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                Bukkit.getLogger().severe("[FarmingPlus] Error restoring auto-commit: " + e.getMessage());
-            }
-        }
-    }
-
     public static void saveRewardCounterToDatabase(Connection connection, UUID uuid, RewardRecord rewardRecord) {
-        createTableIfNotExists(connection);
         String query = "INSERT INTO " + REWARDS_TABLE + " (uuid, Date, rewardName) VALUES (?, ?, ?)";
         // Use thread-safe DateTimeFormatter to convert Date to ISO format
         String isoDate = rewardRecord.getDate()
@@ -113,9 +62,6 @@ public class MySQLData {
     }
 
     public static Map<UUID, RewardsCounter> loadRewardsFromDatabase(Connection connection) {
-        // IMPORTANT: Create table first if it doesn't exist
-        createTableIfNotExists(connection);
-
         String query = "SELECT uuid, Date, rewardName FROM " + REWARDS_TABLE + " ORDER BY Date DESC";
         Map<UUID, RewardsCounter> rewardsMap = new HashMap<>();
 

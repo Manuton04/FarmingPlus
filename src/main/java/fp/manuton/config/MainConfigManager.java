@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.concurrent.Executors;
@@ -133,7 +134,7 @@ public class MainConfigManager {
 
     private Map<String, Reward> rewards;
     private Map<String, Cost> costs;
-    private Map<UUID, RewardsCounter> rewardsCounter;
+    private volatile Map<UUID, RewardsCounter> rewardsCounter;
     private ScheduledExecutorService databaseExecutorService; // MySQL download task executor
     private String enchantNotAllowed;
 
@@ -178,7 +179,7 @@ public class MainConfigManager {
             Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+" &fDownloading rewards from database..."));
             try (Connection conn = FarmingPlus.getConnectionMySQL()) {
                 if (conn != null) {
-                    rewardsCounter = loadRewardsFromDatabase(conn);
+                    rewardsCounter = new ConcurrentHashMap<>(loadRewardsFromDatabase(conn));
                 }
             } catch (SQLException e) {
                 Bukkit.getLogger().severe("[FarmingPlus] Failed to load rewards from database: " + e.getMessage());
@@ -191,7 +192,7 @@ public class MainConfigManager {
             return;
         File file = new File(FarmingPlus.getPlugin().getDataFolder() + File.separator + "Data", "rewardsRecords.json");
         if (!file.exists()) {
-            rewardsCounter = new HashMap<>();
+            rewardsCounter = new ConcurrentHashMap<>();
         } else {
             loadRecordFromJson();
         }
@@ -235,7 +236,7 @@ public class MainConfigManager {
         try (FileReader reader = new FileReader(FarmingPlus.getPlugin().getDataFolder() + File.separator + "Data" + File.separator + "rewardsRecords.json")) {
             Map<String, RewardsCounter> stringKeyedMap = gson.fromJson(reader, recordType);
 
-            rewardsCounter = new HashMap<>();
+            rewardsCounter = new ConcurrentHashMap<>();
             for (Map.Entry<String, RewardsCounter> entry : stringKeyedMap.entrySet()) {
                 rewardsCounter.put(UUID.fromString(entry.getKey()), entry.getValue());
             }

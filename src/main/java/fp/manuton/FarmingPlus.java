@@ -45,6 +45,13 @@ public class FarmingPlus extends JavaPlugin {
             connectionPool = new ConnectionPool(mySQLHost, mySQLPort, mySQLDatabase, mySQLUsername, mySQLPassword);
 
             if (connectionPool.isInitialized()) {
+                // Create table and index once at startup
+                try (Connection conn = connectionPool.getConnection()) {
+                    MySQLData.createTableIfNotExists(conn);
+                } catch (SQLException e) {
+                    Bukkit.getLogger().severe("[FarmingPlus] Failed to create rewards table: " + e.getMessage());
+                }
+
                 // Start periodic connection health check (every 3 minutes)
                 Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
                     if (connectionPool != null) {
