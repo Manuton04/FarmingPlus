@@ -58,18 +58,29 @@ public class ConnectionPool {
         config.addDataSourceProperty("maintainTimeStats", "false");
 
         try {
-            this.dataSource = new HikariDataSource(config);
-            this.initialized = true;
+            // initializationFailTimeout = -1 prevents HikariCP from throwing on startup
+            // if the DB is unreachable. Instead, it creates the pool and fails on first getConnection().
+            config.setInitializationFailTimeout(-1);
 
-            // Test connection
-            try (Connection testConn = getConnection()) {
+            this.dataSource = new HikariDataSource(config);
+
+            // Test connection manually to verify credentials/host
+            try (Connection testConn = dataSource.getConnection()) {
+                this.initialized = true;
                 Bukkit.getLogger().info("[FarmingPlus] Database connection pool initialized successfully.");
                 Bukkit.getLogger().info("[FarmingPlus] Pool size: min=" + config.getMinimumIdle() + ", max=" + config.getMaximumPoolSize());
+            } catch (SQLException e) {
+                this.initialized = false;
+                Bukkit.getLogger().severe("[FarmingPlus] Database connection test failed: " + e.getMessage());
+                Bukkit.getLogger().severe("[FarmingPlus] Check your MySQL credentials and host in config.yml.");
+                // Close the pool since we can't connect
+                dataSource.close();
+                this.dataSource = null;
             }
         } catch (Exception e) {
             this.initialized = false;
+            this.dataSource = null;
             Bukkit.getLogger().severe("[FarmingPlus] Failed to initialize database connection pool: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 

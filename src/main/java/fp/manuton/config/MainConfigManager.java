@@ -176,8 +176,10 @@ public class MainConfigManager {
 
         databaseExecutorService.scheduleAtFixedRate(() -> {
             Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+" &fDownloading rewards from database..."));
-            try {
-                rewardsCounter = loadRewardsFromDatabase(FarmingPlus.getConnectionMySQL());
+            try (Connection conn = FarmingPlus.getConnectionMySQL()) {
+                if (conn != null) {
+                    rewardsCounter = loadRewardsFromDatabase(conn);
+                }
             } catch (SQLException e) {
                 Bukkit.getLogger().severe("[FarmingPlus] Failed to load rewards from database: " + e.getMessage());
             }

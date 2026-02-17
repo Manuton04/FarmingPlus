@@ -271,25 +271,18 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                             boolean[] done = new boolean[1];  // Use array to make it effectively final for lambda
                             done[0] = false;
 
-                            // Check if MySQL is enabled, then use it
+                            // CRITICAL: Run ALL database operations asynchronously to prevent server lag
                             if (FarmingPlus.isMySQLConnected()) {
-                                try (Connection conn = FarmingPlus.getConnectionMySQL()) {
-                                    if (conn != null && MySQLData.existsUUID(conn, targetPlayer.getUniqueId().toString())) {
-                                        // CRITICAL: Run database operation asynchronously to prevent server lag
-                                        Bukkit.getScheduler().runTaskAsynchronously(FarmingPlus.getPlugin(), () -> {
-                                            try (Connection conn2 = FarmingPlus.getConnectionMySQL()) {
-                                                if (conn2 != null) {
-                                                    MySQLData.deleteRewardsForUUID(conn2, targetPlayer.getUniqueId());
-                                                    done[0] = true;
-                                                }
-                                            } catch (SQLException e) {
-                                                Bukkit.getLogger().warning("[FarmingPlus] Failed to delete rewards asynchronously: " + e.getMessage());
-                                            }
-                                        });
+                                Bukkit.getScheduler().runTaskAsynchronously(FarmingPlus.getPlugin(), () -> {
+                                    try (Connection conn = FarmingPlus.getConnectionMySQL()) {
+                                        if (conn != null && MySQLData.existsUUID(conn, targetPlayer.getUniqueId().toString())) {
+                                            MySQLData.deleteRewardsForUUID(conn, targetPlayer.getUniqueId());
+                                            done[0] = true;
+                                        }
+                                    } catch (SQLException e) {
+                                        Bukkit.getLogger().warning("[FarmingPlus] Failed to delete rewards asynchronously: " + e.getMessage());
                                     }
-                                } catch (SQLException e) {
-                                    Bukkit.getLogger().warning("[FarmingPlus] Failed to check UUID existence: " + e.getMessage());
-                                }
+                                });
                             }
 
                             if (!targetPlayer.hasPlayedBefore() && !FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().containsKey(targetPlayer.getUniqueId())) {
@@ -673,25 +666,18 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                             boolean[] done = new boolean[1];
                             done[0] = false;
 
-                            // Check if MySQL is enabled, then use it
+                            // CRITICAL: Run ALL database operations asynchronously to prevent server lag
                             if (FarmingPlus.isMySQLConnected()) {
-                                try (Connection conn = FarmingPlus.getConnectionMySQL()) {
-                                    if (conn != null && MySQLData.existsUUID(conn, targetPlayer.getUniqueId().toString())) {
-                                        // CRITICAL: Run database operation asynchronously to prevent server lag
-                                        Bukkit.getScheduler().runTaskAsynchronously(FarmingPlus.getPlugin(), () -> {
-                                            try (Connection conn2 = FarmingPlus.getConnectionMySQL()) {
-                                                if (conn2 != null) {
-                                                    MySQLData.deleteRewardsForUUID(conn2, targetPlayer.getUniqueId());
-                                                    done[0] = true;
-                                                }
-                                            } catch (SQLException e) {
-                                                Bukkit.getLogger().warning("[FarmingPlus] Failed to delete rewards asynchronously: " + e.getMessage());
-                                            }
-                                        });
+                                Bukkit.getScheduler().runTaskAsynchronously(FarmingPlus.getPlugin(), () -> {
+                                    try (Connection conn = FarmingPlus.getConnectionMySQL()) {
+                                        if (conn != null && MySQLData.existsUUID(conn, targetPlayer.getUniqueId().toString())) {
+                                            MySQLData.deleteRewardsForUUID(conn, targetPlayer.getUniqueId());
+                                            done[0] = true;
+                                        }
+                                    } catch (SQLException e) {
+                                        Bukkit.getLogger().warning("[FarmingPlus] Failed to delete rewards asynchronously: " + e.getMessage());
                                     }
-                                } catch (SQLException e) {
-                                    Bukkit.getLogger().warning("[FarmingPlus] Failed to check UUID existence: " + e.getMessage());
-                                }
+                                });
                             }
                             if (!targetPlayer.hasPlayedBefore() && !FarmingPlus.getPlugin().getMainConfigManager().getRewardsCounterMap().containsKey(targetPlayer.getUniqueId())) {
                                 player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotPlayer()));

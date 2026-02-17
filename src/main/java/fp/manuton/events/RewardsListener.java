@@ -22,6 +22,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.sql.Connection;
 import java.util.*;
 
 public class RewardsListener implements Listener {
@@ -95,8 +96,10 @@ public class RewardsListener implements Listener {
                                 // CRITICAL: Run database operation asynchronously to prevent server lag
                                 // BlockBreakEvent runs on main thread - DB ops must be async!
                                 Bukkit.getScheduler().runTaskAsynchronously(FarmingPlus.getPlugin(), () -> {
-                                    try {
-                                        MySQLData.saveRewardCounterToDatabase(FarmingPlus.getConnectionMySQL(), playerId, rewardRecord);
+                                    try (Connection conn = FarmingPlus.getConnectionMySQL()) {
+                                        if (conn != null) {
+                                            MySQLData.saveRewardCounterToDatabase(conn, playerId, rewardRecord);
+                                        }
                                     } catch (Exception e) {
                                         Bukkit.getLogger().warning("[FarmingPlus] Failed to save reward asynchronously: " + e.getMessage());
                                     }

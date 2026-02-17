@@ -43,17 +43,21 @@ public class FarmingPlus extends JavaPlugin {
         connectionPool = null;
         if (mySQLEnabled) {
             connectionPool = new ConnectionPool(mySQLHost, mySQLPort, mySQLDatabase, mySQLUsername, mySQLPassword);
-            Bukkit.getLogger().info("[FarmingPlus] Database connection pool initialized.");
 
-            // Start periodic connection health check (every 3 minutes)
-            Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
-                if (connectionPool != null) {
-                    boolean isHealthy = connectionPool.validateConnection();
-                    if (!isHealthy) {
-                        Bukkit.getLogger().warning("[FarmingPlus] Database connection validation failed. Attempting reconnection...");
+            if (connectionPool.isInitialized()) {
+                // Start periodic connection health check (every 3 minutes)
+                Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+                    if (connectionPool != null) {
+                        boolean isHealthy = connectionPool.validateConnection();
+                        if (!isHealthy) {
+                            Bukkit.getLogger().warning("[FarmingPlus] Database connection validation failed.");
+                        }
                     }
-                }
-            }, 60L, 60L * 3); // 3 minutes
+                }, 3600L, 3600L); // 3 minutes (20 ticks/sec * 60 sec * 3 min)
+            } else {
+                Bukkit.getLogger().severe("[FarmingPlus] MySQL is enabled but connection failed. Plugin will continue without database.");
+                connectionPool = null;
+            }
         }
         mainConfigManager = new MainConfigManager();
         prefix = getPlugin().getMainConfigManager().getPluginPrefix();
@@ -98,7 +102,9 @@ public class FarmingPlus extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
 
         // Shutdown database executor service to prevent memory leaks
-        mainConfigManager.shutdown();
+        if (mainConfigManager != null) {
+            mainConfigManager.shutdown();
+        }
 
         // Close MySQL connection pool if enabled
         if (connectionPool != null) {
@@ -111,7 +117,7 @@ public class FarmingPlus extends JavaPlugin {
         }
 
         boolean saved = true;
-        if (FarmingPlus.getPlugin().getMainConfigManager().getEnabledRewards()) {
+        if (mainConfigManager != null && mainConfigManager.getEnabledRewards()) {
             try {
                 getMainConfigManager().saveRecordToJson();
                 Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + "&aThe rewards records are being saved in a JSON."));

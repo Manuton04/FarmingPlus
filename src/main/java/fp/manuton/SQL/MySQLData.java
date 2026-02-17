@@ -21,8 +21,7 @@ public class MySQLData {
     public static boolean isDatabaseConnected(Connection connection) {
         if (connection == null)
             return false;
-        try {
-            Statement statement = connection.createStatement();
+        try (Statement statement = connection.createStatement()) {
             statement.executeQuery("SELECT 1");
             return true;
         } catch (SQLException e) {

@@ -37,4 +37,10 @@ build/
 ### Mac OS ###
 .DS_Store
 
+### Maven Shade Plugin ###
+dependency-reduced-pom.xml
+
+.opencode/
+CLAUDE.md
 AGENTS.md
+.claude/
