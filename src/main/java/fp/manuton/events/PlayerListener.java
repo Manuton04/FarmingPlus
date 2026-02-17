@@ -1,9 +1,10 @@
 package fp.manuton.events;
 
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import fp.manuton.FarmingPlus;
 import fp.manuton.enchantments.CustomEnchantments;
 import fp.manuton.guis.FarmersStepGui;
+import fp.manuton.logging.BlockLoggerManager;
+import fp.manuton.protection.ProtectionManager;
 import fp.manuton.utils.ItemUtils;
 import fp.manuton.utils.LocationUtils;
 import fp.manuton.utils.MessageUtils;
@@ -25,7 +26,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.Plugin;
 
 import java.util.*;
 
@@ -34,8 +34,37 @@ import static org.bukkit.event.block.Action.*;
 //
 public class PlayerListener implements Listener {
 
+    private final ProtectionManager protectionManager;
+    private final BlockLoggerManager blockLoggerManager;
+
+    public PlayerListener(ProtectionManager protectionManager, BlockLoggerManager blockLoggerManager) {
+        this.protectionManager = protectionManager;
+        this.blockLoggerManager = blockLoggerManager;
+    }
+
     private boolean playerHasItemInInventory(Player player, Material item) {
         return player.getInventory().contains(item, 1);
+    }
+
+    /**
+     * Checks if a player can bypass protection at a location, considering:
+     * 1. Protection manager (WorldGuard, Towny, etc.)
+     * 2. Enchantment-specific bypass permission
+     * 3. OP override if enabled in config
+     *
+     * @param player the player
+     * @param location the block location
+     * @param bypassPermission the enchantment-specific bypass permission
+     * @return true if the player can modify the block
+     */
+    private boolean canModifyBlock(Player player, Location location, String bypassPermission) {
+        if (protectionManager.canBuild(player, location)) {
+            return true;
+        }
+        if (player.hasPermission(bypassPermission)) {
+            return true;
+        }
+        return player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms();
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -88,6 +117,10 @@ public class PlayerListener implements Listener {
 
         Player player = event.getPlayer();
 
+        // Protection check before replanting
+        if (!canModifyBlock(player, block.getLocation(), "fp.bypass.replenish.protection")) {
+            return;
+        }
 
         Ageable ageable = (Ageable) block.getState().getBlockData();
         Collection<ItemStack> drops = block.getDrops(player.getInventory().getItemInMainHand());
@@ -142,6 +175,8 @@ public class PlayerListener implements Listener {
         }
         ageable.setAge(0);
         block.setBlockData(ageable);
+        // Log the replant to CoreProtect
+        blockLoggerManager.logPlacement("replenish", player.getName(), block.getLocation(), block.getType(), block.getBlockData());
         event.setCancelled(true);
     }
 
@@ -152,16 +187,12 @@ public class PlayerListener implements Listener {
 
         if (action.equals(PHYSICAL))
             return;
-        //player.sendMessage("0");
         if ((!action.equals(LEFT_CLICK_BLOCK)) && (!action.equals(LEFT_CLICK_AIR)))
             return;
-        //player.sendMessage("1");
         if (player.getInventory().getItemInMainHand().getType() == Material.AIR)
             return;
-        //player.sendMessage("2");
         if (!player.getInventory().getItemInMainHand().hasItemMeta())
             return;
-        //player.sendMessage("3");
         boolean areBoots = false;
         for (Material boots: ItemUtils.boots){
             if (player.getInventory().getItemInMainHand().getType() == boots) {
@@ -171,21 +202,16 @@ public class PlayerListener implements Listener {
         }
         if (!areBoots)
             return;
-        //player.sendMessage("4");
         if (!ItemUtils.hasCustomEnchant(player.getInventory().getItemInMainHand(), CustomEnchantments.FARMERSTEP))
             return;
-        //player.sendMessage("5");
         if (player.getGameMode() == GameMode.SPECTATOR)
             return;
-        //player.sendMessage("6");
 
         if (action == LEFT_CLICK_BLOCK){
             player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getLeftClickAir()));
             event.setCancelled(true);
-            //player.sendMessage("7");
         }else if(action == LEFT_CLICK_AIR){
             FarmersStepGui.bootGui(player, player.getInventory().getItemInMainHand());
-            //player.sendMessage("8");
         }
     }
 
@@ -240,11 +266,16 @@ public class PlayerListener implements Listener {
                 crop = Material.PUMPKIN_STEM;
             }
             for (Location block: blocks){
+                // Protection check per block
+                if (!canModifyBlock(player, block, "fp.bypass.farmerstep.protection")) {
+                    continue;
+                }
 
                 if (block.getBlock().getType() == Material.FARMLAND && !crop.equals(Material.NETHER_WART)){
                     block.setY(block.getY() + 1);
                     if (block.getBlock().getType() == Material.AIR){
                         block.getBlock().setType(crop);
+                        blockLoggerManager.logPlacement("farmers-step", player.getName(), block, crop, block.getBlock().getBlockData());
                         if (!usedSetted)
                             if (player.getGameMode() != GameMode.CREATIVE) {
                                 ItemUtils.setDurabilityBoots(player.getInventory().getBoots(), player);
@@ -255,6 +286,7 @@ public class PlayerListener implements Listener {
                     block.setY(block.getY() + 1);
                     if (block.getBlock().getType() == Material.AIR) {
                         block.getBlock().setType(crop);
+                        blockLoggerManager.logPlacement("farmers-step", player.getName(), block, crop, block.getBlock().getBlockData());
                         if (usedSetted)
                             if (player.getGameMode() != GameMode.CREATIVE) {
                                 ItemUtils.setDurabilityBoots(player.getInventory().getBoots(), player);
@@ -284,12 +316,17 @@ public class PlayerListener implements Listener {
                 cropT = Material.PUMPKIN_STEM;
             }
             for (Location block: blocks){
+                // Protection check per block
+                if (!canModifyBlock(player, block, "fp.bypass.farmerstep.protection")) {
+                    continue;
+                }
 
                 if (block.getBlock().getType() == Material.FARMLAND && !cropT.equals(Material.NETHER_WART)){
                     if (player.getInventory().contains(crop)) {
                         block.setY(block.getY() + 1);
                         if (block.getBlock().getType() == Material.AIR) {
                             block.getBlock().setType(cropT);
+                            blockLoggerManager.logPlacement("farmers-step", player.getName(), block, cropT, block.getBlock().getBlockData());
                             ItemStack item = new ItemStack(crop, 1);
                             player.getInventory().removeItem(item);
                             if (!usedSetted){
@@ -306,6 +343,7 @@ public class PlayerListener implements Listener {
                         block.setY(block.getY() + 1);
                         if (block.getBlock().getType() == Material.AIR) {
                             block.getBlock().setType(cropT);
+                            blockLoggerManager.logPlacement("farmers-step", player.getName(), block, cropT, block.getBlock().getBlockData());
                             ItemStack item = new ItemStack(crop, 1);
                             player.getInventory().removeItem(item);
                             if (!usedSetted){
@@ -353,9 +391,14 @@ public class PlayerListener implements Listener {
             case 1, 2:
                 List<Location> blocksR = LocationUtils.getRadiusBlocks(event.getClickedBlock().getLocation(), level, 0);
                 for (Location block: blocksR){
+                    // Protection check per block
+                    if (!canModifyBlock(player, block, "fp.bypass.grandtilling.protection")) {
+                        continue;
+                    }
 
                     if (block.getBlock().getType() == Material.GRASS_BLOCK || block.getBlock().getType() == Material.DIRT || block.getBlock().getType() == Material.DIRT_PATH || block.getBlock().getType() == Material.FARMLAND){
                         block.getBlock().setType(Material.FARMLAND);
+                        blockLoggerManager.logPlacement("grand-tilling", player.getName(), block, Material.FARMLAND, block.getBlock().getBlockData());
                     }
                 }
                 ItemUtils.setDurability(event.getPlayer().getInventory().getItemInMainHand(), event.getPlayer());
@@ -363,9 +406,14 @@ public class PlayerListener implements Listener {
             case 3:
                 List<Location> blocksL = LocationUtils.getRowBlocks(event.getClickedBlock().getLocation(), FarmingPlus.getPlugin().getMainConfigManager().getGrandTilling3Blocks(), LocationUtils.getCardinalDirection(player), 0);
                 for (Location block: blocksL){
+                    // Protection check per block - break if denied (stops the row)
+                    if (!canModifyBlock(player, block, "fp.bypass.grandtilling.protection")) {
+                        break;
+                    }
 
                     if (block.getBlock().getType() == Material.GRASS_BLOCK || block.getBlock().getType() == Material.DIRT || block.getBlock().getType() == Material.DIRT_PATH){
                         block.getBlock().setType(Material.FARMLAND);
+                        blockLoggerManager.logPlacement("grand-tilling", player.getName(), block, Material.FARMLAND, block.getBlock().getBlockData());
                     }else if(block.getBlock().getType() == Material.FARMLAND){
                         continue;
                     }else
@@ -442,9 +490,15 @@ public class PlayerListener implements Listener {
 
         List<Location> blocks = LocationUtils.getRowBlocks(event.getClickedBlock().getRelative(blockFace).getLocation(), FarmingPlus.getPlugin().getMainConfigManager().getIrrigateMaxBlocks(), LocationUtils.getCardinalDirection(player), 0);
         for (Location block : blocks){
-            if (block.getBlock().getType() == Material.AIR || block.getBlock().getType() == Material.WATER)
+            // Protection check per block - break if denied (stops the water flow)
+            if (!canModifyBlock(player, block, "fp.bypass.irrigate.protection")) {
+                break;
+            }
+
+            if (block.getBlock().getType() == Material.AIR || block.getBlock().getType() == Material.WATER) {
                 block.getBlock().setType(Material.WATER);
-            else
+                blockLoggerManager.logPlacement("irrigate", player.getName(), block, Material.WATER, block.getBlock().getBlockData());
+            } else
                 break;
         }
 

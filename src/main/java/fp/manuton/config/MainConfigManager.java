@@ -118,6 +118,10 @@ public class MainConfigManager {
     private String enchantedsuccesfully;
     private Boolean enabledDefaultOpPerms;
     private Boolean enabledRewards;
+    private boolean coreProtectLogReplenish;
+    private boolean coreProtectLogFarmersStep;
+    private boolean coreProtectLogGrandTilling;
+    private boolean coreProtectLogIrrigate;
 
     private List<String> replenishLore;
     private List<String> farmersgraceLore;
@@ -506,6 +510,10 @@ public class MainConfigManager {
         useHelp = config.getString("config.use-help");
         enabledDefaultOpPerms = config.getBoolean("config.enabled-default-op-permissions");
         enabledRewards = config.getBoolean("config.enabled-rewards");
+        coreProtectLogReplenish = config.getBoolean("config.coreprotect.log-replenish", true);
+        coreProtectLogFarmersStep = config.getBoolean("config.coreprotect.log-farmers-step", true);
+        coreProtectLogGrandTilling = config.getBoolean("config.coreprotect.log-grand-tilling", true);
+        coreProtectLogIrrigate = config.getBoolean("config.coreprotect.log-irrigate", true);
 
         replenishLore = config.getStringList("config.enchantments.replenish.lore");
         farmersgraceLore = config.getStringList("config.enchantments.farmers-grace.lore");
@@ -972,6 +980,21 @@ public class MainConfigManager {
 
     public Boolean getEnabledRewards() {
         return enabledRewards;
+    }
+
+    /**
+     * Checks if CoreProtect logging is enabled for a specific enchantment.
+     * @param enchantmentKey the enchantment key (e.g. "replenish", "farmers-step", "grand-tilling", "irrigate")
+     * @return true if logging is enabled for this enchantment
+     */
+    public boolean isCoreProtectLoggingEnabled(String enchantmentKey) {
+        return switch (enchantmentKey) {
+            case "replenish" -> coreProtectLogReplenish;
+            case "farmers-step" -> coreProtectLogFarmersStep;
+            case "grand-tilling" -> coreProtectLogGrandTilling;
+            case "irrigate" -> coreProtectLogIrrigate;
+            default -> false;
+        };
     }
 
     /**
