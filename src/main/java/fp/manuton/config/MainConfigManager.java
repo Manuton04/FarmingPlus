@@ -13,14 +13,16 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.io.*;
-import java.sql.Connection;
-import java.util.*;
-import com.google.gson.reflect.TypeToken;
-
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -132,7 +134,8 @@ public class MainConfigManager {
 
     private Map<String, Reward> rewards;
     private Map<String, Cost> costs;
-    private Map<UUID, RewardsCounter> rewardsCounter;
+    private volatile Map<UUID, RewardsCounter> rewardsCounter;
+    private ScheduledExecutorService databaseExecutorService; // MySQL download task executor
     private String enchantNotAllowed;
 
     public MainConfigManager(){
@@ -145,7 +148,7 @@ public class MainConfigManager {
         loadConfig();
         loadRewards();
         loadCosts();
-        if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL())) {
+        if (FarmingPlus.isMySQLConnected()) {
             databaseDownloadTask();
         }
         initializeRewardsCounter();
@@ -155,11 +158,32 @@ public class MainConfigManager {
     public void databaseDownloadTask(){
         if (!enabledRewards)
             return;
-        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
-        executorService.scheduleAtFixedRate(() -> {
+        // Shutdown existing executor if it's already running
+        if (databaseExecutorService != null && !databaseExecutorService.isShutdown()) {
+            databaseExecutorService.shutdown();
+            try {
+                if (!databaseExecutorService.awaitTermination(5, TimeUnit.SECONDS)) {
+                    databaseExecutorService.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                databaseExecutorService.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        // Create new executor
+        databaseExecutorService = Executors.newSingleThreadScheduledExecutor();
+
+        databaseExecutorService.scheduleAtFixedRate(() -> {
             Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+" &fDownloading rewards from database..."));
-            rewardsCounter = loadRewardsFromDatabase(FarmingPlus.getConnectionMySQL());
+            try (Connection conn = FarmingPlus.getConnectionMySQL()) {
+                if (conn != null) {
+                    rewardsCounter = new ConcurrentHashMap<>(loadRewardsFromDatabase(conn));
+                }
+            } catch (SQLException e) {
+                Bukkit.getLogger().severe("[FarmingPlus] Failed to load rewards from database: " + e.getMessage());
+            }
         }, 0, getMySQLDownloadInterval(), TimeUnit.MINUTES);
     }
 
@@ -168,7 +192,7 @@ public class MainConfigManager {
             return;
         File file = new File(FarmingPlus.getPlugin().getDataFolder() + File.separator + "Data", "rewardsRecords.json");
         if (!file.exists()) {
-            rewardsCounter = new HashMap<>();
+            rewardsCounter = new ConcurrentHashMap<>();
         } else {
             loadRecordFromJson();
         }
@@ -177,7 +201,7 @@ public class MainConfigManager {
     public void saveRecordToJson() {
         if (!enabledRewards)
             return;
-        if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL()))
+        if (FarmingPlus.isMySQLConnected())
             databaseDownloadTask();
 
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(getPluginPrefix()+"&fSaving rewards records in a JSON..."));
@@ -203,7 +227,7 @@ public class MainConfigManager {
     public void loadRecordFromJson() {
         if (!enabledRewards)
             return;
-        if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL()))
+        if (FarmingPlus.isMySQLConnected())
             return;
         Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, getPluginPrefix()+"&fLoading rewards records from JSON..."));
         Gson gson = new Gson();
@@ -212,7 +236,7 @@ public class MainConfigManager {
         try (FileReader reader = new FileReader(FarmingPlus.getPlugin().getDataFolder() + File.separator + "Data" + File.separator + "rewardsRecords.json")) {
             Map<String, RewardsCounter> stringKeyedMap = gson.fromJson(reader, recordType);
 
-            rewardsCounter = new HashMap<>();
+            rewardsCounter = new ConcurrentHashMap<>();
             for (Map.Entry<String, RewardsCounter> entry : stringKeyedMap.entrySet()) {
                 rewardsCounter.put(UUID.fromString(entry.getKey()), entry.getValue());
             }
@@ -542,7 +566,7 @@ public class MainConfigManager {
         rewardsFile.reloadConfig();
         loadRewards();
         loadCosts();
-        if (MySQLData.isDatabaseConnected(FarmingPlus.getConnectionMySQL())) {
+        if (FarmingPlus.isMySQLConnected()) {
             databaseDownloadTask();
         }
         initializeRewardsCounter();
@@ -948,5 +972,25 @@ public class MainConfigManager {
 
     public Boolean getEnabledRewards() {
         return enabledRewards;
+    }
+
+    /**
+     * Cleanup method to shutdown database executor service
+     * Should be called when plugin is disabled
+     */
+    public void shutdown() {
+        if (databaseExecutorService != null && !databaseExecutorService.isShutdown()) {
+            databaseExecutorService.shutdown();
+            try {
+                if (!databaseExecutorService.awaitTermination(5, TimeUnit.SECONDS)) {
+                    databaseExecutorService.shutdownNow();
+                }
+                Bukkit.getLogger().info("[FarmingPlus] Database download task executor shutdown successfully.");
+            } catch (InterruptedException e) {
+                databaseExecutorService.shutdownNow();
+                Thread.currentThread().interrupt();
+                Bukkit.getLogger().warning("[FarmingPlus] Database download task executor interrupted during shutdown.");
+            }
+        }
     }
 }

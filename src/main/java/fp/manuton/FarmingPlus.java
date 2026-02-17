@@ -1,6 +1,6 @@
 package fp.manuton;
 
-import fp.manuton.SQL.ConnectionMySQL;
+import fp.manuton.SQL.ConnectionPool;
 import fp.manuton.SQL.MySQLData;
 import fp.manuton.commands.MainCommand;
 import fp.manuton.config.CustomConfig;
@@ -16,13 +16,14 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class FarmingPlus extends JavaPlugin {
     public static String prefix = null;
     private final String version = getDescription().getVersion();
     private static FarmingPlus plugin;
     private MainConfigManager mainConfigManager;
-    private static Connection connectionMySQL;
+    private static ConnectionPool connectionPool;  // HikariCP connection pool
     private final String link = "https://modrinth.com/plugin/farmingplus";
     private final int pluginIdSpigot = 114643; // ADD PLUGIN ID SPIGOT //
 
@@ -39,9 +40,32 @@ public class FarmingPlus extends JavaPlugin {
         String mySQLUsername = config.getString("config.mysql.username");
         String mySQLPassword = config.getString("config.mysql.password");
 
-        connectionMySQL = null;
-        if (mySQLEnabled)
-            connectionMySQL = new ConnectionMySQL(mySQLHost, mySQLPort, mySQLDatabase, mySQLUsername, mySQLPassword).getConnection();
+        connectionPool = null;
+        if (mySQLEnabled) {
+            connectionPool = new ConnectionPool(mySQLHost, mySQLPort, mySQLDatabase, mySQLUsername, mySQLPassword);
+
+            if (connectionPool.isInitialized()) {
+                // Create table and index once at startup
+                try (Connection conn = connectionPool.getConnection()) {
+                    MySQLData.createTableIfNotExists(conn);
+                } catch (SQLException e) {
+                    Bukkit.getLogger().severe("[FarmingPlus] Failed to create rewards table: " + e.getMessage());
+                }
+
+                // Start periodic connection health check (every 3 minutes)
+                Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+                    if (connectionPool != null) {
+                        boolean isHealthy = connectionPool.validateConnection();
+                        if (!isHealthy) {
+                            Bukkit.getLogger().warning("[FarmingPlus] Database connection validation failed.");
+                        }
+                    }
+                }, 3600L, 3600L); // 3 minutes (20 ticks/sec * 60 sec * 3 min)
+            } else {
+                Bukkit.getLogger().severe("[FarmingPlus] MySQL is enabled but connection failed. Plugin will continue without database.");
+                connectionPool = null;
+            }
+        }
         mainConfigManager = new MainConfigManager();
         prefix = getPlugin().getMainConfigManager().getPluginPrefix();
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
@@ -50,7 +74,7 @@ public class FarmingPlus extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix+"&fHas been enabled. &cVersion: "+version));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
-        if (connectionMySQL != null && MySQLData.isDatabaseConnected(getConnectionMySQL()))
+        if (isMySQLConnected())
             Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, getMainConfigManager().getConnectedMySQL()));
         else
             Bukkit.getConsoleSender().sendMessage(MessageUtils.translateAll(null, getMainConfigManager().getErrorMySQL()));
@@ -83,8 +107,24 @@ public class FarmingPlus extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + "&fHas been disabled. &cVersion: " + version));
         Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage("&f&l------------------------------------------------"));
+
+        // Shutdown database executor service to prevent memory leaks
+        if (mainConfigManager != null) {
+            mainConfigManager.shutdown();
+        }
+
+        // Close MySQL connection pool if enabled
+        if (connectionPool != null) {
+            try {
+                connectionPool.close();
+                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + "&aMySQL connection pool closed successfully."));
+            } catch (Exception e) {
+                Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + "&cError closing MySQL connection pool: " + e.getMessage()));
+            }
+        }
+
         boolean saved = true;
-        if (FarmingPlus.getPlugin().getMainConfigManager().getEnabledRewards()) {
+        if (mainConfigManager != null && mainConfigManager.getEnabledRewards()) {
             try {
                 getMainConfigManager().saveRecordToJson();
                 Bukkit.getConsoleSender().sendMessage(MessageUtils.getColoredMessage(prefix + "&aThe rewards records are being saved in a JSON."));
@@ -134,8 +174,21 @@ public class FarmingPlus extends JavaPlugin {
         new FarmersStepGui();
     }
 
-    public static Connection getConnectionMySQL(){
-        return connectionMySQL;
+    /**
+     * Get a connection from the pool.
+     * IMPORTANT: This throws SQLException, caller must handle it.
+     *
+     * @return Connection from HikariCP pool
+     */
+    public static Connection getConnectionMySQL() throws SQLException {
+        if (connectionPool == null || !connectionPool.isInitialized()) {
+            return null;
+        }
+        return connectionPool.getConnection();
+    }
+
+    public static boolean isMySQLConnected() {
+        return connectionPool != null && connectionPool.isInitialized();
     }
 
     private boolean isWorldguardEnabled() {
