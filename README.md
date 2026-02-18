@@ -69,6 +69,7 @@ FarmingPlus is a plugin that allows players to experience new mechanics in farmi
   - fp.bypass.grandtilling.protection: Let the player use Grand Tilling on protected regions (WorldGuard, Towny).
   - fp.bypass.irrigate.protection: Let the player use Irrigate on protected regions (WorldGuard, Towny).
   - fp.bypass.durability-damage: Tools or boots don't take durability damage when used by that player.
+  - fp.town.flags: Let the player toggle FarmingPlus enchantment flags in their town (requires mayor/assistant rank in Towny).
 # Compatibilities
 - **Vault**:
   - Setup economic costs when enchanting items.
@@ -79,14 +80,15 @@ FarmingPlus is a plugin that allows players to experience new mechanics in farmi
 
 - **Towny**:
   - Region control for Farmer's Step, Grand Tilling, Replenish, Irrigate and rewards.
-  - Per-enchantment custom flags: server admins can allow specific FarmingPlus enchantments per town without giving full build permissions. For now its only for server admins, will change in the future.
+  - Per-enchantment custom flags: mayors and assistants can toggle specific FarmingPlus enchantments in their town using `/fp towny <enchantment> <on|off>`.
+  - Server admins can also manage flags via `/townyadmin town {name} meta add <flag>` and `/townyadmin town {name} meta set <flag> true`.
 
-  | Flag Key | Command                                                                                                                               | Effect |
-  |----------|---------------------------------------------------------------------------------------------------------------------------------------|--------|
-  | `farmingplus_replenish` | `/townyadmin town {name} meta add farmingplus_replenish`<br/><br/>`/townyadmin town {name} meta set farmingplus_replenish true`       | Allow Replenish in town |
-  | `farmingplus_farmerstep` | `/townyadmin town {name} meta add farmingplus_farmerstep`<br/><br/>`/townyadmin town {name} meta set farmingplus_farmerstep true`     | Allow Farmer's Step in town |
-  | `farmingplus_grandtilling` | `/townyadmin town {name} meta add farmingplus_grandtilling `<br/><br/>`/townyadmin town {name} meta set farmingplus_grandtilling true` | Allow Grand Tilling in town |
-  | `farmingplus_irrigate` | `/townyadmin town {name} meta add farmingplus_irrigate`<br/><br/>`/townyadmin town {name} meta set farmingplus_irrigate true`     | Allow Irrigate in town |
+  | Enchantment | Command | Flag Key |
+  |-------------|---------|----------|
+  | Replenish | `/fp towny replenish on` | `farmingplus_replenish` |
+  | Farmer's Step | `/fp towny farmerstep on` | `farmingplus_farmerstep` |
+  | Grand Tilling | `/fp towny grandtilling on` | `farmingplus_grandtilling` |
+  | Irrigate | `/fp towny irrigate on` | `farmingplus_irrigate` |
 
 - **CoreProtect**:
   - Block logging for Replenish, Farmer's Step, Grand Tilling and Irrigate. All block changes are logged and can be rolled back.

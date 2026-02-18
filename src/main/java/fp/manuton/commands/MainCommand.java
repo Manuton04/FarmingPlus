@@ -685,6 +685,12 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                     player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotCommand()));
                     player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getUseHelp()));
                 }
+            }else if (args[0].equalsIgnoreCase("towny")){
+                if (Bukkit.getPluginManager().getPlugin("Towny") != null) {
+                    TownyFlagCommand.handle(player, args);
+                } else {
+                    player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.prefix + "&cTowny is not installed."));
+                }
             }else{
                 player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getNotCommand()));
                 player.sendMessage(MessageUtils.translateAll(player, FarmingPlus.getPlugin().getMainConfigManager().getUseHelp()));
@@ -720,8 +726,12 @@ public class MainCommand implements CommandExecutor, TabExecutor {
 
         if (args.length == 1) {
             List<String> list = new ArrayList<>();
-            if (sender.hasPermission("fp.admin"))
-                return Arrays.asList("enchant","reload", "reward", "help");
+            if (sender.hasPermission("fp.admin")) {
+                list.addAll(Arrays.asList("enchant", "reload", "reward", "help"));
+                if (Bukkit.getPluginManager().getPlugin("Towny") != null)
+                    list.add("towny");
+                return list;
+            }
 
             if (sender.hasPermission("fp.commands.enchant"))
                 list.add("enchant");
@@ -731,6 +741,8 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                 list.add("reward");
             if (sender.hasPermission("fp.commands.help"))
                 list.add("help");
+            if (sender.hasPermission("fp.town.flags") && Bukkit.getPluginManager().getPlugin("Towny") != null)
+                list.add("towny");
             return list;
         }
 
@@ -830,6 +842,14 @@ public class MainCommand implements CommandExecutor, TabExecutor {
                     }
                 }
 
+            }
+        } else if (args[0].equalsIgnoreCase("towny") && Bukkit.getPluginManager().getPlugin("Towny") != null
+                && (sender.hasPermission("fp.town.flags") || sender.hasPermission("fp.admin"))) {
+            if (args.length == 2) {
+                return TownyFlagCommand.ENCHANTMENT_NAMES;
+            }
+            if (args.length == 3) {
+                return Arrays.asList("on", "off");
             }
         }
 

@@ -141,6 +141,13 @@ public class MainConfigManager {
     private volatile Map<UUID, RewardsCounter> rewardsCounter;
     private ScheduledExecutorService databaseExecutorService; // MySQL download task executor
     private String enchantNotAllowed;
+    private String townyNotInTown;
+    private String townyNotMayor;
+    private String townyFlagEnabled;
+    private String townyFlagDisabled;
+    private String townyInvalidEnchantment;
+    private String townyInvalidValue;
+    private String townyUsage;
 
     public MainConfigManager(){
         configFile = new CustomConfig("config.yml", null, FarmingPlus.getPlugin());
@@ -555,6 +562,13 @@ public class MainConfigManager {
         notplayedbefore = messages.getString("messages.not-played-before");
         enchantedsuccesfully = messages.getString("messages.enchanted-succesfully");
         enchantNotAllowed = messages.getString("messages.enchant-not-allowed");
+        townyNotInTown = messages.getString("messages.towny-not-in-town");
+        townyNotMayor = messages.getString("messages.towny-not-mayor");
+        townyFlagEnabled = messages.getString("messages.towny-flag-enabled");
+        townyFlagDisabled = messages.getString("messages.towny-flag-disabled");
+        townyInvalidEnchantment = messages.getString("messages.towny-invalid-enchantment");
+        townyInvalidValue = messages.getString("messages.towny-invalid-value");
+        townyUsage = messages.getString("messages.towny-usage");
 
         saveInterval = config.getLong("config.save-interval");
         if (saveInterval <= 0) {
@@ -972,6 +986,34 @@ public class MainConfigManager {
 
     public String getEnchantNotAllowed() {
         return enchantNotAllowed;
+    }
+
+    public String getTownyNotInTown() {
+        return townyNotInTown;
+    }
+
+    public String getTownyNotMayor() {
+        return townyNotMayor;
+    }
+
+    public String getTownyFlagEnabled() {
+        return townyFlagEnabled;
+    }
+
+    public String getTownyFlagDisabled() {
+        return townyFlagDisabled;
+    }
+
+    public String getTownyInvalidEnchantment() {
+        return townyInvalidEnchantment;
+    }
+
+    public String getTownyInvalidValue() {
+        return townyInvalidValue;
+    }
+
+    public String getTownyUsage() {
+        return townyUsage;
     }
 
     public Boolean getEnabledDefaultOpPerms() {
