@@ -79,14 +79,14 @@ FarmingPlus is a plugin that allows players to experience new mechanics in farmi
 
 - **Towny**:
   - Region control for Farmer's Step, Grand Tilling, Replenish, Irrigate and rewards.
-  - Per-enchantment custom flags: mayors can allow specific FarmingPlus enchantments without giving full build permissions.
+  - Per-enchantment custom flags: server admins can allow specific FarmingPlus enchantments per town without giving full build permissions. For now its only for server admins, will change in the future.
 
-  | Flag Key | Command | Effect |
-  |----------|---------|--------|
-  | `farmingplus_replenish` | `/town set meta farmingplus_replenish true` | Allow Replenish in town |
-  | `farmingplus_farmerstep` | `/town set meta farmingplus_farmerstep true` | Allow Farmer's Step in town |
-  | `farmingplus_grandtilling` | `/town set meta farmingplus_grandtilling true` | Allow Grand Tilling in town |
-  | `farmingplus_irrigate` | `/town set meta farmingplus_irrigate true` | Allow Irrigate in town |
+  | Flag Key | Command                                                                                                                               | Effect |
+  |----------|---------------------------------------------------------------------------------------------------------------------------------------|--------|
+  | `farmingplus_replenish` | `/townyadmin town {name} meta add farmingplus_replenish`<br/><br/>`/townyadmin town {name} meta set farmingplus_replenish true`       | Allow Replenish in town |
+  | `farmingplus_farmerstep` | `/townyadmin town {name} meta add farmingplus_farmerstep`<br/><br/>`/townyadmin town {name} meta set farmingplus_farmerstep true`     | Allow Farmer's Step in town |
+  | `farmingplus_grandtilling` | `/townyadmin town {name} meta add farmingplus_grandtilling `<br/><br/>`/townyadmin town {name} meta set farmingplus_grandtilling true` | Allow Grand Tilling in town |
+  | `farmingplus_irrigate` | `/townyadmin town {name} meta add farmingplus_irrigate`<br/><br/>`/townyadmin town {name} meta set farmingplus_irrigate true`     | Allow Irrigate in town |
 
 - **CoreProtect**:
   - Block logging for Replenish, Farmer's Step, Grand Tilling and Irrigate. All block changes are logged and can be rolled back.
