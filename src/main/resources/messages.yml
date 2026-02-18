@@ -53,6 +53,7 @@ messages:
   towny-not-mayor: "%farmingplus_prefix%&cYou must be a mayor or assistant to use this command!"
   towny-flag-enabled: "%farmingplus_prefix%&a%enchantment% has been &2enabled &ain your town!"
   towny-flag-disabled: "%farmingplus_prefix%&a%enchantment% has been &cdisabled &ain your town!"
+  towny-flag-already: "%farmingplus_prefix%&e%enchantment% is already %status% in your town!"
   towny-invalid-enchantment: "%farmingplus_prefix%&cInvalid enchantment! Use: replenish, farmerstep, grandtilling, irrigate"
   towny-invalid-value: "%farmingplus_prefix%&cInvalid value! Use: on / off"
   towny-usage: "%farmingplus_prefix%&eUsage: /fp towny <enchantment> <on|off>"

@@ -98,6 +98,16 @@ public class TownyFlagCommand {
             return;
         }
 
+        // Check if the flag is already set to the desired value
+        boolean currentValue = MetaDataUtil.hasMeta(town, field) && MetaDataUtil.getBoolean(town, field);
+        if (currentValue == enable) {
+            String message = FarmingPlus.getPlugin().getMainConfigManager().getTownyFlagAlready();
+            message = message.replace("%enchantment%", enchantmentArg);
+            message = message.replace("%status%", enable ? "enabled" : "disabled");
+            player.sendMessage(MessageUtils.translateAll(player, message));
+            return;
+        }
+
         MetaDataUtil.setBoolean(town, field, enable, true);
 
         // Send confirmation

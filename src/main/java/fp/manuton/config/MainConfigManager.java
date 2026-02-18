@@ -145,6 +145,7 @@ public class MainConfigManager {
     private String townyNotMayor;
     private String townyFlagEnabled;
     private String townyFlagDisabled;
+    private String townyFlagAlready;
     private String townyInvalidEnchantment;
     private String townyInvalidValue;
     private String townyUsage;
@@ -566,6 +567,7 @@ public class MainConfigManager {
         townyNotMayor = messages.getString("messages.towny-not-mayor");
         townyFlagEnabled = messages.getString("messages.towny-flag-enabled");
         townyFlagDisabled = messages.getString("messages.towny-flag-disabled");
+        townyFlagAlready = messages.getString("messages.towny-flag-already");
         townyInvalidEnchantment = messages.getString("messages.towny-invalid-enchantment");
         townyInvalidValue = messages.getString("messages.towny-invalid-value");
         townyUsage = messages.getString("messages.towny-usage");
@@ -1002,6 +1004,10 @@ public class MainConfigManager {
 
     public String getTownyFlagDisabled() {
         return townyFlagDisabled;
+    }
+
+    public String getTownyFlagAlready() {
+        return townyFlagAlready;
     }
 
     public String getTownyInvalidEnchantment() {
