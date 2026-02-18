@@ -32,6 +32,14 @@ config:
   enabled-default-op-permissions: false
   enabled-rewards: true
 
+  # CoreProtect logging - Log blocks modifications made by FarmingPlus enchantments to CoreProtect #
+  # Requires CoreProtect to be installed on the server #
+  coreprotect:
+    log-replenish: true
+    log-farmers-step: true
+    log-grand-tilling: true
+    log-irrigate: true
+
 
 
   gui:

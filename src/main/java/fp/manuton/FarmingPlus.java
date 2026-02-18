@@ -9,10 +9,14 @@ import fp.manuton.enchantments.CustomEnchantments;
 import fp.manuton.events.*;
 import fp.manuton.guis.EnchantGui;
 import fp.manuton.guis.FarmersStepGui;
+import fp.manuton.logging.BlockLoggerManager;
+import fp.manuton.logging.CoreProtectLogger;
+import fp.manuton.protection.ProtectionManager;
+import fp.manuton.protection.TownyProtection;
+import fp.manuton.protection.WorldGuardProtection;
 import fp.manuton.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
@@ -24,6 +28,8 @@ public class FarmingPlus extends JavaPlugin {
     private static FarmingPlus plugin;
     private MainConfigManager mainConfigManager;
     private static ConnectionPool connectionPool;  // HikariCP connection pool
+    private ProtectionManager protectionManager;
+    private BlockLoggerManager blockLoggerManager;
     private final String link = "https://modrinth.com/plugin/farmingplus";
     private final int pluginIdSpigot = 114643; // ADD PLUGIN ID SPIGOT //
 
@@ -146,15 +152,27 @@ public class FarmingPlus extends JavaPlugin {
     }
 
     public void registerEvents(){
-        if (isWorldguardEnabled()) {
-            getServer().getPluginManager().registerEvents(new PlayerListenerWorldGuard(), this);
-            getServer().getPluginManager().registerEvents(new RewardsListenerWorldGuard(), this);
-        }else {
-            getServer().getPluginManager().registerEvents(new PlayerListener(), this);
-            getServer().getPluginManager().registerEvents(new RewardsListener(), this);
+        // Initialize protection system — only load classes if the plugin is present
+        // to avoid NoClassDefFoundError when the dependency is not installed
+        protectionManager = new ProtectionManager();
+        if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
+            protectionManager.register(new WorldGuardProtection());
         }
-        getServer().getPluginManager().registerEvents(new GuiListener(), this);
+        if (Bukkit.getPluginManager().getPlugin("Towny") != null) {
+            protectionManager.register(new TownyProtection());
+            // Register custom Towny flags for per-enchantment control
+            TownyProtection.registerMetadataFields();
+        }
 
+        // Initialize block logging system — same pattern
+        blockLoggerManager = new BlockLoggerManager();
+        if (Bukkit.getPluginManager().getPlugin("CoreProtect") != null) {
+            blockLoggerManager.register(new CoreProtectLogger());
+        }
+
+        getServer().getPluginManager().registerEvents(new PlayerListener(protectionManager, blockLoggerManager), this);
+        getServer().getPluginManager().registerEvents(new RewardsListener(protectionManager), this);
+        getServer().getPluginManager().registerEvents(new GuiListener(), this);
     }
 
     public void registerItemUtils(){
@@ -191,10 +209,12 @@ public class FarmingPlus extends JavaPlugin {
         return connectionPool != null && connectionPool.isInitialized();
     }
 
-    private boolean isWorldguardEnabled() {
-        //Bukkit.getConsoleSender().sendMessage("Checking if WorldGuard is enabled...");
-        Plugin worldGuardPlugin = Bukkit.getPluginManager().getPlugin("WorldGuard");
-        return worldGuardPlugin != null && worldGuardPlugin.isEnabled();
+    public ProtectionManager getProtectionManager() {
+        return protectionManager;
+    }
+
+    public BlockLoggerManager getBlockLoggerManager() {
+        return blockLoggerManager;
     }
 
 }

@@ -1,5 +1,5 @@
 main: fp.manuton.FarmingPlus
-version: 1.2.3
+version: 1.3.0
 name: FarmingPlus
 author: Manuton
 api-version: 1.13
@@ -7,6 +7,8 @@ load: POSTWORLD
 softdepend:
   - [Vault]
   - [WorldGuard]
+  - [Towny]
+  - [CoreProtect]
   - [MythicMobs]
   - [PlaceholderAPI]
   - [Jobs]
@@ -72,16 +74,16 @@ permissions:
     description: Crops not needed in inventory when using Farmer's Step.
     default: false
   fp.bypass.farmerstep.protection:
-    description: Let the player use Farmer's step on WorldGuard regions.
+    description: Let the player use Farmer's Step in protected regions (WorldGuard, Towny).
     default: false
   fp.bypass.replenish.protection:
-    description: Let the player use Replenish on WorldGuard regions.
+    description: Let the player use Replenish in protected regions (WorldGuard, Towny).
     default: false
   fp.bypass.grandtilling.protection:
-    description: Let the player use Grand Tilling on WorldGuard regions.
+    description: Let the player use Grand Tilling in protected regions (WorldGuard, Towny).
     default: false
   fp.bypass.irrigate.protection:
-    description: Let the player use Irrigate on WorldGuard regions.
+    description: Let the player use Irrigate in protected regions (WorldGuard, Towny).
     default: false
   fp.bypass.durability-damage:
     description: Tools or boots don't take durability damage when used by that player.

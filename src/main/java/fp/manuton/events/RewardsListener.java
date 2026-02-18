@@ -2,6 +2,7 @@ package fp.manuton.events;
 
 import fp.manuton.FarmingPlus;
 import fp.manuton.SQL.MySQLData;
+import fp.manuton.protection.ProtectionManager;
 import fp.manuton.rewards.MoneyReward;
 import fp.manuton.rewards.Reward;
 import fp.manuton.rewardsCounter.RewardRecord;
@@ -26,6 +27,12 @@ import java.sql.Connection;
 import java.util.*;
 
 public class RewardsListener implements Listener {
+
+    private final ProtectionManager protectionManager;
+
+    public RewardsListener(ProtectionManager protectionManager) {
+        this.protectionManager = protectionManager;
+    }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void Rewards(BlockBreakEvent event){
@@ -55,6 +62,12 @@ public class RewardsListener implements Listener {
                     return;
             }
 
+        // Protection check - don't give rewards for blocks in protected regions
+        if (!protectionManager.canBuild(player, block.getLocation())
+                && !player.hasPermission("fp.bypass.replenish.protection")
+                && !(player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms())) {
+            return;
+        }
 
         boolean rewardGiven = false;
 
