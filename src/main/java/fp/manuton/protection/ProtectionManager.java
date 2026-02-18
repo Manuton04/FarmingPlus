@@ -47,4 +47,22 @@ public class ProtectionManager {
         }
         return true;
     }
+
+    /**
+     * Returns true if ALL active protection systems allow the player to build at the location,
+     * considering an enchantment-specific flag key for per-enchantment overrides (e.g. Towny flags).
+     *
+     * @param player the player performing the action
+     * @param location the block location being modified
+     * @param enchantmentKey the enchantment-specific flag key (e.g. "farmingplus_replenish")
+     * @return true if building is allowed by all active protections
+     */
+    public boolean canBuild(Player player, Location location, String enchantmentKey) {
+        for (ProtectionCheck check : checks) {
+            if (check.isEnabled() && !check.canBuild(player, location, enchantmentKey)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

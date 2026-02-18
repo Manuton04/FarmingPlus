@@ -48,17 +48,18 @@ public class PlayerListener implements Listener {
 
     /**
      * Checks if a player can bypass protection at a location, considering:
-     * 1. Protection manager (WorldGuard, Towny, etc.)
+     * 1. Protection manager (WorldGuard, Towny, etc.) with enchantment-specific flag
      * 2. Enchantment-specific bypass permission
      * 3. OP override if enabled in config
      *
      * @param player the player
      * @param location the block location
      * @param bypassPermission the enchantment-specific bypass permission
+     * @param enchantmentFlagKey the enchantment-specific Towny flag key (e.g. "farmingplus_replenish")
      * @return true if the player can modify the block
      */
-    private boolean canModifyBlock(Player player, Location location, String bypassPermission) {
-        if (protectionManager.canBuild(player, location)) {
+    private boolean canModifyBlock(Player player, Location location, String bypassPermission, String enchantmentFlagKey) {
+        if (protectionManager.canBuild(player, location, enchantmentFlagKey)) {
             return true;
         }
         if (player.hasPermission(bypassPermission)) {
@@ -118,7 +119,7 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
 
         // Protection check before replanting
-        if (!canModifyBlock(player, block.getLocation(), "fp.bypass.replenish.protection")) {
+        if (!canModifyBlock(player, block.getLocation(), "fp.bypass.replenish.protection", "farmingplus_replenish")) {
             return;
         }
 
@@ -267,7 +268,7 @@ public class PlayerListener implements Listener {
             }
             for (Location block: blocks){
                 // Protection check per block
-                if (!canModifyBlock(player, block, "fp.bypass.farmerstep.protection")) {
+                if (!canModifyBlock(player, block, "fp.bypass.farmerstep.protection", "farmingplus_farmerstep")) {
                     continue;
                 }
 
@@ -317,7 +318,7 @@ public class PlayerListener implements Listener {
             }
             for (Location block: blocks){
                 // Protection check per block
-                if (!canModifyBlock(player, block, "fp.bypass.farmerstep.protection")) {
+                if (!canModifyBlock(player, block, "fp.bypass.farmerstep.protection", "farmingplus_farmerstep")) {
                     continue;
                 }
 
@@ -392,7 +393,7 @@ public class PlayerListener implements Listener {
                 List<Location> blocksR = LocationUtils.getRadiusBlocks(event.getClickedBlock().getLocation(), level, 0);
                 for (Location block: blocksR){
                     // Protection check per block
-                    if (!canModifyBlock(player, block, "fp.bypass.grandtilling.protection")) {
+                    if (!canModifyBlock(player, block, "fp.bypass.grandtilling.protection", "farmingplus_grandtilling")) {
                         continue;
                     }
 
@@ -407,7 +408,7 @@ public class PlayerListener implements Listener {
                 List<Location> blocksL = LocationUtils.getRowBlocks(event.getClickedBlock().getLocation(), FarmingPlus.getPlugin().getMainConfigManager().getGrandTilling3Blocks(), LocationUtils.getCardinalDirection(player), 0);
                 for (Location block: blocksL){
                     // Protection check per block - break if denied (stops the row)
-                    if (!canModifyBlock(player, block, "fp.bypass.grandtilling.protection")) {
+                    if (!canModifyBlock(player, block, "fp.bypass.grandtilling.protection", "farmingplus_grandtilling")) {
                         break;
                     }
 
@@ -491,7 +492,7 @@ public class PlayerListener implements Listener {
         List<Location> blocks = LocationUtils.getRowBlocks(event.getClickedBlock().getRelative(blockFace).getLocation(), FarmingPlus.getPlugin().getMainConfigManager().getIrrigateMaxBlocks(), LocationUtils.getCardinalDirection(player), 0);
         for (Location block : blocks){
             // Protection check per block - break if denied (stops the water flow)
-            if (!canModifyBlock(player, block, "fp.bypass.irrigate.protection")) {
+            if (!canModifyBlock(player, block, "fp.bypass.irrigate.protection", "farmingplus_irrigate")) {
                 break;
             }
 

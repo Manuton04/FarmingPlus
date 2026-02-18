@@ -5,6 +5,8 @@ What is **FarmingPlus**?
   - It's compatible with the next plugins:
      - Vault
      - WorldGuard
+     - Towny
+     - CoreProtect
      - MythicMobs
      - PlaceholderAPI
   - Compatible with MySQL.
@@ -62,10 +64,10 @@ FarmingPlus is a plugin that allows players to experience new mechanics in farmi
   - fp.commands.enchant: Let the player use /fp enchant.
   - fp.bypass.costs: Let the player enchant without costs.
   - fp.bypass.farmerstep: Crops not needed in inventory when using Farmer's Step.
-  - fp.bypass.farmerstep.protection: Let the player use Farmer's step on WorldGuard regions.
-  - fp.bypass.replenish.protection: Let the player use Replenish on WorldGuard regions.
-  - fp.bypass.grandtilling.protection: Let the player use Grand Tilling on WorldGuard regions.
-  - fp.bypass.irrigate.protection: Let the player use Irrigate on WorldGuard regions.
+  - fp.bypass.farmerstep.protection: Let the player use Farmer's Step on protected regions (WorldGuard, Towny).
+  - fp.bypass.replenish.protection: Let the player use Replenish on protected regions (WorldGuard, Towny).
+  - fp.bypass.grandtilling.protection: Let the player use Grand Tilling on protected regions (WorldGuard, Towny).
+  - fp.bypass.irrigate.protection: Let the player use Irrigate on protected regions (WorldGuard, Towny).
   - fp.bypass.durability-damage: Tools or boots don't take durability damage when used by that player.
 # Compatibilities
 - **Vault**:
@@ -74,6 +76,20 @@ FarmingPlus is a plugin that allows players to experience new mechanics in farmi
 
 - **WorldGuard**:
   - Region control for Farmer's Step, Grand Tilling, Replenish, Irrigate and rewards.
+
+- **Towny**:
+  - Region control for Farmer's Step, Grand Tilling, Replenish, Irrigate and rewards.
+  - Per-enchantment custom flags: mayors can allow specific FarmingPlus enchantments without giving full build permissions.
+
+  | Flag Key | Command | Effect |
+  |----------|---------|--------|
+  | `farmingplus_replenish` | `/town set meta farmingplus_replenish true` | Allow Replenish in town |
+  | `farmingplus_farmerstep` | `/town set meta farmingplus_farmerstep true` | Allow Farmer's Step in town |
+  | `farmingplus_grandtilling` | `/town set meta farmingplus_grandtilling true` | Allow Grand Tilling in town |
+  | `farmingplus_irrigate` | `/town set meta farmingplus_irrigate true` | Allow Irrigate in town |
+
+- **CoreProtect**:
+  - Block logging for Replenish, Farmer's Step, Grand Tilling and Irrigate. All block changes are logged and can be rolled back.
 
 - **MythicMobs**:
   - You can summon MythicMobs as rewards.

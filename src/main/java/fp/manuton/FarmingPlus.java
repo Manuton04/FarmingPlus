@@ -160,6 +160,8 @@ public class FarmingPlus extends JavaPlugin {
         }
         if (Bukkit.getPluginManager().getPlugin("Towny") != null) {
             protectionManager.register(new TownyProtection());
+            // Register custom Towny flags for per-enchantment control
+            TownyProtection.registerMetadataFields();
         }
 
         // Initialize block logging system — same pattern
