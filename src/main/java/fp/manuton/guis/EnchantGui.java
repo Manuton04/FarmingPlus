@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -27,8 +26,8 @@ import java.util.List;
 public class EnchantGui{
 
     public static void createGui(Player player, Inventory inventory){
-        if (player.hasMetadata("menuConfirm"))
-            player.removeMetadata("menuConfirm", FarmingPlus.getPlugin());
+        if (GuiSessions.hasConfirmMenu(player))
+            GuiSessions.closeConfirmMenu(player);
 
         FarmingPlus plugin = FarmingPlus.getPlugin();
         ItemStack empty = new ItemStack(Material.valueOf(plugin.getMainConfigManager().getGuiEmptySlot()));
@@ -74,8 +73,8 @@ public class EnchantGui{
         inventory.setItem(28, enchantItem);
 
 
-        if (player.hasMetadata("menuConfirm"))
-            player.removeMetadata("menuConfirm", FarmingPlus.getPlugin());
+        if (GuiSessions.hasConfirmMenu(player))
+            GuiSessions.closeConfirmMenu(player);
 
         String sound = plugin.getMainConfigManager().getGuiSoundOpen();
         if (SoundUtils.getSoundFromString(sound) != null) {
@@ -83,13 +82,13 @@ public class EnchantGui{
             player.playSound(player.getLocation(), SoundUtils.getSoundFromString(sound), volume, 1.0f);
         }
 
-        player.setMetadata("OpenedMenu", new FixedMetadataValue(plugin, inventory));
+        GuiSessions.openEnchantMenu(player);
         player.openInventory(inventory);
     }
 
     public static void guiMenu(Player player, String Page, Inventory inventory, ItemStack enchant, ItemStack item){
-        if (player.hasMetadata("menuConfirm"))
-            player.removeMetadata("menuConfirm", FarmingPlus.getPlugin());
+        if (GuiSessions.hasConfirmMenu(player))
+            GuiSessions.closeConfirmMenu(player);
 
         FarmingPlus plugin = FarmingPlus.getPlugin();
         ItemStack empty = new ItemStack(Material.valueOf(plugin.getMainConfigManager().getGuiEmptySlot()));
@@ -136,8 +135,8 @@ public class EnchantGui{
             inventory.setItem(23, putItem);
             inventory.setItem(28, enchantItem);
         }else if (Page.equals("boots")){
-            if (player.hasMetadata("menuConfirm"))
-                player.removeMetadata("menuConfirm", FarmingPlus.getPlugin());
+            if (GuiSessions.hasConfirmMenu(player))
+                GuiSessions.closeConfirmMenu(player);
 
             ItemStack farmerstep = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta farmerstepMeta = farmerstep.getItemMeta();
@@ -174,8 +173,8 @@ public class EnchantGui{
             inventory.setItem(21, farmersgrace);
             inventory.setItem(22, farmerstep);
         }else if (Page.equals("hoe")){
-            if (player.hasMetadata("menuConfirm"))
-                player.removeMetadata("menuConfirm", FarmingPlus.getPlugin());
+            if (GuiSessions.hasConfirmMenu(player))
+                GuiSessions.closeConfirmMenu(player);
 
             ItemStack replenish = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta replenishMeta = replenish.getItemMeta();
@@ -213,8 +212,8 @@ public class EnchantGui{
             inventory.setItem(22, grandTilling);
 
         }else if (Page.equals("axe")){
-            if (player.hasMetadata("menuConfirm"))
-                player.removeMetadata("menuConfirm", FarmingPlus.getPlugin());
+            if (GuiSessions.hasConfirmMenu(player))
+                GuiSessions.closeConfirmMenu(player);
 
             ItemStack replenish = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta replenishMeta = replenish.getItemMeta();
@@ -255,8 +254,8 @@ public class EnchantGui{
             inventory.setItem(22, delicate);
 
         }else if (Page.equals("water")){
-            if (player.hasMetadata("menuConfirm"))
-                player.removeMetadata("menuConfirm", FarmingPlus.getPlugin());
+            if (GuiSessions.hasConfirmMenu(player))
+                GuiSessions.closeConfirmMenu(player);
 
             ItemStack irrigate = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta irrigateMeta = irrigate.getItemMeta();
@@ -279,8 +278,8 @@ public class EnchantGui{
             inventory.setItem(21, irrigate);
 
         }else if (Page.equals("grandTilling")){
-            if (player.hasMetadata("menuConfirm"))
-                player.removeMetadata("menuConfirm", FarmingPlus.getPlugin());
+            if (GuiSessions.hasConfirmMenu(player))
+                GuiSessions.closeConfirmMenu(player);
 
             ItemStack grandTilling1 = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta grandTillingMeta1 = grandTilling1.getItemMeta();
@@ -339,8 +338,8 @@ public class EnchantGui{
 
 
         }else if (Page.equals("farmersStep")){
-            if (player.hasMetadata("menuConfirm"))
-                player.removeMetadata("menuConfirm", FarmingPlus.getPlugin());
+            if (GuiSessions.hasConfirmMenu(player))
+                GuiSessions.closeConfirmMenu(player);
 
             ItemStack farmersStep1 = new ItemStack(Material.ENCHANTED_BOOK);
             ItemMeta farmersStepMeta1 = farmersStep1.getItemMeta();
@@ -513,7 +512,7 @@ public class EnchantGui{
             inventory.setItem(14, anvil);
             inventory.setItem(30, confirm);
             inventory.setItem(32, cancel);
-            player.setMetadata("menuConfirm", new FixedMetadataValue(FarmingPlus.getPlugin(), inventory));
+            GuiSessions.openConfirmMenu(player);
         }
     }
 

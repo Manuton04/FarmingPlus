@@ -5,6 +5,7 @@ import fp.manuton.costs.Cost;
 import fp.manuton.enchantments.CustomEnchantments;
 import fp.manuton.enchantments.EnchantFp;
 import fp.manuton.guis.EnchantGui;
+import fp.manuton.guis.GuiSessions;
 import fp.manuton.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,6 +19,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -33,7 +35,7 @@ public class GuiListener implements Listener {
         Player player = (Player) event.getWhoClicked();
         if (event.getClickedInventory() == null)
             return;
-        if (!player.hasMetadata("OpenedMenu"))
+        if (!GuiSessions.hasEnchantMenu(player))
             return;
         event.setCancelled(true);
         int slot = event.getSlot();
@@ -46,14 +48,14 @@ public class GuiListener implements Listener {
             }
 
             ItemStack item = null;
-            if (!player.hasMetadata("menuConfirm")){
+            if (!GuiSessions.hasConfirmMenu(player)){
                 try {
                     item = CompatibilityInventoryUtils.getTopInventory(event).getItem(19);
                 }catch (NullPointerException e){
                 }
             }
 
-            if (clicked != null && !player.hasMetadata("menuConfirm")){
+            if (clicked != null && !GuiSessions.hasConfirmMenu(player)){
                 if (CompatibilityInventoryUtils.getTopInventory(event).getItem(19) == null){
                     CompatibilityInventoryUtils.getTopInventory(event).setItem(19, clicked);
                     CompatibilityInventoryUtils.getBottomInventory(event).setItem(slot, null);
@@ -103,12 +105,12 @@ public class GuiListener implements Listener {
 
             }
         }else{
-            if (!(slot == 19) && !(slot == 12 && player.hasMetadata("menuConfirm"))){
+            if (!(slot == 19) && !(slot == 12 && GuiSessions.hasConfirmMenu(player))){
                 if (slot == 49){
                     player.closeInventory();
                     return;
                 }
-                if (slot == 13 && player.hasMetadata("menuConfirm"))
+                if (slot == 13 && GuiSessions.hasConfirmMenu(player))
                     return;
 
                 ItemStack clicked;
@@ -130,7 +132,7 @@ public class GuiListener implements Listener {
                     data = clicked.getItemMeta().getPersistentDataContainer();
                 }
 
-                if (clicked != null && item != null && !player.hasMetadata("menuConfirm")){
+                if (clicked != null && item != null && !GuiSessions.hasConfirmMenu(player)){
                     if (data.has(new NamespacedKey(FarmingPlus.getPlugin(), "menuItem"), PersistentDataType.STRING)){
                         if (clicked.getItemMeta().hasLore()) {
                             if (clicked.getItemMeta().getLore().contains(MessageUtils.getColoredMessage(FarmingPlus.getPlugin().getMainConfigManager().getEnchanted())))
@@ -435,15 +437,15 @@ public class GuiListener implements Listener {
                 }
 
             }else {
-                if (player.hasMetadata("menuConfirm") && slot == 19)
+                if (GuiSessions.hasConfirmMenu(player) && slot == 19)
                     return;
-                if (!player.hasMetadata("menuConfirm") && slot == 12)
+                if (!GuiSessions.hasConfirmMenu(player) && slot == 12)
                     return;
 
                 Inventory inventory = event.getInventory();
-                if (player.hasMetadata("menuConfirm")){
+                if (GuiSessions.hasConfirmMenu(player)){
                     slot = 12;
-                    player.removeMetadata("menuConfirm", FarmingPlus.getPlugin());
+                    GuiSessions.closeConfirmMenu(player);
                 }else
                     slot = 19;
 
@@ -472,11 +474,11 @@ public class GuiListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onCloseEn(InventoryCloseEvent event){
         Player player = (Player) event.getPlayer();
-        if (!player.hasMetadata("OpenedMenu"))
+        if (!GuiSessions.hasEnchantMenu(player))
             return;
         FarmingPlus plugin = FarmingPlus.getPlugin();
 
-        player.removeMetadata("OpenedMenu", plugin);
+        GuiSessions.closeEnchantMenu(player);
         String sound = plugin.getMainConfigManager().getGuiSoundClose();
         if (SoundUtils.getSoundFromString(sound) != null) {
             float volume = plugin.getMainConfigManager().getVolumeGuiSoundClose();
@@ -486,9 +488,9 @@ public class GuiListener implements Listener {
         Inventory inventory = event.getInventory();
         if (inventory.getSize() == 54){
             ItemStack slot;
-            if (player.hasMetadata("menuConfirm")){
+            if (GuiSessions.hasConfirmMenu(player)){
                 slot = inventory.getItem(12);
-                player.removeMetadata("menuConfirm", plugin);
+                GuiSessions.closeConfirmMenu(player);
             }else
                 slot = inventory.getItem(19);
 
@@ -510,7 +512,7 @@ public class GuiListener implements Listener {
         if (event.getClickedInventory() == null)
             return;
         Player player = (Player) event.getWhoClicked();
-        if (!player.hasMetadata("BootsMenu"))
+        if (!GuiSessions.hasBootsMenu(player))
             return;
 
         event.setCancelled(true);
@@ -546,11 +548,10 @@ public class GuiListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onCloseBoots(InventoryCloseEvent event){
         Player player = (Player) event.getPlayer();
-        if (!player.hasMetadata("BootsMenu"))
+        if (!GuiSessions.hasBootsMenu(player))
             return;
 
-        FarmingPlus plugin = FarmingPlus.getPlugin();
-        player.removeMetadata("BootsMenu", plugin);
+        GuiSessions.closeBootsMenu(player);
 
         Inventory inventory = event.getInventory();
         if (inventory.getSize() == 36){
@@ -578,6 +579,19 @@ public class GuiListener implements Listener {
             }
 
         }
+    }
+
+    /**
+     * Drops any GUI session flag left behind when a player disconnects.
+     *
+     * <p>A player can quit with a GUI still open, in which case no close event fires. Without this
+     * the entry would stay in {@link GuiSessions} for the lifetime of the server.</p>
+     *
+     * @param event the quit event
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onQuit(PlayerQuitEvent event){
+        GuiSessions.clear(event.getPlayer());
     }
 
 }
