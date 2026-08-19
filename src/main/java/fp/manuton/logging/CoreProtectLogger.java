@@ -15,6 +15,7 @@ import org.bukkit.plugin.Plugin;
 public class CoreProtectLogger implements BlockLogger {
 
     private CoreProtectAPI api;
+    private boolean unavailable;
 
     /**
      * Attempts to obtain the CoreProtect API instance.
@@ -24,19 +25,39 @@ public class CoreProtectLogger implements BlockLogger {
         if (api != null) {
             return api;
         }
+        if (unavailable) {
+            return null;
+        }
 
         Plugin plugin = Bukkit.getPluginManager().getPlugin("CoreProtect");
-        if (plugin == null || !(plugin instanceof CoreProtect)) {
+        // isEnabled() must be checked before any CoreProtect class is referenced below: a
+        // CoreProtect that failed to start is still registered here, but its classes can no
+        // longer be linked, and touching one would throw NoClassDefFoundError.
+        if (plugin == null || !plugin.isEnabled()) {
             return null;
         }
 
-        CoreProtectAPI coreProtectAPI = ((CoreProtect) plugin).getAPI();
-        if (coreProtectAPI == null || !coreProtectAPI.isEnabled() || coreProtectAPI.APIVersion() < 11) {
+        try {
+            if (!(plugin instanceof CoreProtect)) {
+                return null;
+            }
+
+            CoreProtectAPI coreProtectAPI = ((CoreProtect) plugin).getAPI();
+            if (coreProtectAPI == null || !coreProtectAPI.isEnabled() || coreProtectAPI.APIVersion() < 11) {
+                return null;
+            }
+
+            this.api = coreProtectAPI;
+            return api;
+        } catch (LinkageError error) {
+            // CoreProtect is present but its classes cannot be linked, typically because it does
+            // not support this server version. Give up for the rest of the session rather than
+            // retrying on every logged block.
+            unavailable = true;
+            Bukkit.getLogger().warning("[FarmingPlus] CoreProtect is installed but its API could not be "
+                    + "loaded (" + error.getMessage() + "). Block logging will be disabled.");
             return null;
         }
-
-        this.api = coreProtectAPI;
-        return api;
     }
 
     @Override

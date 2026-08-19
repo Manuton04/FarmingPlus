@@ -23,12 +23,13 @@ public class BlockLoggerManager {
      */
     public void register(BlockLogger logger) {
         loggers.add(logger);
-        if (logger.isEnabled()) {
-            try {
+        try {
+            if (logger.isEnabled()) {
                 Bukkit.getLogger().info("[FarmingPlus] Hooked into " + logger.getName() + " for block logging!");
-            } catch (Exception ignored) {
-                // Bukkit not available (unit tests)
             }
+        } catch (Exception | LinkageError ignored) {
+            // Block logging is an optional integration: a logger that cannot probe its backing
+            // plugin must never abort startup. Bukkit is also absent under unit tests.
         }
     }
 
