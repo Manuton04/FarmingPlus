@@ -1,0 +1,10 @@
+# Normalize every text file to LF in the repository and in the working tree.
+# The project is developed from both Windows and Linux, and without this the
+# whole tree shows up as modified whenever the platform changes.
+* text=auto eol=lf
+
+# Files that must never be touched by EOL conversion
+*.jar binary
+*.png binary
+*.jpg binary
+*.zip binary
