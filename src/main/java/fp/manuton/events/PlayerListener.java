@@ -19,9 +19,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -68,7 +70,27 @@ public class PlayerListener implements Listener {
         return player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms();
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    /**
+     * Fires a BlockPlaceEvent for a block this plugin writes directly, so land protection
+     * plugins that only listen to block events (GriefPrevention, Lands, Residence, PlotSquared...)
+     * can still veto it. Without this they never see the change.
+     *
+     * @param player the player performing the action
+     * @param target the block that is about to be replaced
+     * @param placedAgainst the block the placement is anchored to
+     * @param itemInHand the item responsible for the placement
+     * @param hand the hand holding the item, null defaults to the main hand
+     * @return true if no plugin denied the placement
+     */
+    private boolean callBlockPlace(Player player, Block target, Block placedAgainst, ItemStack itemInHand, EquipmentSlot hand) {
+        BlockPlaceEvent placeEvent = new BlockPlaceEvent(target, target.getState(), placedAgainst,
+                itemInHand, player, true,
+                hand == null ? EquipmentSlot.HAND : hand);
+        Bukkit.getPluginManager().callEvent(placeEvent);
+        return !placeEvent.isCancelled() && placeEvent.canBuild();
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void autoPickup(BlockBreakEvent event){
         Player player = event.getPlayer();
         Block block = event.getBlock();
@@ -100,7 +122,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void Replenish(BlockBreakEvent event){
         if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR)
             return;
@@ -275,6 +297,9 @@ public class PlayerListener implements Listener {
                 if (block.getBlock().getType() == Material.FARMLAND && !crop.equals(Material.NETHER_WART)){
                     block.setY(block.getY() + 1);
                     if (block.getBlock().getType() == Material.AIR){
+                        // Third-party claim plugins only see block events - skip if any of them denies
+                        if (!callBlockPlace(player, block.getBlock(), block.getBlock().getRelative(BlockFace.DOWN), player.getInventory().getBoots(), EquipmentSlot.HAND))
+                            continue;
                         block.getBlock().setType(crop);
                         blockLoggerManager.logPlacement("farmers-step", player.getName(), block, crop, block.getBlock().getBlockData());
                         if (!usedSetted)
@@ -286,6 +311,9 @@ public class PlayerListener implements Listener {
                 }else if (crop.equals(Material.NETHER_WART) && block.getBlock().getType() == Material.SOUL_SAND){
                     block.setY(block.getY() + 1);
                     if (block.getBlock().getType() == Material.AIR) {
+                        // Third-party claim plugins only see block events - skip if any of them denies
+                        if (!callBlockPlace(player, block.getBlock(), block.getBlock().getRelative(BlockFace.DOWN), player.getInventory().getBoots(), EquipmentSlot.HAND))
+                            continue;
                         block.getBlock().setType(crop);
                         blockLoggerManager.logPlacement("farmers-step", player.getName(), block, crop, block.getBlock().getBlockData());
                         if (usedSetted)
@@ -326,6 +354,9 @@ public class PlayerListener implements Listener {
                     if (player.getInventory().contains(crop)) {
                         block.setY(block.getY() + 1);
                         if (block.getBlock().getType() == Material.AIR) {
+                            // Third-party claim plugins only see block events - skip if any of them denies
+                            if (!callBlockPlace(player, block.getBlock(), block.getBlock().getRelative(BlockFace.DOWN), player.getInventory().getBoots(), EquipmentSlot.HAND))
+                                continue;
                             block.getBlock().setType(cropT);
                             blockLoggerManager.logPlacement("farmers-step", player.getName(), block, cropT, block.getBlock().getBlockData());
                             ItemStack item = new ItemStack(crop, 1);
@@ -343,6 +374,9 @@ public class PlayerListener implements Listener {
                     if (player.getInventory().contains(crop)) {
                         block.setY(block.getY() + 1);
                         if (block.getBlock().getType() == Material.AIR) {
+                            // Third-party claim plugins only see block events - skip if any of them denies
+                            if (!callBlockPlace(player, block.getBlock(), block.getBlock().getRelative(BlockFace.DOWN), player.getInventory().getBoots(), EquipmentSlot.HAND))
+                                continue;
                             block.getBlock().setType(cropT);
                             blockLoggerManager.logPlacement("farmers-step", player.getName(), block, cropT, block.getBlock().getBlockData());
                             ItemStack item = new ItemStack(crop, 1);
@@ -360,7 +394,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void GrandTilling(PlayerInteractEvent event){
         Player player = event.getPlayer();
         boolean isHoe = false;
@@ -398,6 +432,9 @@ public class PlayerListener implements Listener {
                     }
 
                     if (block.getBlock().getType() == Material.GRASS_BLOCK || block.getBlock().getType() == Material.DIRT || block.getBlock().getType() == Material.DIRT_PATH || block.getBlock().getType() == Material.FARMLAND){
+                        // Third-party claim plugins only see block events - skip if any of them denies
+                        if (!callBlockPlace(player, block.getBlock(), event.getClickedBlock(), player.getInventory().getItemInMainHand(), event.getHand()))
+                            continue;
                         block.getBlock().setType(Material.FARMLAND);
                         blockLoggerManager.logPlacement("grand-tilling", player.getName(), block, Material.FARMLAND, block.getBlock().getBlockData());
                     }
@@ -413,6 +450,9 @@ public class PlayerListener implements Listener {
                     }
 
                     if (block.getBlock().getType() == Material.GRASS_BLOCK || block.getBlock().getType() == Material.DIRT || block.getBlock().getType() == Material.DIRT_PATH){
+                        // Third-party claim plugins only see block events - break if any of them denies
+                        if (!callBlockPlace(player, block.getBlock(), event.getClickedBlock(), player.getInventory().getItemInMainHand(), event.getHand()))
+                            break;
                         block.getBlock().setType(Material.FARMLAND);
                         blockLoggerManager.logPlacement("grand-tilling", player.getName(), block, Material.FARMLAND, block.getBlock().getBlockData());
                     }else if(block.getBlock().getType() == Material.FARMLAND){
@@ -483,6 +523,10 @@ public class PlayerListener implements Listener {
             return;
         if (blockC.getType().isInteractable())
             return;
+        // Vanilla only stops water in ultra-warm dimensions inside the bucket item logic, so
+        // writing the block directly would leave permanent water in the Nether //
+        if (blockC.getWorld().getEnvironment() == World.Environment.NETHER)
+            return;
 
         event.setCancelled(true);
 
@@ -497,6 +541,9 @@ public class PlayerListener implements Listener {
             }
 
             if (block.getBlock().getType() == Material.AIR || block.getBlock().getType() == Material.WATER) {
+                // Third-party claim plugins only see block events - break if any of them denies
+                if (!callBlockPlace(player, block.getBlock(), blockC, player.getInventory().getItemInMainHand(), event.getHand()))
+                    break;
                 block.getBlock().setType(Material.WATER);
                 blockLoggerManager.logPlacement("irrigate", player.getName(), block, Material.WATER, block.getBlock().getBlockData());
             } else
