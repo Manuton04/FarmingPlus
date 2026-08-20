@@ -523,12 +523,20 @@ public class PlayerListener implements Listener {
             return;
         if (blockC.getType().isInteractable())
             return;
-        // Vanilla only stops water in ultra-warm dimensions inside the bucket item logic, so
-        // writing the block directly would leave permanent water in the Nether //
-        if (blockC.getWorld().getEnvironment() == World.Environment.NETHER)
-            return;
-
         event.setCancelled(true);
+
+        // Vanilla only stops water in ultra-warm dimensions inside the bucket item logic, so
+        // writing the block directly would leave permanent water in the Nether. Cancel first
+        // and place nothing: letting vanilla handle it would empty the bucket, and the
+        // enchantment lives in the PersistentDataContainer of the WATER_BUCKET item //
+        if (blockC.getWorld().getEnvironment() == World.Environment.NETHER) {
+            Location evaporated = blockC.getRelative(event.getBlockFace()).getLocation().add(0.5, 0.5, 0.5);
+            try {
+                blockC.getWorld().spawnParticle(Particle.valueOf("LARGE_SMOKE"), evaporated, 8, 0.25, 0.25, 0.25, 0.0);
+            } catch (Exception e) {
+            }
+            return;
+        }
 
 
         BlockFace blockFace = event.getBlockFace();
