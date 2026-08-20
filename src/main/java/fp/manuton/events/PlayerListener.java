@@ -517,18 +517,22 @@ public class PlayerListener implements Listener {
         Block blockC = event.getClickedBlock();
         if (blockC == null)
             return;
-        if (blockC.getRelative(BlockFace.UP).getType() != Material.AIR  && event.getClickedBlock().getRelative(BlockFace.UP).getType() != Material.WATER)
-            return;
+        // Containers and interactable blocks are left alone so the player can still open a
+        // chest or a door while holding the bucket //
         if (blockC.getState() instanceof Container)
             return;
         if (blockC.getType().isInteractable())
             return;
+        // The enchantment owns the interaction from here on, so cancel before every other
+        // check: any early return below would hand the bucket to vanilla, which empties it,
+        // and the enchantment lives in the PersistentDataContainer of the WATER_BUCKET item //
         event.setCancelled(true);
 
+        if (blockC.getRelative(BlockFace.UP).getType() != Material.AIR  && event.getClickedBlock().getRelative(BlockFace.UP).getType() != Material.WATER)
+            return;
+
         // Vanilla only stops water in ultra-warm dimensions inside the bucket item logic, so
-        // writing the block directly would leave permanent water in the Nether. Cancel first
-        // and place nothing: letting vanilla handle it would empty the bucket, and the
-        // enchantment lives in the PersistentDataContainer of the WATER_BUCKET item //
+        // writing the block directly would leave permanent water in the Nether //
         if (blockC.getWorld().getEnvironment() == World.Environment.NETHER) {
             Location evaporated = blockC.getRelative(event.getBlockFace()).getLocation().add(0.5, 0.5, 0.5);
             try {
