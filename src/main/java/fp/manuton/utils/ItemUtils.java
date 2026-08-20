@@ -135,7 +135,9 @@ public class ItemUtils {
         if (player.hasPermission("fp.bypass.costs") || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms()))
             return true;
 
-        if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
+        // hasEconomy() rather than a Vault presence check: Vault can be installed while the
+        // economy plugin behind it never loaded //
+        if (VaultUtils.hasEconomy()) {
             if (cost.getMoney() > 0) {
                 if (VaultUtils.getMoney(player) < cost.getMoney())
                     return false;

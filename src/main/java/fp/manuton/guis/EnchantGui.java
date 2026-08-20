@@ -399,10 +399,6 @@ public class EnchantGui{
 
         }else if (Page.equals("confirm")){
 
-            for (int i = 9; i <= 45; i++){
-                inventory.setItem(i, empty);
-            }
-
             ItemStack confirm = new ItemStack(Material.valueOf(FarmingPlus.getPlugin().getMainConfigManager().getGuiConfirm()));
             ItemMeta confirmMeta = confirm.getItemMeta();
             confirmMeta.setDisplayName(MessageUtils.getColoredMessage("&aConfirm"));
@@ -468,12 +464,19 @@ public class EnchantGui{
                     }else {
                         anvilLore.add(MessageUtils.getColoredMessage("&c✘ - " + String.valueOf(costE.getXpLevels()) + " " + plugin.getMainConfigManager().getXpLevelsMessage()));
                     }
-                if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
+                // hasEconomy() rather than a Vault presence check: Vault can be installed while the
+                // economy plugin behind it never loaded //
+                if (VaultUtils.hasEconomy()) {
                     if (costE.getMoney() > 0)
-                        if ((player.hasPermission("fp.bypass.costs") || VaultUtils.getMoney(player) >= costE.getMoney()) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms()))
-                            anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + VaultUtils.formatCurrencySymbol(costE.getMoney())));
-                        else
-                            anvilLore.add(MessageUtils.getColoredMessage("&c✘ - " + VaultUtils.formatCurrencySymbol(costE.getMoney())));
+                        try {
+                            if ((player.hasPermission("fp.bypass.costs") || VaultUtils.getMoney(player) >= costE.getMoney()) || (player.isOp() && FarmingPlus.getPlugin().getMainConfigManager().getEnabledDefaultOpPerms()))
+                                anvilLore.add(MessageUtils.getColoredMessage("&a✔ - " + VaultUtils.formatCurrencySymbol(costE.getMoney())));
+                            else
+                                anvilLore.add(MessageUtils.getColoredMessage("&c✘ - " + VaultUtils.formatCurrencySymbol(costE.getMoney())));
+                        } catch (UnsupportedOperationException e) {
+                            // The economy died while building the page: drop the cost line rather
+                            // than abort the render and leave the player staring at filler panes //
+                        }
                 }
                 if (!costE.getItems().isEmpty()) {
                     anvilLore.add(MessageUtils.getColoredMessage("&e- Items:"));
@@ -506,6 +509,12 @@ public class EnchantGui{
             anvilMeta.setLore(anvilLore);
             anvil.setItemMeta(anvilMeta);
 
+            // Every item above is built before a single slot is written. The filler wipes the
+            // player's item out of slot 19, so anything that throws between the wipe and the
+            // writes below would destroy it — keep the two adjacent and last //
+            for (int i = 9; i <= 45; i++){
+                inventory.setItem(i, empty);
+            }
 
             inventory.setItem(12, item);
             inventory.setItem(13, enchant);

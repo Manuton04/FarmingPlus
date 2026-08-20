@@ -42,18 +42,45 @@ public class VaultUtils {
         return economy != null;
     }
 
+    /**
+     * Drops the economy provider after it failed, so the rest of the session degrades to
+     * "no economy" instead of throwing on every call.
+     *
+     * <p>Registering with Vault only proves a provider exists, not that it works: an economy
+     * plugin that failed to enable still leaves its provider behind, and every call into it
+     * throws. Latching here keeps that failure from reaching callers more than once.</p>
+     *
+     * @param error the failure reported by the provider
+     */
+    private static void economyFailed(RuntimeException error){
+        economy = null;
+        Bukkit.getLogger().warning("[FarmingPlus] The Vault economy provider failed (" + error.getMessage()
+                + "). Money costs and rewards are disabled until the server is restarted.");
+    }
+
     public static void deposit(Player target, double amount){
         if (!hasEconomy())
             throw new UnsupportedOperationException("Vault Economy not found.");
 
-        economy.depositPlayer(target, amount);
+        try {
+            economy.depositPlayer(target, amount);
+        } catch (RuntimeException e) {
+            economyFailed(e);
+            throw new UnsupportedOperationException("Vault Economy is not usable.", e);
+        }
     }
 
     public static void extract(Player target, double amount){
         if (!hasEconomy())
             throw new UnsupportedOperationException("Vault Economy not found.");
 
-        EconomyResponse r = economy.withdrawPlayer(target, amount);
+        EconomyResponse r;
+        try {
+            r = economy.withdrawPlayer(target, amount);
+        } catch (RuntimeException e) {
+            economyFailed(e);
+            throw new UnsupportedOperationException("Vault Economy is not usable.", e);
+        }
         if(!r.transactionSuccess()) {
             target.sendMessage(MessageUtils.getColoredMessage(FarmingPlus.prefix+"You don't have enough money!"));
         }
@@ -63,14 +90,24 @@ public class VaultUtils {
         if (!hasEconomy())
             throw new UnsupportedOperationException("Vault Economy not found.");
 
-        return economy.getBalance(target);
+        try {
+            return economy.getBalance(target);
+        } catch (RuntimeException e) {
+            economyFailed(e);
+            throw new UnsupportedOperationException("Vault Economy is not usable.", e);
+        }
     }
 
     public static String formatCurrencySymbol(double amount){
         if (!hasEconomy())
             throw new UnsupportedOperationException("Vault Economy not found.");
 
-        return amount + " " + (((int) amount) == 1 ? economy.currencyNameSingular() : economy.currencyNamePlural());
+        try {
+            return amount + " " + (((int) amount) == 1 ? economy.currencyNameSingular() : economy.currencyNamePlural());
+        } catch (RuntimeException e) {
+            economyFailed(e);
+            throw new UnsupportedOperationException("Vault Economy is not usable.", e);
+        }
     }
 
     static {
